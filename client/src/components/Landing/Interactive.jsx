@@ -1,40 +1,52 @@
-import React, { useState } from 'react';
-import { Zap, Layers, Network, BarChart, PieChart, TrendingUp, Globe, Boxes, Settings } from 'lucide-react';
+import { useState } from "react";
+import {
+  Zap,
+  Layers,
+  Network,
+  BarChart,
+  PieChart,
+  TrendingUp,
+  Globe,
+  Boxes,
+  Settings,
+} from "lucide-react";
 
 export const Interactive = () => {
-  const [activeTab, setActiveTab] = useState('features');
+  const [activeTab, setActiveTab] = useState("features");
 
   return (
     <section className="py-20 bg-gray-50">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Powerful Features</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            Powerful Features
+          </h2>
           <div className="w-20 h-1 bg-blue-900 mx-auto mb-8"></div>
           <div className="flex justify-center space-x-4 mb-12">
-            <TabButton 
-              active={activeTab === 'features'} 
-              onClick={() => setActiveTab('features')}
+            <TabButton
+              active={activeTab === "features"}
+              onClick={() => setActiveTab("features")}
               text="Core Features"
             />
-            <TabButton 
-              active={activeTab === 'analytics'} 
-              onClick={() => setActiveTab('analytics')}
+            <TabButton
+              active={activeTab === "analytics"}
+              onClick={() => setActiveTab("analytics")}
               text="Analytics"
             />
-            <TabButton 
-              active={activeTab === 'integration'} 
-              onClick={() => setActiveTab('integration')}
+            <TabButton
+              active={activeTab === "integration"}
+              onClick={() => setActiveTab("integration")}
               text="Integration"
             />
           </div>
         </div>
 
-        {activeTab === 'features' && (
+        {activeTab === "features" && (
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<Zap className="w-12 h-12 text-blue-900" />}
-              title="Real-time Tracking"
-              description="Monitor your shipments in real-time with precise location tracking and status updates."
+              title="Tracking"
+              description="Monitor your shipments in time with precise location tracking and status updates."
             />
             <FeatureCard
               icon={<Layers className="w-12 h-12 text-blue-900" />}
@@ -49,7 +61,7 @@ export const Interactive = () => {
           </div>
         )}
 
-        {activeTab === 'analytics' && (
+        {activeTab === "analytics" && (
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<BarChart className="w-12 h-12 text-blue-900" />}
@@ -69,7 +81,7 @@ export const Interactive = () => {
           </div>
         )}
 
-        {activeTab === 'integration' && (
+        {activeTab === "integration" && (
           <div className="grid md:grid-cols-3 gap-8">
             <FeatureCard
               icon={<Globe className="w-12 h-12 text-blue-900" />}
@@ -98,9 +110,9 @@ function TabButton({ active, onClick, text }) {
     <button
       onClick={onClick}
       className={`px-6 py-2 rounded-full transition-colors ${
-        active 
-          ? 'bg-blue-900 text-white' 
-          : 'bg-white text-gray-600 hover:bg-gray-100'
+        active
+          ? "bg-blue-900 text-white"
+          : "bg-white text-gray-600 hover:bg-gray-100"
       }`}
     >
       {text}

@@ -17,13 +17,13 @@ export const StatsSection = () => {
 
 function StatCard({ number, text }) {
   return (
-    <motion.div 
+    <motion.div
       className="p-6 rounded-lg bg-blue-800 shadow-md"
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <motion.div 
+      <motion.div
         className="text-4xl font-bold mb-2"
         initial={{ scale: 0.8 }}
         whileInView={{ scale: 1 }}

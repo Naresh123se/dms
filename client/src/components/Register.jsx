@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRegisterMutation } from "../app/slices/userApiSlice";
 import { toast } from "react-toastify";
-import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"; // Added missing imports
+import { Eye, EyeOff, Mail, Lock, User, Package } from "lucide-react"; // Added missing imports
 import { useState } from "react";
 
 const Register = () => {
@@ -51,7 +51,7 @@ const Register = () => {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-white space-y-6 max-w-xl">
             <div className="flex items-center gap-3">
-              <User size={40} className="text-[#FF8E1F]" />
+              <Package size={40} className="text-[#0EA5E9]" />
               <h1 className="text-3xl font-bold">DMS</h1>
             </div>
             <p className="text-xl text-blue-100">
@@ -209,7 +209,7 @@ const Register = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#FF8E1F] text-white py-2 px-4 rounded-lg"
+              className="w-full bg-[#1E3A8A]  hover:bg-[#1E3A8A]/90  text-white py-2 px-4 rounded-lg"
             >
               Create account
             </Button>

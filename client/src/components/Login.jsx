@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { setCredentials } from "../app/slices/authSlice";
 import { useLoginMutation } from "../app/slices/userApiSlice";
 import { toast } from "react-toastify";
-import { Eye, EyeOff, Mail, Package, Lock } from "lucide-react"; // Added missing imports
+import { Eye, EyeOff, Mail, Package, Lock, User } from "lucide-react"; // Added missing imports
 import { useState } from "react";
 
 const Login = () => {
@@ -48,7 +48,7 @@ const Login = () => {
         <div className="absolute inset-0 flex items-center justify-center p-12">
           <div className="text-white space-y-6 max-w-xl">
             <div className="flex items-center gap-3">
-              <Package size={40} className="text-[#FF8E1F]" />
+              <Package size={40} className="text-[#0EA5E9]" />
               <h1 className="text-3xl font-bold">DMS</h1>
             </div>
             <p className="text-xl text-blue-100">
@@ -62,7 +62,8 @@ const Login = () => {
       {/* Right Side - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-gray-50">
         <div className="w-full max-w-md space-y-8">
-          <Package size={50} className="text-[#FF8E1F] mx-auto" /> {/* Centered icon */}
+          <User size={50} className="text-[#0EA5E9] mx-auto" />{" "}
+          {/* Centered icon */}
           <div className="text-center">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Welcome back
@@ -136,7 +137,7 @@ const Login = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#FF8E1F] text-white py-2 px-4 rounded-lg"
+              className="w-full bg-[#1E3A8A]  hover:bg-[#1E3A8A]/90  text-white py-2 px-4 rounded-lg"
             >
               Sign in
             </Button>
