@@ -1,12 +1,22 @@
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
- // Adjust import based on your file structure
+// Adjust import based on your file structure
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRegisterMutation } from "../app/slices/userApiSlice";
 import { toast } from "react-toastify";
-import { Eye, EyeOff, Mail, Lock, User, Package } from "lucide-react"; // Added missing imports
+
+import {
+  Eye,
+  EyeOff,
+  Mail,
+  Lock,
+  User,
+  PhoneCall,
+  MapPin,
+  Package,
+} from "lucide-react"; // Added missing imports
 import { useState } from "react";
 
 const Register = () => {
@@ -29,7 +39,7 @@ const Register = () => {
       const res = await storeRegister(data).unwrap(); // Use `.unwrap()` to handle success/error responses
       console.log(res);
       navigate("/activate", {
-        state: { activationToken: res.data.activationToken },
+        state: { activationToken: res.activationToken },
       });
       toast.success("Please check your mail");
     } catch (error) {
@@ -69,8 +79,11 @@ const Register = () => {
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Create an account
             </h2>
-            <p className="text-gray-600">
-              Get started with your free account today
+            <p className="text-gray-800">
+              Get started with your free account today <br />
+              <span className="text-sm text-gray-400">
+                Register your shop and find your nearest distributors
+              </span>
             </p>
           </div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -89,8 +102,8 @@ const Register = () => {
                   {...register("name", {
                     required: "Name is required",
                     minLength: {
-                      value: 2,
-                      message: "Name must be at least 2 characters",
+                      value: 8,
+                      message: "Name must be at least 8 characters",
                     },
                   })}
                   className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
@@ -130,6 +143,72 @@ const Register = () => {
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">
                   {errors.email.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
+                Phone Number
+              </Label>
+              <div className="relative">
+                <PhoneCall
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+
+                <Input
+                  type="number"
+                  {...register("phone", {
+                    required: "Phone number is required",
+                    pattern: {
+                      value: /^9\d{9}$/, // Ensures it starts with 98 and has 10 digits
+                      message:
+                        "Phone number must start with 9 and be 10 digits long",
+                    },
+                  })}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="9815000001"
+                />
+              </div>
+              {errors.phone && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.phone.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <Label className="block text-sm font-medium text-gray-700 mb-1">
+                Shop Location
+              </Label>
+              <div className="relative">
+                <MapPin
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
+                <Input
+                  type="text"
+                  {...register("shop", {
+                    required: "Shop location is required",
+                    pattern: {
+                      value: /^[A-Za-z\s,]+$/, // Allows only letters, spaces, and commas
+                      message:
+                        "Shop location must contain only letters, spaces, and commas",
+                    },
+                    minLength: {
+                      value: 3,
+                      message:
+                        "Shop location must be at least 3 characters long",
+                    },
+                  })}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
+                  placeholder="Bagbazar, Kathmandu"
+                />
+              </div>
+              {errors.shop && (
+                <p className="mt-1 text-sm text-red-600">
+                  {errors.shop.message}
                 </p>
               )}
             </div>
@@ -196,7 +275,11 @@ const Register = () => {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2"
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
                 </button>
               </div>
               {errors.confirmPassword && (
@@ -209,9 +292,10 @@ const Register = () => {
             {/* Submit Button */}
             <Button
               type="submit"
-              className="w-full bg-[#1E3A8A]  hover:bg-[#1E3A8A]/90  text-white py-2 px-4 rounded-lg"
+              className="w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white py-2 px-4 rounded-lg"
+              disabled={isLoading}
             >
-              Create account
+              {isLoading ? "Creating Account..." : "Create account"}
             </Button>
 
             {/* Already Have an Account? */}

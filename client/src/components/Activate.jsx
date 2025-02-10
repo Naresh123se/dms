@@ -16,7 +16,6 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 
-import { Input } from "./ui/input";
 import { toast } from "react-toastify";
 
 const Activate = () => {
@@ -46,15 +45,29 @@ const Activate = () => {
         toast.success("Registration was successfull");
       }
     } catch (err) {
-      const errorMessage = err?.data?.message.charAt(0).toUpperCase() + err?.data?.message.slice(1);
-      toast.error(errorMessage || "Activation failed. Please try again.")
+      const errorMessage =
+        err?.data?.message.charAt(0).toUpperCase() +
+        err?.data?.message.slice(1);
+      toast.error(errorMessage || "Activation failed. Please try again.");
     }
   };
 
   return (
     <>
-      <div className="flex items-center h-screen justify-center">
-        <Card className="lg:w-1/4 text-center  ">
+<div
+  className="absolute inset-0 overflow-hidden mix-blend-multiply"
+  style={{
+    backgroundImage: 
+      "linear-gradient(to right, #4c4fcd, #4338CA), url('https://images.pexels.com/photos/4483608/pexels-photo-4483608.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')",
+
+    backgroundBlendMode: "multiply",
+  }}
+></div>
+
+
+      <div className="flex items-center h-screen justify-center  ">
+      <Card className="lg:w-1/4 text-center  z-10">
+
           <CardHeader>
             <CardTitle>Verify Your Email</CardTitle>
             <p>Please Enter The Verification Code</p>

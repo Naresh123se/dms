@@ -27,7 +27,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const res = await storeLogin(data).unwrap();
-      dispatch(setCredentials({ user: res.data.user }));
+      console.log(res);
+      dispatch(setCredentials({ user: res.user }));
       navigate("/");
       toast.success("Login Successful");
     } catch (error) {

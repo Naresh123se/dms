@@ -26,9 +26,14 @@ const userSchema = new mongoose.Schema(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
+
+    shop: {
+      type: String,
+      required: [true, "Please enter shop name"],
+    },
     isVerified: {
       type: Boolean,
-      default:false
+      default: false,
     },
     role: {
       type: String,

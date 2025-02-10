@@ -1,11 +1,12 @@
 import { Menu, Search, Truck, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { LogoutButton } from "@/components";
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const nav = useNavigate();
+  const user = useSelector((state) => state.auth.user);
+  console.log(user);
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
@@ -35,15 +36,29 @@ const Nav = () => {
             </a>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              className="bg-sky-400 text-black px-6 py-2 rounded hover:bg-sky-500 transition-colors"
-              onClick={() => nav("/login")}
-            >
-              Login
-            </Button>
-            <Button className="bg-blue-900 text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors"  onClick={() => nav("/register")}>
-              Register
-            </Button>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Track your shipment..."
+                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
+              />
+              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+            </div>
+            {user ? (
+              <>
+                <p className="text-lg font-semibold text-gray-600">
+                  Welcome, {user.name}
+                </p>
+                <LogoutButton />
+              </>
+            ) : (
+              <Link
+                to={"/register"}
+                className="bg-blue-900 text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors"
+              >
+                Get Started
+              </Link>
+            )}
           </div>
           <button
             className="md:hidden"
@@ -85,9 +100,21 @@ const Nav = () => {
                 />
                 <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
               </div>
-              <button className="bg-blue-900 text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors w-full">
-                Get Started
-              </button>
+              {user ? (
+                <>
+                  <p className="text-lg font-semibold text-gray-600">
+                    Welcome, {user.name}
+                  </p>
+                  <LogoutButton />
+                </>
+              ) : (
+                <Link
+                  to={"/register"}
+                  className="bg-blue-900 text-white px-6 py-2 rounded hover:bg-blue-800 transition-colors w-full"
+                >
+                  Get Started
+                </Link>
+              )}
             </div>
           </div>
         </div>
