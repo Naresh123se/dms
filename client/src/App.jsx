@@ -2,7 +2,8 @@
 import { ToastContainer, Bounce } from "react-toastify";
 import { Route, Routes, useLocation } from "react-router-dom";
 import { Login, Register, Activate } from "./components";
-import {HomePage} from './pages/HomePage'
+import { HomePage, DashboardPage } from "./pages";
+
 function App() {
   // const location = useLocation();
   // const isLogin = location.pathname === "/login" || "/register";
@@ -14,6 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/activate" element={<Activate />} />
         <Route path="/" element={<HomePage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
       </Routes>
 
       <ToastContainer

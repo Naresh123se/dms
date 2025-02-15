@@ -1,5 +1,9 @@
-import HomePage from '../components/Landing/HomePage'
+import Home from '@/components/Landing/HomePage'
 
-export {
-    HomePage
+const HomePage = () => {
+  return (
+   <Home/>
+  )
 }
+
+export default HomePage
