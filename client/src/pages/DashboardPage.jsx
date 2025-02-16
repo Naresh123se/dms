@@ -1,7 +1,15 @@
-import Dashboard from "@/components/Dashboard/Dashboard";
+import { Dashboard, Sidebar } from "../components";
 
 const DashboardPage = () => {
-  return <Dashboard />;
+  return (
+    <div className="flex">
+      <Sidebar />
+      <div className=" w-full">
+
+      <Dashboard />
+      </div>
+    </div>
+  );
 };
 
 export default DashboardPage;

@@ -1,7 +1,4 @@
-import React, { useState } from "react";
 import {
-  BarChart3,
-  Box,
   Clock,
   Package,
   Truck,
@@ -9,99 +6,18 @@ import {
   AlertCircle,
   ArrowUpRight,
   ArrowDownRight,
-  Search,
-  Bell,
-  Settings,
   Filter,
   Download,
-  Boxes,
-  Building2,
   ChevronRight,
-  LayoutDashboard,
-  CircleDollarSign,
-  LineChart,
-  Warehouse,
 } from "lucide-react";
+import Nav from "./Nav";
 
 function Dashboard() {
-  const [searchQuery, setSearchQuery] = useState("");
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Top Navigation */}
-      <div className="fixed top-0 left-64 right-0 h-16 bg-white border-b border-gray-200 px-8 flex items-center justify-between z-10 backdrop-blur-sm bg-white/90">
-        <div className="flex items-center gap-4 flex-1 max-w-xl">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search orders, shipments, customers..."
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-gray-50"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <button className="p-2 hover:bg-gray-100 rounded-lg relative">
-            <Bell className="h-5 w-5 text-gray-600" />
-            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
-          </button>
-          <button className="p-2 hover:bg-gray-100 rounded-lg">
-            <Settings className="h-5 w-5 text-gray-600" />
-          </button>
-          <div className="flex items-center gap-3 ml-4">
-            <div className="h-9 w-9 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white font-medium shadow-lg shadow-blue-200">
-              A
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Sidebar */}
-      <div className="fixed w-64 h-full bg-white border-r border-gray-200">
-        <div className="flex items-center gap-3 p-6 border-b border-gray-100">
-          <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl">
-            <Box className="h-6 w-6 text-white" />
-          </div>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
-            DistriHub
-          </h1>
-        </div>
-
-        <div className="p-4">
-          <nav className="space-y-1">
-            {[
-              { icon: LayoutDashboard, text: "Dashboard", active: true },
-              { icon: Package, text: "Inventory" },
-              { icon: Truck, text: "Shipments" },
-              { icon: Users, text: "Customers" },
-              { icon: Warehouse, text: "Warehouses" },
-              { icon: Building2, text: "Suppliers" },
-              { icon: CircleDollarSign, text: "Finance" },
-              { icon: LineChart, text: "Analytics" },
-            ].map((item, index) => (
-              <button
-                key={index}
-                className={`flex items-center justify-between w-full p-3 rounded-xl transition-all duration-200 ${
-                  item.active
-                    ? "bg-gradient-to-r from-blue-50 to-blue-100 text-blue-600 shadow-sm"
-                    : "text-gray-600 hover:bg-gray-50"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.text}</span>
-                </div>
-                {item.active && <ChevronRight className="h-4 w-4" />}
-              </button>
-            ))}
-          </nav>
-        </div>
-      </div>
-
+    <div>
+      <Nav/>
       {/* Main Content */}
-      <div className="ml-64 pt-16 p-8">
+      <div className=" ml-72 pt-16 m-8">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h2 className="text-3xl font-bold text-gray-800 mb-1">
