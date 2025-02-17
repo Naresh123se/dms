@@ -6,6 +6,8 @@ import Nav from "./Header/Nav/NavBar";
 import Footer from "./Footer/Footer";
 import Sidebar from "./SideBar";
 import Dashboard from "./Dashboard/Dashboard";
+import SupplierList from "./Suppliers/SupplierList"
+import AddSupplier from "./Suppliers/AddSupplier"
 
 export {
   Login,
@@ -15,5 +17,7 @@ export {
   Nav,
   Sidebar,
   Dashboard,
+  SupplierList,
+  AddSupplier,
   Footer,
 };
