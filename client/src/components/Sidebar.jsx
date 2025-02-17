@@ -10,6 +10,7 @@ import {
   CircleDollarSign,
   LineChart,
   ChevronRight,
+  PackagePlusIcon
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -17,18 +18,21 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { icon: LayoutDashboard, text: "Dashboard", path: "/dashboard" },
-    { icon: Package, text: "Inventory", path: "/inventory" },
+    { icon: LayoutDashboard, text: "Dashboard", path: "/admin" },
+    { icon: Building2, text: "Suppliers", path: "/admin/suppliers" },
+    { icon: PackagePlusIcon, text: "Products", path: "/admin/products" },
+
+    // { icon: Package, text: "Inventory", path: "/inventory" },
     { icon: Truck, text: "Shipments", path: "/shipments" },
     { icon: Users, text: "Customers", path: "/customers" },
     { icon: Warehouse, text: "Warehouses", path: "/warehouses" },
-    { icon: Building2, text: "Suppliers", path: "/suppliers" },
     { icon: CircleDollarSign, text: "Finance", path: "/finance" },
     { icon: LineChart, text: "Analytics", path: "/analytics" },
   ];
 
   return (
-    <div className="fixed z-20 w-64 h-full bg-white border-r border-gray-200">
+    
+    <div className="  w-72 h-full bg-white border-r border-gray-200">
       <div className="flex items-center gap-3 p-6 border-b border-gray-100">
         <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl">
           <Box className="h-6 w-6 text-white" />

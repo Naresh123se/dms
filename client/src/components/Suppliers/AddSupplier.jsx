@@ -1,72 +1,34 @@
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import { ArrowLeft, Stethoscope } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 // import { useAddDentistMutation } from "@/app/slices/adminApiSlice";
 import { ScrollArea } from "../ui/scroll-area";
+import { useAddSupplierMutation } from "@/app/slices/supplierApiSlice";
 function AddSupplier() {
   const navigate = useNavigate();
-  // const [addDentist, { isLoading, errors: addErrors }] =
-  //   useAddDentistMutation();
+  const [addSupplier, { isLoading, errors: addErrors }] =
+    useAddSupplierMutation();
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-    setValue,
-    watch,
-  } = useForm({
-    defaultValues: {
-      slotDuration: "30",
-      workingHours: {
-        startTime: "09:00",
-        endTime: "17:00",
-        days: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
-      },
-    },
-  });
-
-  const [selectedDays, setSelectedDays] = useState({
-    Monday: true,
-    Tuesday: true,
-    Wednesday: true,
-    Thursday: true,
-    Friday: true,
-    Saturday: false,
-    Sunday: false,
-  });
-
-  const handleDayToggle = (day) => {
-    setSelectedDays((prev) => {
-      const newDays = { ...prev, [day]: !prev[day] };
-      const selectedDays = Object.entries(newDays)
-        .filter(([ isSelected]) => isSelected)
-        .map(([day]) => day);
-
-      setValue("workingHours.days", selectedDays);
-      return newDays;
-    });
-  };
+  } = useForm({});
 
   const onSubmit = async (data) => {
     try {
+      console.log(data);
       // Add your API call here
-      const response = await addDentist(data).unwrap();
+      const response = await addSupplier(data).unwrap();
       console.log(response);
       if (response.success) {
-        toast.success("Dentist Added Successfully");
-        navigate("/admin/all-dentists");
+        toast.success("Supplier Added Successfully");
+        // navigate("/admin/all-dentists");
       }
     } catch (error) {
       toast.error(error.message);
@@ -77,27 +39,20 @@ function AddSupplier() {
 
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-25px)] ">
-      <div className="overflow-auto bg-gray-50 w-full py-8 px-4 sm:px-6 lg:px-8">
+      <div className="overflow-auto bg-gray-50 w-full py-8 px-4 sm:px-6 lg:px-8 ">
         <div className="mb-8">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="mb-4"
-          >
+          <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Dentists
+            Back to Supplier
           </Button>
 
           <div className="flex items-center gap-4 mb-6">
-            <div className="p-3 bg-teal-100 rounded-lg">
-              <Stethoscope className="h-8 w-8 text-teal-700" />
-            </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Add New Dentist
+                Add New Supplier
               </h1>
               <p className="text-gray-500 mt-1">
-                Register a new dental professional to the system
+                Register a new Supplier to the system
               </p>
             </div>
           </div>
@@ -111,23 +66,23 @@ function AddSupplier() {
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-1 bg-blue-600 rounded-full"></div>
                   <h3 className="text-xl font-semibold text-gray-900">
-                    Personal Information
+                    Supplier Information
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Full Name
+                      Shop Name
                     </label>
                     <Input
                       {...register("name", {
-                        required: "Name is required",
+                        required: "Shop is required",
                         pattern: {
                           value: /^[A-Za-z\s]{2,}$/,
-                          message: "Please enter a valid name",
+                          message: "Please enter a valid shop name",
                         },
                       })}
-                      placeholder="Dr. John Doe"
+                      placeholder="Janaki suppliers "
                       className={`w-full ${
                         errors.name ? "border-red-500" : ""
                       }`}
@@ -152,7 +107,7 @@ function AddSupplier() {
                         },
                       })}
                       type="email"
-                      placeholder="doctor@example.com"
+                      placeholder="janaki@example.com"
                       className={`w-full ${
                         errors.email ? "border-red-500" : ""
                       }`}
@@ -228,7 +183,7 @@ function AddSupplier() {
                           message: "Please enter a complete address",
                         },
                       })}
-                      placeholder="123 Medical Center Dr."
+                      placeholder="123 Dang"
                       className={`w-full ${
                         errors.address ? "border-red-500" : ""
                       }`}
@@ -241,284 +196,117 @@ function AddSupplier() {
                   </div>
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Date of Birth
+                      Zip Code
                     </label>
                     <Input
-                      {...register("dob", {
-                        required: "Date of birth is required",
-                        validate: (value) => {
-                          const date = new Date(value);
-                          const today = new Date();
-                          const age = today.getFullYear() - date.getFullYear();
-                          return age >= 18 || "Must be at least 18 years old";
-                        },
+                      {...register("zipCode", {
+                        required: "zip Code  is required",
                       })}
-                      type="date"
+                      type="number"
+                      placeholder="477442"
                       className={`w-full ${errors.dob ? "border-red-500" : ""}`}
                     />
-                    {errors.dob && (
+                    {errors.zipCode && (
                       <p className="text-red-500 text-xs mt-1">
-                        {errors.dob.message}
+                        {errors.zipCode.message}
                       </p>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Professional Information Section */}
               <div className="space-y-6">
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-1 bg-green-600 rounded-full"></div>
                   <h3 className="text-xl font-semibold text-gray-900">
-                    Professional Information
+                    Ware house Information
                   </h3>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   {/* ... Professional information fields ... */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Specialization
+                      Ware house location
                     </label>
-                    <Select
-                      onValueChange={(value) =>
-                        setValue("specialization", value, {
-                          shouldValidate: true,
-                        })
-                      }
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select specialization" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="general">
-                          General Dentistry
-                        </SelectItem>
-                        <SelectItem value="orthodontics">
-                          Orthodontics
-                        </SelectItem>
-                        <SelectItem value="periodontics">
-                          Periodontics
-                        </SelectItem>
-                        <SelectItem value="endodontics">Endodontics</SelectItem>
-                        <SelectItem value="oral-surgery">
-                          Oral Surgery
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {errors.specialization && (
+
+                    <Input
+                      {...register("location", {
+                        required: "Location is required",
+                      })}
+                      type="text"
+                      placeholder="Pokhara"
+                      className={`w-full ${
+                        errors.location ? "border-red-500" : ""
+                      }`}
+                    />
+
+                    {errors.location && (
                       <p className="text-red-500 text-xs mt-1">
-                        {errors.specialization.message}
+                        {errors.location.message}
                       </p>
                     )}
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Experience (years)
+                      Contact Person
                     </label>
                     <Input
-                      {...register("experience", {
-                        required: "Experience is required",
-                        min: {
-                          value: 1,
-                          message: "Experience must be at least 1 year",
-                        },
-                        max: {
-                          value: 50,
-                          message: "Please enter a valid experience",
-                        },
+                      {...register("contact", {
+                        required: "Contact is required",
                       })}
-                      type="number"
-                      placeholder="5"
+                      type="text"
+                      placeholder="John Dun "
                       className={`w-full ${
                         errors.experience ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.experience && (
+                    {errors.contact && (
                       <p className="text-red-500 text-xs mt-1">
-                        {errors.experience.message}
+                        {errors.contact.message}
                       </p>
                     )}
                   </div>
+
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      NMC Number
+                      VAT Number
                     </label>
                     <Input
-                      {...register("nmcNumber", {
-                        required: "NMC Number is required",
-                        // pattern: {
-                        //   value: /^NMC\d{6}$/,
-                        //   message:
-                        //     "Please enter a valid NMC number (e.g., NMC123456)",
-                        // },
+                      {...register("vat", {
+                        required: "VAT Number is required",
                       })}
-                      placeholder="NMC123456"
+                      placeholder="V123456"
                       className={`w-full ${
                         errors.nmcNumber ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.nmcNumber && (
+                    {errors.vat && (
                       <p className="text-red-500 text-xs mt-1">
-                        {errors.nmcNumber.message}
+                        {errors.vat.message}
                       </p>
                     )}
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Qualifications
-                    </label>
-                    <Input
-                      {...register("qualifications", {
-                        required: "Qualifications are required",
-                      })}
-                      placeholder="BDS, MDS"
-                      className={`w-full ${
-                        errors.qualifications ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.qualifications && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.qualifications.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Consulting Fee ($)
-                    </label>
-                    <Input
-                      {...register("consultingFee", {
-                        required: "Consulting fee is required",
-                        min: {
-                          value: 1,
-                          message: "Consulting fee must be greater than 0",
-                        },
-                      })}
-                      type="number"
-                      placeholder="150"
-                      className={`w-full ${
-                        errors.consultingFee ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.consultingFee && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.consultingFee.message}
-                      </p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      Appointment Duration (minutes)
-                    </label>
-                    <Select
-                      onValueChange={(value) => setValue("slotDuration", value)} // Update form state correctly
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select Slot Duration" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="15">15 Minutes</SelectItem>
-                        <SelectItem value="30">30 Minutes</SelectItem>
-                        <SelectItem value="45">45 Minutes</SelectItem>
-                        <SelectItem value="60">60 Minutes</SelectItem>
-                      </SelectContent>
-                    </Select>
 
-                    {errors.slotDuration && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.slotDuration.message}
-                      </p>
-                    )}
-                    {errors.slotDuration && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.slotDuration.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Working Hours Section */}
-              <div className="space-y-6">
-                <div className="flex items-center gap-2">
-                  <div className="h-8 w-1 bg-teal-500 rounded-full"></div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    Working Hours
-                  </h3>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-sm font-medium text-gray-700">
-                      Start Time
+                      Area Covered
                     </label>
                     <Input
-                      {...register("workingHours.startTime", {
-                        required: "Start time is required",
+                      {...register("areaCovered", {
+                        required: "Area Covered are required",
                       })}
-                      type="time"
+                      placeholder="ktm"
                       className={`w-full ${
-                        errors.workingHours?.startTime ? "border-red-500" : ""
+                        errors.areaCovered ? "border-red-500" : ""
                       }`}
                     />
-                    {errors.workingHours?.startTime && (
+                    {errors.areaCovered && (
                       <p className="text-red-500 text-xs mt-1">
-                        {errors.workingHours.startTime.message}
+                        {errors.areaCovered.message}
                       </p>
                     )}
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">
-                      End Time
-                    </label>
-                    <Input
-                      {...register("workingHours.endTime", {
-                        required: "End time is required",
-                        validate: (value) => {
-                          const startTime = watch("workingHours.startTime");
-                          return (
-                            value > startTime ||
-                            "End time must be after start time"
-                          );
-                        },
-                      })}
-                      type="time"
-                      className={`w-full ${
-                        errors.workingHours?.endTime ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors.workingHours?.endTime && (
-                      <p className="text-red-500 text-xs mt-1">
-                        {errors.workingHours.endTime.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-700">
-                    Working Days
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {Object.entries(selectedDays).map(([day, isSelected]) => (
-                      <Button
-                        key={day}
-                        type="button"
-                        variant={isSelected ? "default" : "outline"}
-                        onClick={() => handleDayToggle(day)}
-                        className={`${
-                          isSelected
-                            ? "bg-teal-600 text-white hover:bg-teal-700"
-                            : "bg-white text-gray-700 hover:bg-gray-100"
-                        } transition-colors duration-200`}
-                      >
-                        {day}
-                      </Button>
-                    ))}
-                  </div>
-                  {errors.workingHours?.days && (
-                    <p className="text-red-500 text-xs mt-1">
-                      Please select at least one working day
-                    </p>
-                  )}
                 </div>
               </div>
 
@@ -535,7 +323,7 @@ function AddSupplier() {
                     type="submit"
                     className="bg-teal-500 hover:bg-teal-600 text-white px-8"
                   >
-                    Add Dentist
+                    Add supplier
                   </Button>
                 </div>
               </div>

@@ -11,6 +11,7 @@ userRouter.post("/activate", AuthController.activation);
 userRouter.post("/login", AuthController.login);
 userRouter.post("/logout", isAuthenticated, AuthController.logout);
 
+
 // ********************* PROFILE MANAGEMENT ROUTES *********************
 // userRouter.put(
 //   "/update-profile",

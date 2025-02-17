@@ -1,6 +1,5 @@
-import DashboardPage from "./DashboardPage";
+import AdminDashboardPage from "./AdminDashboardPage";
 import HomePage from "./HomePage";
-import SupplierPage from "./SupplierPage";
-import AddSupplierPage from "./AddSupplierPage";
 
-export { DashboardPage, HomePage, SupplierPage, AddSupplierPage };
+
+export { AdminDashboardPage as DashboardPage, HomePage };

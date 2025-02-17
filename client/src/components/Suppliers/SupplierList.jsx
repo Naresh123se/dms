@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import {
-  Search,
-  Eye,
   User as UserIcon,
   Clock,
   Calendar,
@@ -21,20 +19,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import {
-//   useGetAllDentistsQuery,
-//   useVerifyDentistMutation,
-// } from "@/app/slices/dentistApiSlice";
+import supplierimage from "../../../public/supplier.svg";
 
 function SupplierList() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDentist, setSelectedDentist] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  // const { data, refetch, isLoading, isError } = useGetAllDentistsQuery();
-  // const [verifyDentist, { isLoading: verifyLoading }] =
-  //   useVerifyDentistMutation();
-  // const dentists = data?.dentists;
+
+  const { data, refetch, isLoading, isError } = useGetAllDentistsQuery();
+  const [verifyDentist, { isLoading: verifyLoading }] =
+    useVerifyDentistMutation();
+  const dentists = data?.dentists;
 
   const handleViewDetails = (dentist) => {
     setSelectedDentist(dentist);
@@ -43,8 +38,8 @@ function SupplierList() {
 
   const handleStatusChange = async (dentistId) => {
     try {
-      // const response = await verifyDentist(dentistId);
-      // refetch();
+      const response = await verifyDentist(dentistId);
+      refetch();
       toast.success("Dentist has been verified Successfully");
     } catch (error) {
       toast.error(error.message);
@@ -62,108 +57,102 @@ function SupplierList() {
     return workingHours.days.join(", ");
   };
 
-  // const filterDentistsByStatus = (status) => {
-  //   return dentists.filter((dentist) => dentist?.user?.isVerified === status);
-  // };
+  const filterDentistsByStatus = (status) => {
+    return dentists.filter((dentist) => dentist?.user?.isVerified === status);
+  };
 
-  // useEffect(() => {
-  //   refetch();
-  // }, []);
+  const DentistList = ({ dentists }) => (
+    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {dentists.length === 0 ? (
+        <div className="col-span-full text-center text-gray-500">
+          No dentists found in this category.
+        </div>
+      ) : (
+        dentists.map((dentist) => (
+          <Card
+            key={dentist._id}
+            className="p-6 hover:shadow-lg transition-shadow duration-200"
+          >
+            <div className="flex items-center gap-4">
+              {dentist.user.avatar?.url ? (
+                <img
+                  src={dentist.user.avatar.url}
+                  alt={dentist.user.name}
+                  className="h-16 w-16 rounded-full object-cover"
+                />
+              ) : (
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
+                  <UserIcon className="h-8 w-8 text-gray-500" />
+                </div>
+              )}
+              <div>
+                <h3 className="font-semibold">{dentist.user.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  {dentist.specialization}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-2">
+              <p className="text-sm">Experience: {dentist.experience} years</p>
+              <p className="text-sm">NMC Number: {dentist.nmcNumber}</p>
+              <p className="text-sm">
+                Consulting Fee: ${dentist.consultingFee}
+              </p>
+            </div>
+            <Button
+              className="mt-4 w-full"
+              variant="outline"
+              onClick={() => handleViewDetails(dentist)}
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              View Details
+            </Button>
+          </Card>
+        ))
+      )}
+    </div>
+  );
 
-  // const DentistList = ({ dentists }) => (
-  //   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-  //     {dentists.length === 0 ? (
-  //       <div className="col-span-full text-center text-gray-500">
-  //         No dentists found in this category.
-  //       </div>
-  //     ) : (
-  //       dentists.map((dentist) => (
-  //         <Card
-  //           key={dentist._id}
-  //           className="p-6 hover:shadow-lg transition-shadow duration-200"
-  //         >
-  //           <div className="flex items-center gap-4">
-  //             {dentist.user.avatar?.url ? (
-  //               <img
-  //                 src={dentist.user.avatar.url}
-  //                 alt={dentist.user.name}
-  //                 className="h-16 w-16 rounded-full object-cover"
-  //               />
-  //             ) : (
-  //               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-  //                 <UserIcon className="h-8 w-8 text-gray-500" />
-  //               </div>
-  //             )}
-  //             <div>
-  //               <h3 className="font-semibold">{dentist.user.name}</h3>
-  //               <p className="text-sm text-muted-foreground">
-  //                 {dentist.specialization}
-  //               </p>
-  //             </div>
-  //           </div>
-  //           <div className="mt-4 space-y-2">
-  //             <p className="text-sm">Experience: {dentist.experience} years</p>
-  //             <p className="text-sm">NMC Number: {dentist.nmcNumber}</p>
-  //             <p className="text-sm">
-  //               Consulting Fee: ${dentist.consultingFee}
-  //             </p>
-  //           </div>
-  //           <Button
-  //             className="mt-4 w-full"
-  //             variant="outline"
-  //             onClick={() => handleViewDetails(dentist)}
-  //           >
-  //             <Eye className="mr-2 h-4 w-4" />
-  //             View Details
-  //           </Button>
-  //         </Card>
-  //       ))
-  //     )}
-  //   </div>
-  // );
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
+  }
 
-  // if (isLoading) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen">
-  //       Loading...
-  //     </div>
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //     <div className="flex items-center justify-center h-screen text-red-500">
-  //       Error loading dentists.
-  //     </div>
-  //   );
-  // }
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center h-screen text-red-500">
+        Error loading dentists.
+      </div>
+    );
+  }
 
   return (
-    // <ScrollArea className="flex-1 h-[calc(100vh-25px)]  ">
-      <div className="">
-        <div className="overflow-auto bg-gray-50 ml-72  ">
+    <ScrollArea className="flex-1 h-[calc(100vh-25px)] ">
+      <div className="overflow-auto bg-gray-50">
+        <div className="p-8">
           <div className="mx-auto max-w-7xl space-y-8">
             {/* Header Section */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h1 className="text-4xl font-bold text-gray-900 flex gap-2 items-center ">
-                    <img src="supplier.svg" alt="supplier" width={50} />
-                    {/* <Truck className="size-9 "/> */}
-                    Suppliers
+                  <h1 className="text-4xl font-bold text-gray-900">
+                    Dental Professionals
                   </h1>
                   <p className="text-gray-500 mt-2">
-                    Manage and oversee all suppliers in the system
+                    Manage and oversee all dental professionals in the system
                   </p>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/suppliers/add-supplier">
+                  <Link to="/admin/add-dentist">
                     <Button
                       className="bg-teal-500 hover:bg-teal-700 text-white shadow-md"
                       onClick={() => console.log("Add new dentist")}
                     >
                       <UserPlus className="mr-2 h-5 w-5" />
-                      Add New Supplier
+                      Add New Dentist
                     </Button>
                   </Link>
                   <div className="relative">
@@ -184,28 +173,28 @@ function SupplierList() {
                   <h3 className="text-blue-600 font-semibold">
                     Total Dentists
                   </h3>
-                  {/* <p className="text-2xl font-bold">{dentists.length}</p> */}
+                  <p className="text-2xl font-bold">{dentists.length}</p>
                 </div>
                 <div className="bg-green-50 p-4 rounded-lg">
                   <h3 className="text-green-600 font-semibold">Verified</h3>
-                  {/* <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold">
                     {filterDentistsByStatus(true).length}
-                  </p> */}
+                  </p>
                 </div>
                 <div className="bg-yellow-50 p-4 rounded-lg">
                   <h3 className="text-yellow-600 font-semibold">
                     Pending Verification
                   </h3>
-                  {/* <p className="text-2xl font-bold">
+                  <p className="text-2xl font-bold">
                     {filterDentistsByStatus(false).length}
-                  </p> */}
+                  </p>
                 </div>
               </div>
             </div>
 
             {/* Tabs Section */}
             <div className="bg-white p-6 rounded-lg shadow-sm">
-              {/* <Tabs defaultValue="approved" className="space-y-6">
+              <Tabs defaultValue="approved" className="space-y-6">
                 <TabsList className="w-full sm:w-auto">
                   <TabsTrigger value="approved" className="flex-1 sm:flex-none">
                     Verified Dentists
@@ -222,7 +211,7 @@ function SupplierList() {
                 <TabsContent value="pending">
                   <DentistList dentists={filterDentistsByStatus(false)} />
                 </TabsContent>
-              </Tabs> */}
+              </Tabs>
             </div>
           </div>
         </div>
@@ -341,7 +330,7 @@ function SupplierList() {
           )}
         </Dialog>
       </div>
-    // </ScrollArea>
+    </ScrollArea>
   );
 }
 

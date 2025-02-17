@@ -6,6 +6,8 @@ import ErrorHandler from "../utils/ErrorHandler.js";
 import sendMail from "../utils/sendMail.js";
 import User from "../models/userModel.js";
 import Distributor from "../models/distributorModel.js";
+import mongoose from "mongoose";
+
 class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
@@ -19,13 +21,17 @@ class DistributorController {
         address,
         phone,
         avatar,
-        warehousedetails,
+        contact,
+        location,
         areaCovered,
         zipCode,
         vat,
       } = req.body;
       console.log(req.body);
-
+      const warehousedetails = {
+        address: location,
+        contactPerson: contact,
+      };
       if (
         !name ||
         !email ||
@@ -52,10 +58,8 @@ class DistributorController {
       }
 
       // Upload the image to Cloudinary
-      let uploadedImage = {
-
-      }
-      if(avatar){
+      let uploadedImage = {};
+      if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
           folder: "avatars", // Optional: Save images in a specific folder
           resource_type: "auto", // Automatically detect the file type
@@ -64,11 +68,11 @@ class DistributorController {
           public_id: result.public_id,
           url: result.secure_url,
         };
-      }else{
+      } else {
         uploadedImage = {
           public_id: "sample",
-          url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg"
-        }
+          url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg",
+        };
       }
 
       // Create the User entry
@@ -95,7 +99,7 @@ class DistributorController {
             user: distributorUser[0]._id,
             areaCovered,
             zipCode,
-            warehousedetails,
+            warehouseDetails: warehousedetails,
           },
         ],
         { session }
@@ -103,9 +107,6 @@ class DistributorController {
 
       await session.commitTransaction();
       session.endSession();
-
-
-      // TODO: SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR 
 
       res.status(201).json({
         success: true,
@@ -117,7 +118,24 @@ class DistributorController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-
+  static fetchAllDistributors = asyncHandler(async (req, res, next) => {
+    try {
+      const distributors = await Distributor.find().populate("user");
+      if (!distributors) {
+        res.status(200).json({
+          success: true,
+          message: "No distributor found.",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Distributors found.",
+        distributors,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(err.message, 500));
+    }
+  });
   static updateDistributor = asyncHandler(async (req, res, next) => {
     try {
     } catch (error) {

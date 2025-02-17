@@ -6,6 +6,8 @@ const distributorRouter = express.Router();
 
 
 distributorRouter.post("/add-distributor", isAuthenticated, authorizeRoles('admin'), DistributorController.addDistributor);
+distributorRouter.get("/", isAuthenticated, authorizeRoles('admin'), DistributorController.fetchAllDistributors);
+
 
 
 export default distributorRouter;

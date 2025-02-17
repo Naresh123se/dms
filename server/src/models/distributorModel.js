@@ -11,7 +11,6 @@ const DistributorSchema = new mongoose.Schema(
     warehouseDetails: {
       // Warehouse information
       address: { type: String, required: true },
-      capacity: { type: Number, required: true }, // Warehouse capacity
       contactPerson: { type: String, required: true }, // Contact person for the warehouse
     },
     zipCode: {

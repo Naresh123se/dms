@@ -8,6 +8,8 @@ import Sidebar from "./SideBar";
 import Dashboard from "./Dashboard/Dashboard";
 import SupplierList from "./Suppliers/SupplierList"
 import AddSupplier from "./Suppliers/AddSupplier"
+import AdminNav from "./AdminNav"
+import AddProduct from "./Products/AddProduct"
 
 export {
   Login,
@@ -19,5 +21,7 @@ export {
   Dashboard,
   SupplierList,
   AddSupplier,
+  AdminNav,
+  AddProduct,
   Footer,
-};
+  };
