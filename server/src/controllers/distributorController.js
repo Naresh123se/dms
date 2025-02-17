@@ -60,6 +60,8 @@ class DistributorController {
       // Upload the image to Cloudinary
       let uploadedImage = {};
       if (avatar) {
+      let uploadedImage = {};
+      if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
           folder: "avatars", // Optional: Save images in a specific folder
           resource_type: "auto", // Automatically detect the file type
@@ -69,8 +71,11 @@ class DistributorController {
           url: result.secure_url,
         };
       } else {
+      } else {
         uploadedImage = {
           public_id: "sample",
+          url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg",
+        };
           url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg",
         };
       }
