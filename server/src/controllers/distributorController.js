@@ -21,8 +21,8 @@ class DistributorController {
         address,
         phone,
         avatar,
-        contact,
-        location,
+       location,
+       contact,
         areaCovered,
         zipCode,
         vat,
@@ -32,6 +32,9 @@ class DistributorController {
         address: location,
         contactPerson: contact,
       };
+
+
+
       if (
         !name ||
         !email ||
@@ -60,8 +63,6 @@ class DistributorController {
       // Upload the image to Cloudinary
       let uploadedImage = {};
       if (avatar) {
-      let uploadedImage = {};
-      if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
           folder: "avatars", // Optional: Save images in a specific folder
           resource_type: "auto", // Automatically detect the file type
@@ -71,11 +72,8 @@ class DistributorController {
           url: result.secure_url,
         };
       } else {
-      } else {
         uploadedImage = {
           public_id: "sample",
-          url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg",
-        };
           url: "https://cdn.pixabay.com/photo/2024/08/22/10/37/ai-generated-8988977_1280.jpg",
         };
       }
@@ -104,7 +102,7 @@ class DistributorController {
             user: distributorUser[0]._id,
             areaCovered,
             zipCode,
-            warehouseDetails: warehousedetails,
+            warehouseDetails:warehousedetails,
           },
         ],
         { session }
@@ -113,6 +111,8 @@ class DistributorController {
       await session.commitTransaction();
       session.endSession();
 
+      // TODO: SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
+      
       res.status(201).json({
         success: true,
         message: "Distributor Added successfully.",
@@ -123,22 +123,43 @@ class DistributorController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
   static fetchAllDistributors = asyncHandler(async (req, res, next) => {
     try {
-      const distributors = await Distributor.find().populate("user");
-      if (!distributors) {
-        res.status(200).json({
-          success: true,
-          message: "No distributor found.",
+      const distributors = await Distributor.find().populate("user"); 
+        if (distributors.length === 0) {
+        return res.status(200).json({
+          success: false,
+          message: "No distributors found",
         });
       }
-      res.status(200).json({
+  
+      return res.status(200).json({
         success: true,
-        message: "Distributors found.",
+        message: "Distributors fetched successfully",
         distributors,
       });
+  
     } catch (error) {
-      return next(new ErrorHandler(err.message, 500));
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+  
+
+  static fetchSingleDistributor = asyncHandler(async (req, res, next) => {
+    const id = req.params.id;
+    try {
+      const distributor = await Distributor.findOne({ id: id });
+      if (!distributor) {
+        return next(new ErrorHandler("Distributor not found", 400));
+      }
+      return res.status(200).json({
+        success: true,
+        message: "Distributor fetched successfully",
+        distributor,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
   });
   static updateDistributor = asyncHandler(async (req, res, next) => {
