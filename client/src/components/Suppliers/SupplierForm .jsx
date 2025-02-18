@@ -30,11 +30,11 @@ function SupplierForm({
   };
 
   return (
-    <ScrollArea className="flex-1 h-[calc(100vh-25px)] mt-16">
+    <ScrollArea className="flex-1 h-[calc(100vh-50px)] mt-12">
       <div className="overflow-auto bg-gray-50 w-full py-8 px-4 sm:px-6 lg:px-8 ">
-        <div className="mb-8">
+        <div className="mb-7">
           <Button variant="ghost" onClick={onCancel} className="mb-4">
-            <ArrowLeft className="mr-2 h-4 w-4" />
+            <ArrowLeft className="" />
             Back to Suppliers
           </Button>
 
