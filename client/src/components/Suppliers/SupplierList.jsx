@@ -41,14 +41,14 @@ function SupplierList() {
         <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200  mb-10 ">
           <div className="">
             <div className="flex justify-between">
-          <div className="">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-                Suppliers
-              </h1>
-              <p className="text-gray-700 mb-5">
-                Key partners ensuring a smooth supply chain.
-              </p>
-          </div>
+              <div className="">
+                <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                  Suppliers
+                </h1>
+                <p className="text-gray-700 mb-5">
+                  Key partners ensuring a smooth supply chain.
+                </p>
+              </div>
 
               <Link to="/admin/add-supplier" className="w-full sm:w-auto">
                 <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white">

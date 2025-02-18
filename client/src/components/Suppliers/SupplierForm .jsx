@@ -25,7 +25,7 @@ function SupplierForm({
       await onSubmit(data);
       reset();
     } catch (error) {
-     console.log(error)
+      console.log(error);
     }
   };
 
@@ -269,9 +269,7 @@ function SupplierForm({
                         required: "VAT number is required",
                       })}
                       placeholder="V123456"
-                      className={`w-full ${
-                        errors.vat ? "border-red-500" : ""
-                      }`}
+                      className={`w-full ${errors.vat ? "border-red-500" : ""}`}
                     />
                     {errors.vat && (
                       <p className="text-red-500 text-xs mt-1">
@@ -304,11 +302,7 @@ function SupplierForm({
 
               <div className="pt-6 border-t border-gray-200">
                 <div className="flex justify-end gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={onCancel}
-                  >
+                  <Button type="button" variant="outline" onClick={onCancel}>
                     Cancel
                   </Button>
                   <Button
@@ -316,13 +310,11 @@ function SupplierForm({
                     className="bg-teal-500 hover:bg-teal-600 text-white px-8"
                     disabled={isLoading}
                   >
-                    {isLoading ? (
-                      "Processing..."
-                    ) : isEdit ? (
-                      "Save Changes"
-                    ) : (
-                      "Add Supplier"
-                    )}
+                    {isLoading
+                      ? "Processing..."
+                      : isEdit
+                      ? "Save Changes"
+                      : "Add Supplier"}
                   </Button>
                 </div>
               </div>
