@@ -14,18 +14,34 @@ function SupplierForm({
   onSubmit,
   onCancel,
   isLoading,
+  initialImage,
 }) {
+  // Make sure `initialData` is available and properly structured
+
+  // Define initial form values from distributorData
+  const initialData1 = {
+    name: initialData?.user?.name || "",
+    email: initialData?.user?.email || "",
+    phone: initialData?.user?.phone || "",
+    address: initialData?.user?.address || "",
+    location: initialData?.warehouseDetails?.address || "",
+    contact: initialData?.warehouseDetails?.contactPerson || "",
+    // availableBalance: distributorData?.availableBalance || 0,
+  };
+
+  const allData = { ...initialData, ...initialData1 };
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: initialData || {},
+    defaultValues: allData, // Use initialData1 here
   });
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [selectedImage, setSelectedImage] = useState("");
+  // Log the initial form data to verify
+
+  // const [isEditing, setIsEditing] = useState(false);
 
   const onSubmitForm = async (data) => {
     try {
@@ -36,44 +52,44 @@ function SupplierForm({
     }
   };
 
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-        toast.error("Please upload only JPG, PNG or GIF images");
-        return;
-      }
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("File size should be less than 5MB");
-        return;
-      }
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        setSelectedImage(reader.result);
-        const data = {
-          image: reader.result,
-        };
-        // Update the image using API CALL TO THE BACKEND
-        try {
-          // Send the base64 string to the backend
-          const response = await updateAvatar(data).unwrap();
-          // Handle the response
-          if (response.success) {
-            toast.success("Profile image updated successfully!");
-            // setSelectedImage(response.avatar.url); // Update the displayed image
-            await refetch();
-          } else {
-            toast.error("Failed to update profile image");
-          }
-        } catch (error) {
-          toast.error(error.message);
-        } finally {
-          setIsEditing(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+  // const handleImageChange = (e) => {
+  //   const file = e.target.files[0];
+  //   if (file) {
+  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+  //       toast.error("Please upload only JPG, PNG or GIF images");
+  //       return;
+  //     }
+  //     if (file.size > 5 * 1024 * 1024) {
+  //       toast.error("File size should be less than 5MB");
+  //       return;
+  //     }
+  //     const reader = new FileReader();
+  //     reader.onloadend = async () => {
+  //       setSelectedImage(reader.result);
+  //       const data = {
+  //         image: reader.result,
+  //       };
+  //       // Update the image using API CALL TO THE BACKEND
+  //       try {
+  //         // Send the base64 string to the backend
+  //         const response = await updateAvatar(data).unwrap();
+  //         // Handle the response
+  //         if (response.success) {
+  //           toast.success("Profile image updated successfully!");
+  //           // setSelectedImage(response.avatar.url); // Update the displayed image
+  //            refetch();
+  //         } else {
+  //           toast.error("Failed to update profile image");
+  //         }
+  //       } catch (error) {
+  //         toast.error(error.message);
+  //       } finally {
+  //         // setIsEditing(false);
+  //       }
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // };
 
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-50px)] mt-12">
@@ -137,7 +153,7 @@ function SupplierForm({
                     <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
                       <div className="relative">
                         <Avatar className="w-32 h-32">
-                          <AvatarImage src={selectedImage} />
+                          <AvatarImage src={initialImage} />
                           <AvatarFallback>
                             <Image className="w-12 h-12" />
                           </AvatarFallback>
@@ -153,7 +169,7 @@ function SupplierForm({
                             type="file"
                             className="hidden"
                             accept="image/jpeg,image/png,image/gif"
-                            onChange={handleImageChange}
+                            onChange={initialImage}
                           />
                         </Label>
                       </div>
@@ -380,7 +396,7 @@ function SupplierForm({
                   </Button>
                   <Button
                     type="submit"
-                    className="bg-teal-500 hover:bg-teal-600 text-white px-8"
+                  className="bg-[#2F71F0] hover:bg-[#2F71F0]/90 text-white px-8"
                     disabled={isLoading}
                   >
                     {isLoading

@@ -7,6 +7,10 @@ import sendMail from "../utils/sendMail.js";
 import User from "../models/userModel.js";
 import Distributor from "../models/distributorModel.js";
 import mongoose from "mongoose";
+import cloudinary from "cloudinary";
+
+
+
 
 class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
@@ -21,19 +25,17 @@ class DistributorController {
         address,
         phone,
         avatar,
-       location,
-       contact,
+        location,
+        contact,
         areaCovered,
         zipCode,
         vat,
       } = req.body;
-      console.log(req.body);
+
       const warehousedetails = {
         address: location,
         contactPerson: contact,
       };
-
-
 
       if (
         !name ||
@@ -102,7 +104,7 @@ class DistributorController {
             user: distributorUser[0]._id,
             areaCovered,
             zipCode,
-            warehouseDetails:warehousedetails,
+            warehouseDetails: warehousedetails,
           },
         ],
         { session }
@@ -112,7 +114,7 @@ class DistributorController {
       session.endSession();
 
       // TODO: SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
-      
+
       res.status(201).json({
         success: true,
         message: "Distributor Added successfully.",
@@ -126,30 +128,30 @@ class DistributorController {
 
   static fetchAllDistributors = asyncHandler(async (req, res, next) => {
     try {
-      const distributors = await Distributor.find().populate("user"); 
-        if (distributors.length === 0) {
-        return res.status(200).json({
-          success: false,
+      const distributors = await Distributor.find().populate("user");
+
+      if (!distributors.length) {
+        return res.status(204).json({
+          success: true,
           message: "No distributors found",
+          distributors: [],
         });
       }
-  
+
       return res.status(200).json({
         success: true,
         message: "Distributors fetched successfully",
         distributors,
       });
-  
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-  
 
   static fetchSingleDistributor = asyncHandler(async (req, res, next) => {
     const id = req.params.id;
     try {
-      const distributor = await Distributor.findOne({ id: id });
+      const distributor = await Distributor.findById(id).populate("user");;
       if (!distributor) {
         return next(new ErrorHandler("Distributor not found", 400));
       }
@@ -162,10 +164,93 @@ class DistributorController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+  
   static updateDistributor = asyncHandler(async (req, res, next) => {
+    const session = await mongoose.startSession();
+    session.startTransaction();
+
     try {
+      const distributorId = req.params.id; // Distributor ID from params
+      const {
+        name,
+        email,
+        password,
+        address,
+        phone,
+        avatar,
+        location,
+        contact,
+        areaCovered,
+        zipCode,
+        vat,
+      } = req.body;
+
+      // Find the distributor by ID
+      const distributor = await Distributor.findById(distributorId).session(
+        session
+      );
+      if (!distributor) {
+        await session.abortTransaction();
+        session.endSession();
+        return next(new ErrorHandler("Distributor not found", 404));
+      }
+
+      // Find the user associated with the distributor
+      const user = await User.findById(distributor.user).session(session);
+      if (!user) {
+        await session.abortTransaction();
+        session.endSession();
+        return next(
+          new ErrorHandler(
+            "User associated with the distributor not found",
+            404
+          )
+        );
+      }
+
+      // Update user details if provided
+      if (name) user.name = name;
+      if (email) user.email = email; // Update email if provided
+      if (password) user.password = password; // Ensure to hash the password before saving
+      if (phone) user.phone = phone;
+
+      // TODO: UPload iamge to cloudinary
+      let uploadedImage = {};
+      if (avatar) {
+        const result = await cloudinary.v2.uploader.upload(avatar, {
+          folder: "avatars", // Optional: Save images in a specific folder
+          resource_type: "auto", // Automatically detect the file type
+        });
+        uploadedImage = {
+          public_id: result.public_id,
+          url: result.secure_url,
+        };
+      } 
+      if (uploadedImage) user.avatar = uploadedImage;
+      await user.save({ session });
+
+      // Update distributor details if provided
+      if (address) distributor.address = address;
+      if (location) distributor.warehouseDetails.address = location;
+      if (contact) distributor.warehouseDetails.contactPerson = contact;
+      if (areaCovered) distributor.areaCovered = areaCovered;
+      if (zipCode) distributor.zipCode = zipCode;
+      if (vat) distributor.vat = vat;
+      await distributor.save({ session });
+
+      // Commit the transaction
+      await session.commitTransaction();
+      session.endSession();
+
+      res.status(200).json({
+        success: true,
+        message: "Distributor updated successfully",
+      });
     } catch (error) {
-      return next(new ErrorHandler(err.message, 500));
+      // Abort transaction and end session in case of error
+      await session.abortTransaction();
+      session.endSession();
+      return next(new ErrorHandler(error.message, 500));
     }
   });
   static deleteDistributor = asyncHandler(async (req, res, next) => {

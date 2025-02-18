@@ -11,6 +11,8 @@ import AddSupplier from "./Suppliers/AddSupplier"
 import EditSupplier from "./Suppliers/EditSupplier"
 import AdminNav from "./AdminNav"
 import AddProduct from "./Products/AddProduct"
+import ProductList from "./Products/ProductList"
+import EditProduct from "./Products/EditProduct"
 
 export {
   Login,
@@ -25,5 +27,7 @@ export {
   AdminNav,
   AddProduct,
   EditSupplier,
+  ProductList,
+  EditProduct,
   Footer,
   };

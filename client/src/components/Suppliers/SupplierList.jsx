@@ -11,6 +11,10 @@ import {
   Warehouse,
   DollarSign,
   Pencil,
+  Package,
+  Phone,
+  Paperclip,
+  Dock,
 } from "lucide-react";
 import {
   Dialog,
@@ -28,13 +32,14 @@ function SupplierList() {
   const navigate = useNavigate();
   const suppliers = Array.isArray(data?.distributors) ? data.distributors : [];
   const sortedSuppliers = [...suppliers].reverse();
+
   const verifiedSuppliers = suppliers.filter(
     (supplier) => supplier.user.isVerified
   ).length;
   const unverifiedSuppliers = suppliers.length - verifiedSuppliers;
 
   return (
-    <ScrollArea className="flex-1 h-[calc(100vh-64px)] bg-gray-50 p-6 mt-16">
+    <ScrollArea className="flex-1 h-[calc(100vh-64px)] bg-blue-150  bg-gradient-to-r from-[#DFECFE] to-[#DFEDFF] p-6 mt-16">
       <div className="mx-auto max-w-7x ">
         {/* Header Section */}
 
@@ -51,7 +56,7 @@ function SupplierList() {
               </div>
 
               <Link to="/admin/add-supplier" className="w-full sm:w-auto">
-                <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white">
+                <Button className="bg-[#2F71F0] hover:bg-[#2F71F0]/90 text-white px-8">
                   <UserPlus className="mr-2 h-4 w-4" /> Add Supplier
                 </Button>
               </Link>
@@ -68,7 +73,7 @@ function SupplierList() {
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Verified Suppliers
+                  Active Suppliers
                 </h3>
                 <p className="text-2xl font-bold text-green-600">
                   {verifiedSuppliers}
@@ -76,7 +81,7 @@ function SupplierList() {
               </div>
               <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
                 <h3 className="text-lg font-semibold text-gray-900">
-                  Unverified Suppliers
+                  Inactive Suppliers
                 </h3>
                 <p className="text-2xl font-bold text-red-600">
                   {unverifiedSuppliers}
@@ -103,64 +108,81 @@ function SupplierList() {
           ) : sortedSuppliers.length > 0 ? (
             sortedSuppliers.map((supplier) => (
               <div
-                key={supplier._id}
+                key={supplier.id}
+                className="bg-gray-100 overflow-hidden shadow-lg  rounded-lg hover:shadow-lg transition-shadow duration-300"
                 onClick={() => {
                   setSelectedSupplier(supplier);
                   setIsDialogOpen(true);
                 }}
-                className="bg-white group cursor-pointer rounded-xl border border-gray-200 hover:border-indigo-200 hover:shadow-lg transition-all duration-200 ease-in-out"
               >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
+                <div className="h-48 overflow-hidden">
+                  <img
+                    src={supplier.user.avatar.url}
+                    alt={supplier.name}
+                    className="w-full h-full object-fit"
+                  />
+                </div>
+                <div className="px-4 py-5 sm:p-6">
+                  <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
-                        {supplier.user.name}
+                      <h3 className="text-lg font-semibold text-gray-900">
+                        {supplier.user?.name}
                       </h3>
-                      <p className="text-sm text-indigo-600 font-medium">
-                        {supplier.company}
+                      <p className="mt-1 text-sm text-gray-500">
+                        {/* {supplier.user?.email} */}
                       </p>
                     </div>
-                    {supplier.user.isVerified ? (
-                      <CheckCircle className="h-6 w-6 text-green-500" />
+                    {supplier.user?.isVerified ? (
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                        <CheckCircle className="h-4 w-4 mr-1" />
+                        Active
+                      </span>
                     ) : (
-                      <Clock className="h-6 w-6 text-amber-500" />
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        <Clock className="h-4 w-4 mr-1" />
+                        Inactive
+                      </span>
                     )}
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="truncate">
-                        {supplier.warehouseDetails.address}
-                      </span>
+                  <div className="mt-4 space-y-2">
+                    <div className="flex items-center text-sm text-gray-500">
+                      <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">{supplier.user?.address}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Warehouse className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span className="truncate">{supplier.zipCode}</span>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Phone className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">{supplier.user?.phone}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <DollarSign className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
-                      <span>
-                        Balance: ${supplier.availableBalance.toLocaleString()}
-                      </span>
+                    <div className="flex items-center text-sm text-gray-500">
+                      <Dock className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span>{supplier.vat}</span>
                     </div>
                   </div>
-                </div>
 
-                <div className="border-t border-gray-100 px-6 py-3 bg-gray-50 rounded-b-xl">
-                  <div className="flex items-center justify-between text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full ${
-                        supplier.user.isVerified
-                          ? "bg-green-100 text-green-800"
-                          : "bg-amber-100 text-amber-800"
-                      }`}
+                  {/* <div className="mt-6">
+                    <button
+                      className="w-full bg-gray-50 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                      onClick={() => {
+                        setSelectedSupplier(supplier);
+                        setIsDialogOpen(true);
+                      }}
                     >
-                      {supplier.user.isVerified ? "Verified" : "Pending"}
-                    </span>
-                    <span className="text-gray-500 text-sm">
-                      Joined {new Date(supplier.createdAt).toLocaleDateString()}
-                    </span>
+                      View Details
+                    </button>
+                  </div> */}
+
+                  <div
+                    className="mt-4 pt-4 border-t border-gray-100"
+                    onClick={() => {
+                      setSelectedSupplier(supplier);
+                      setIsDialogOpen(true);
+                    }}
+                  >
+                    <button className="w-full bg-blue-900 text-white py-2 px-4 rounded-lg hover:bg-blue-800 transition-colors duration-200 flex items-center justify-center">
+                      <Package className="w-4 h-4 mr-2" />
+                      View Details
+                    </button>
                   </div>
                 </div>
               </div>
@@ -246,7 +268,7 @@ function SupplierList() {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-gray-100">
+                {/* <div className="pt-4 border-t border-gray-100">
                   {!selectedSupplier.user.isVerified && (
                     <div className="flex gap-3">
                       <Button className="flex-1 bg-green-600 hover:bg-green-700">
@@ -257,7 +279,7 @@ function SupplierList() {
                       </Button>
                     </div>
                   )}
-                </div>
+                </div> */}
               </div>
             </DialogContent>
           )}
