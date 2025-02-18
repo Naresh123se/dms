@@ -1,17 +1,16 @@
-import { useEffect, useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import {
-  User as UserIcon,
-  Clock,
-  Calendar,
-  Plus,
   UserPlus,
-  Truck,
+  CheckCircle,
+  Clock,
+  XCircle,
+  MapPin,
+  Warehouse,
+  DollarSign,
+  Pencil,
 } from "lucide-react";
 import {
   Dialog,
@@ -19,312 +18,240 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import supplierimage from "../../../public/supplier.svg";
+import { useGetAllSupplierQuery } from "@/app/slices/supplierApiSlice";
+import { useNavigate } from "react-router-dom";
 
 function SupplierList() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedDentist, setSelectedDentist] = useState(null);
+  const { data, refetch, isLoading, isError } = useGetAllSupplierQuery();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  const { data, refetch, isLoading, isError } = useGetAllDentistsQuery();
-  const [verifyDentist, { isLoading: verifyLoading }] =
-    useVerifyDentistMutation();
-  const dentists = data?.dentists;
-
-  const handleViewDetails = (dentist) => {
-    setSelectedDentist(dentist);
-    setIsDialogOpen(true);
-  };
-
-  const handleStatusChange = async (dentistId) => {
-    try {
-      const response = await verifyDentist(dentistId);
-      refetch();
-      toast.success("Dentist has been verified Successfully");
-    } catch (error) {
-      toast.error(error.message);
-    }
-    setIsDialogOpen(false);
-  };
-
-  const formatWorkingHours = (workingHours) => {
-    if (!workingHours) return "Not specified";
-    return `${workingHours.startTime} - ${workingHours.endTime}`;
-  };
-
-  const formatWorkingDays = (workingHours) => {
-    if (!workingHours?.days?.length) return "Not specified";
-    return workingHours.days.join(", ");
-  };
-
-  const filterDentistsByStatus = (status) => {
-    return dentists.filter((dentist) => dentist?.user?.isVerified === status);
-  };
-
-  const DentistList = ({ dentists }) => (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {dentists.length === 0 ? (
-        <div className="col-span-full text-center text-gray-500">
-          No dentists found in this category.
-        </div>
-      ) : (
-        dentists.map((dentist) => (
-          <Card
-            key={dentist._id}
-            className="p-6 hover:shadow-lg transition-shadow duration-200"
-          >
-            <div className="flex items-center gap-4">
-              {dentist.user.avatar?.url ? (
-                <img
-                  src={dentist.user.avatar.url}
-                  alt={dentist.user.name}
-                  className="h-16 w-16 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-                  <UserIcon className="h-8 w-8 text-gray-500" />
-                </div>
-              )}
-              <div>
-                <h3 className="font-semibold">{dentist.user.name}</h3>
-                <p className="text-sm text-muted-foreground">
-                  {dentist.specialization}
-                </p>
-              </div>
-            </div>
-            <div className="mt-4 space-y-2">
-              <p className="text-sm">Experience: {dentist.experience} years</p>
-              <p className="text-sm">NMC Number: {dentist.nmcNumber}</p>
-              <p className="text-sm">
-                Consulting Fee: ${dentist.consultingFee}
-              </p>
-            </div>
-            <Button
-              className="mt-4 w-full"
-              variant="outline"
-              onClick={() => handleViewDetails(dentist)}
-            >
-              <Eye className="mr-2 h-4 w-4" />
-              View Details
-            </Button>
-          </Card>
-        ))
-      )}
-    </div>
-  );
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (isError) {
-    return (
-      <div className="flex items-center justify-center h-screen text-red-500">
-        Error loading dentists.
-      </div>
-    );
-  }
+  const [selectedSupplier, setSelectedSupplier] = useState(null);
+  const navigate = useNavigate();
+  const suppliers = Array.isArray(data?.distributors) ? data.distributors : [];
+  const sortedSuppliers = [...suppliers].reverse();
+  const verifiedSuppliers = suppliers.filter(
+    (supplier) => supplier.user.isVerified
+  ).length;
+  const unverifiedSuppliers = suppliers.length - verifiedSuppliers;
 
   return (
-    <ScrollArea className="flex-1 h-[calc(100vh-25px)] ">
-      <div className="overflow-auto bg-gray-50">
-        <div className="p-8">
-          <div className="mx-auto max-w-7xl space-y-8">
-            {/* Header Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                <div>
-                  <h1 className="text-4xl font-bold text-gray-900">
-                    Dental Professionals
-                  </h1>
-                  <p className="text-gray-500 mt-2">
-                    Manage and oversee all dental professionals in the system
-                  </p>
-                </div>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link to="/admin/add-dentist">
-                    <Button
-                      className="bg-teal-500 hover:bg-teal-700 text-white shadow-md"
-                      onClick={() => console.log("Add new dentist")}
-                    >
-                      <UserPlus className="mr-2 h-5 w-5" />
-                      Add New Dentist
-                    </Button>
-                  </Link>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input
-                      placeholder="Search dentists..."
-                      className="pl-10 w-full sm:w-64"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
+    <ScrollArea className="flex-1 h-[calc(100vh-64px)] bg-gray-50 p-6 mt-16">
+      <div className="mx-auto max-w-7x ">
+        {/* Header Section */}
 
-              {/* Stats Summary */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h3 className="text-blue-600 font-semibold">
-                    Total Dentists
-                  </h3>
-                  <p className="text-2xl font-bold">{dentists.length}</p>
-                </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <h3 className="text-green-600 font-semibold">Verified</h3>
-                  <p className="text-2xl font-bold">
-                    {filterDentistsByStatus(true).length}
-                  </p>
-                </div>
-                <div className="bg-yellow-50 p-4 rounded-lg">
-                  <h3 className="text-yellow-600 font-semibold">
-                    Pending Verification
-                  </h3>
-                  <p className="text-2xl font-bold">
-                    {filterDentistsByStatus(false).length}
-                  </p>
-                </div>
-              </div>
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200  mb-10 ">
+          <div className="">
+            <div className="flex justify-between">
+              <h1 className="text-2xl font-bold text-gray-900 mb-5">
+                Add new Supplier
+              </h1>
+              <Link to="/admin/add-supplier" className="w-full sm:w-auto">
+                <Button className="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white">
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Supplier
+                </Button>
+              </Link>
             </div>
-
-            {/* Tabs Section */}
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <Tabs defaultValue="approved" className="space-y-6">
-                <TabsList className="w-full sm:w-auto">
-                  <TabsTrigger value="approved" className="flex-1 sm:flex-none">
-                    Verified Dentists
-                  </TabsTrigger>
-                  <TabsTrigger value="pending" className="flex-1 sm:flex-none">
-                    Pending Verification
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="approved">
-                  <DentistList dentists={filterDentistsByStatus(true)} />
-                </TabsContent>
-
-                <TabsContent value="pending">
-                  <DentistList dentists={filterDentistsByStatus(false)} />
-                </TabsContent>
-              </Tabs>
+            {/* Dashboard Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Total Suppliers
+                </h3>
+                <p className="text-2xl font-bold text-indigo-600">
+                  {suppliers.length}
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Verified Suppliers
+                </h3>
+                <p className="text-2xl font-bold text-green-600">
+                  {verifiedSuppliers}
+                </p>
+              </div>
+              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Unverified Suppliers
+                </h3>
+                <p className="text-2xl font-bold text-red-600">
+                  {unverifiedSuppliers}
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Details Dialog */}
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          {selectedDentist && (
-            <DialogContent className="sm:max-w-[600px]">
-              <DialogHeader>
-                <DialogTitle>Dentist Details</DialogTitle>
-              </DialogHeader>
-              <div className="grid gap-6">
-                <div className="flex items-center gap-4">
-                  {selectedDentist.user.avatar?.url ? (
-                    <img
-                      src={selectedDentist.user.avatar.url}
-                      alt={selectedDentist.user.name}
-                      className="h-24 w-24 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-24 w-24 items-center justify-center rounded-full bg-gray-100">
-                      <UserIcon className="h-12 w-12 text-gray-500" />
+        {/* Supplier Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {isLoading ? (
+            [...Array(6)].map((_, i) => (
+              <div
+                key={i}
+                className="animate-pulse bg-white p-6 rounded-xl h-48 border border-gray-200"
+              />
+            ))
+          ) : isError ? (
+            <div className="col-span-full text-center py-12">
+              <XCircle className="h-8 w-8 text-red-500 mx-auto mb-4" />
+              <p className="text-gray-600">Failed to load suppliers</p>
+            </div>
+          ) : sortedSuppliers.length > 0 ? (
+            sortedSuppliers.map((supplier) => (
+              <div
+                key={supplier._id}
+                onClick={() => {
+                  setSelectedSupplier(supplier);
+                  setIsDialogOpen(true);
+                }}
+                className="bg-white group cursor-pointer rounded-xl border border-gray-200 hover:border-indigo-200 hover:shadow-lg transition-all duration-200 ease-in-out"
+              >
+                <div className="p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                        {supplier.user.name}
+                      </h3>
+                      <p className="text-sm text-indigo-600 font-medium">
+                        {supplier.company}
+                      </p>
                     </div>
-                  )}
-                  <div>
-                    <h3 className="text-xl font-semibold">
-                      {selectedDentist.user.name}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {selectedDentist.specialization}
-                    </p>
-                    <div className="mt-2">
-                      <span
-                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                          selectedDentist.user.isVerified
-                            ? "bg-green-100 text-green-800"
-                            : "bg-yellow-100 text-yellow-800"
-                        }`}
-                      >
-                        {selectedDentist.user.isVerified
-                          ? "Verified"
-                          : "Pending Verification"}
+                    {supplier.user.isVerified ? (
+                      <CheckCircle className="h-6 w-6 text-green-500" />
+                    ) : (
+                      <Clock className="h-6 w-6 text-amber-500" />
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="flex items-center text-sm text-gray-600">
+                      <MapPin className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
+                      <span className="truncate">
+                        {supplier.warehouseDetails.address}
+                      </span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Warehouse className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
+                      <span className="truncate">{supplier.zipCode}</span>
+                    </div>
+                    <div className="flex items-center text-sm text-gray-600">
+                      <DollarSign className="h-4 w-4 text-gray-400 mr-2 flex-shrink-0" />
+                      <span>
+                        Balance: ${supplier.availableBalance.toLocaleString()}
                       </span>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid gap-4">
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Contact Information</h4>
-                    <p className="text-sm">
-                      Email: {selectedDentist.user.email}
+                <div className="border-t border-gray-100 px-6 py-3 bg-gray-50 rounded-b-xl">
+                  <div className="flex items-center justify-between text-sm">
+                    <span
+                      className={`px-2 py-1 rounded-full ${
+                        supplier.user.isVerified
+                          ? "bg-green-100 text-green-800"
+                          : "bg-amber-100 text-amber-800"
+                      }`}
+                    >
+                      {supplier.user.isVerified ? "Verified" : "Pending"}
+                    </span>
+                    <span className="text-gray-500 text-sm">
+                      Joined {new Date(supplier.createdAt).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12">
+              <div className="mb-4 text-gray-400">No suppliers found</div>
+              <Button variant="outline" asChild>
+                <Link to="/admin/add-supplier">Add First Supplier</Link>
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Supplier Details Dialog */}
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          {selectedSupplier && (
+            <DialogContent className="sm:max-w-[600px] rounded-xl">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="absolute right-12 top-2 text-gray-500 hover:text-indigo-600 border rounded-lg"
+                onClick={() => {
+                  setIsDialogOpen(false);
+                  navigate(`/admin/edit-supplier/${selectedSupplier._id}`);
+                }}
+              >
+                <Pencil className="w-4 " />
+                Edit
+              </Button>
+              <DialogHeader className="flex flex-row items-center">
+                <DialogTitle className="text-lg font-semibold">
+                  Supplier Profile
+                </DialogTitle>
+              </DialogHeader>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="bg-indigo-100 p-3 rounded-lg">
+                    <Warehouse className="h-6 w-6 text-indigo-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {selectedSupplier.user.name}
+                    </h3>
+                    <p className="text-sm text-indigo-600 font-medium">
+                      {selectedSupplier.company}
                     </p>
                   </div>
+                </div>
 
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Professional Details</h4>
-                    <p className="text-sm">
-                      Experience: {selectedDentist.experience} years
-                    </p>
-                    <p className="text-sm">
-                      NMC Number: {selectedDentist.nmcNumber}
-                    </p>
-                    <p className="text-sm">
-                      Qualifications:{" "}
-                      {selectedDentist.qualifications.join(", ")}
-                    </p>
-                    <p className="text-sm">
-                      Consulting Fee: ${selectedDentist.consultingFee}
-                    </p>
-                    <p className="text-sm">
-                      Appointment Duration: {selectedDentist.slotDuration}{" "}
-                      minutes
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Contact Email</p>
+                    <p className="font-medium">{selectedSupplier.user.email}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Phone Number</p>
+                    <p className="font-medium">
+                      {selectedSupplier.user.phone || "N/A"}
                     </p>
                   </div>
-
-                  <div className="grid gap-2">
-                    <h4 className="font-semibold">Working Time</h4>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Clock className="h-4 w-4" />
-                      {formatWorkingHours(selectedDentist.workingHours)}
-                    </div>
-                    <div className="flex items-center gap-2 text-sm">
-                      <Calendar className="h-4 w-4" />
-                      {formatWorkingDays(selectedDentist.workingHours)}
-                    </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Registered Date</p>
+                    <p className="font-medium">
+                      {new Date(
+                        selectedSupplier.createdAt
+                      ).toLocaleDateString()}
+                    </p>
                   </div>
+                  <div className="space-y-1">
+                    <p className="text-gray-500">Verification Status</p>
+                    <p
+                      className={`font-medium ${
+                        selectedSupplier.user.isVerified
+                          ? "text-green-600"
+                          : "text-amber-600"
+                      }`}
+                    >
+                      {selectedSupplier.user.isVerified
+                        ? "Verified"
+                        : "Pending Approval"}
+                    </p>
+                  </div>
+                </div>
 
-                  {selectedDentist.bio && (
-                    <div className="grid gap-2">
-                      <h4 className="font-semibold">Bio</h4>
-                      <p className="text-sm">{selectedDentist.bio}</p>
+                <div className="pt-4 border-t border-gray-100">
+                  {!selectedSupplier.user.isVerified && (
+                    <div className="flex gap-3">
+                      <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                        Approve Supplier
+                      </Button>
+                      <Button variant="destructive" className="flex-1">
+                        Reject Application
+                      </Button>
                     </div>
                   )}
                 </div>
-
-                {selectedDentist.user.isVerified === false && (
-                  <div className="flex gap-4 mt-4">
-                    <Button
-                      className="flex-1 bg-green-500 hover:bg-green-600"
-                      onClick={() => handleStatusChange(selectedDentist._id)}
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      className="flex-1"
-                      variant="destructive"
-                      onClick={() => handleStatusChange(selectedDentist._id)}
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                )}
               </div>
             </DialogContent>
           )}

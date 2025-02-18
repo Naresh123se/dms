@@ -12,12 +12,14 @@ import {
   SupplierList,
   AddSupplier,
   AddProduct,
+  EditSupplier
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
 
 import { HomePage } from "./pages";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminLayout from "./routes/AdminLayout";
 
 const router = createBrowserRouter([
   {
@@ -83,23 +85,35 @@ const router = createBrowserRouter([
           {
             path: "suppliers",
             element: (
-              // <AdminLayout>
-              <SupplierList />
-              // </AdminLayout>
+              <AdminLayout>
+                <SupplierList />
+              </AdminLayout>
             ),
           },
           {
             path: "add-supplier",
-            element: <AddSupplier />,
+            element: (
+              <AdminLayout>
+                <AddSupplier />
+              </AdminLayout>
+            ),
+          },
+          {
+            path: "edit-supplier/:id",
+            element: (
+              <AdminLayout>
+                <EditSupplier />
+              </AdminLayout>
+            ),
           },
           {
             path: "products",
             element: (
-            // <AdminLayout>
-            <AddProduct/>
-            // </AdminLayout>
-          ),
-          }, 
+              <AdminLayout>
+                <AddProduct />
+              </AdminLayout>
+            ),
+          },
         ],
       },
     ],
