@@ -1,8 +1,12 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Camera, Image, Plus, User } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { Label } from "@radix-ui/react-label";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 function SupplierForm({
   initialData,
@@ -20,12 +24,54 @@ function SupplierForm({
     defaultValues: initialData || {},
   });
 
+  const [isEditing, setIsEditing] = useState(false);
+  const [selectedImage, setSelectedImage] = useState("");
+
   const onSubmitForm = async (data) => {
     try {
       await onSubmit(data);
       reset();
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
+        toast.error("Please upload only JPG, PNG or GIF images");
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error("File size should be less than 5MB");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        setSelectedImage(reader.result);
+        const data = {
+          image: reader.result,
+        };
+        // Update the image using API CALL TO THE BACKEND
+        try {
+          // Send the base64 string to the backend
+          const response = await updateAvatar(data).unwrap();
+          // Handle the response
+          if (response.success) {
+            toast.success("Profile image updated successfully!");
+            // setSelectedImage(response.avatar.url); // Update the displayed image
+            await refetch();
+          } else {
+            toast.error("Failed to update profile image");
+          }
+        } catch (error) {
+          toast.error(error.message);
+        } finally {
+          setIsEditing(false);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -85,6 +131,33 @@ function SupplierForm({
                         {errors.name.message}
                       </p>
                     )}
+                  </div>
+
+                  <div className="flex flex-col items-center mb-6 relative">
+                    <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
+                      <div className="relative">
+                        <Avatar className="w-32 h-32">
+                          <AvatarImage src={selectedImage} />
+                          <AvatarFallback>
+                            <Image className="w-12 h-12" />
+                          </AvatarFallback>
+                        </Avatar>
+
+                        <Label
+                          htmlFor="picture"
+                          className="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full cursor-pointer hover:bg-primary/90"
+                        >
+                          <Plus className="w-5 h-5" />
+                          <Input
+                            id="picture"
+                            type="file"
+                            className="hidden"
+                            accept="image/jpeg,image/png,image/gif"
+                            onChange={handleImageChange}
+                          />
+                        </Label>
+                      </div>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -163,7 +236,7 @@ function SupplierForm({
                     )}
                   </div>
 
-                  <div className="space-y-2 md:col-span-2">
+                  <div className="space-y-2 ">
                     <label className="text-sm font-medium text-gray-700">
                       Address
                     </label>
