@@ -30,14 +30,11 @@ const Login = () => {
       console.log("Response:", res);
   
       dispatch(setCredentials({ user: res.user }));
-      console.log("User:", res.user);
-  
-      if (res.user?.role === "admin") {
-        navigate("/admin");
-      } else {
+      if(res.user.role === 'user'){
         navigate("/");
+      }else if (res.user.role === 'admin'){
+        navigate('/admin')
       }
-  
       toast.success("Login Successful");
     } catch (error) {
       toast.error("Invalid Email or Password");
