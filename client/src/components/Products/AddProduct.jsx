@@ -6,7 +6,7 @@ import { ArrowLeft, Box, Package, Layers } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import productImage from "../../../public/order.png";
-import { useState } from "react";
+
 
 function AddProduct() {
   const navigate = useNavigate();

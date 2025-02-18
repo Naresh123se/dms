@@ -11,6 +11,6 @@ distributorRouter.post(
   DistributorController.addDistributor
 );
 distributorRouter.get("/", DistributorController.fetchAllDistributors);
-distributorRouter.put("/:id", DistributorController.fetchSingleDistributor);
+distributorRouter.get("/:id", DistributorController.fetchSingleDistributor);
 
 export default distributorRouter;

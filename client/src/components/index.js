@@ -8,6 +8,7 @@ import Sidebar from "./SideBar";
 import Dashboard from "./Dashboard/Dashboard";
 import SupplierList from "./Suppliers/SupplierList"
 import AddSupplier from "./Suppliers/AddSupplier"
+import EditSupplier from "./Suppliers/EditSupplier"
 import AdminNav from "./AdminNav"
 import AddProduct from "./Products/AddProduct"
 
@@ -23,5 +24,6 @@ export {
   AddSupplier,
   AdminNav,
   AddProduct,
+  EditSupplier,
   Footer,
   };

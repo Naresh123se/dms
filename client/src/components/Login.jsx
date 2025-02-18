@@ -27,7 +27,8 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const res = await storeLogin(data).unwrap();
-      console.log(res);
+      console.log("Response:", res);
+  
       dispatch(setCredentials({ user: res.user }));
       if(res.user.role === 'user'){
         navigate("/");
@@ -39,7 +40,7 @@ const Login = () => {
       toast.error("Invalid Email or Password");
     }
   };
-
+  
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}
