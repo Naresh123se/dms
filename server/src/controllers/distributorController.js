@@ -170,7 +170,8 @@ class DistributorController {
     session.startTransaction();
 
     try {
-      const distributorId = req.params.id; // Distributor ID from params
+      const distributorId = req.params.id;
+      console.log(distributorId) // Distributor ID from params
       const {
         name,
         email,
@@ -184,6 +185,7 @@ class DistributorController {
         zipCode,
         vat,
       } = req.body;
+      // console.log(req.body)
 
       // Find the distributor by ID
       const distributor = await Distributor.findById(distributorId).session(
@@ -226,7 +228,7 @@ class DistributorController {
           url: result.secure_url,
         };
       } 
-      if (uploadedImage) user.avatar = uploadedImage;
+      user.avatar = uploadedImage || user.avatar;
       await user.save({ session });
 
       // Update distributor details if provided

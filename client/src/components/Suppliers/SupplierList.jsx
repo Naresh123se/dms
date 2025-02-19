@@ -117,7 +117,7 @@ function SupplierList() {
               >
                 <div className="h-48 overflow-hidden">
                   <img
-                    src={supplier.user.avatar.url}
+                    src={supplier.user?.avatar?.url}
                     alt={supplier.name}
                     className="w-full h-full object-fit"
                   />

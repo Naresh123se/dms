@@ -16,7 +16,6 @@ function SupplierForm({
   isLoading,
   initialImage,
 }) {
-  // Make sure `initialData` is available and properly structured
 
   // Define initial form values from distributorData
   const initialData1 = {
@@ -26,7 +25,6 @@ function SupplierForm({
     address: initialData?.user?.address || "",
     location: initialData?.warehouseDetails?.address || "",
     contact: initialData?.warehouseDetails?.contactPerson || "",
-    // availableBalance: distributorData?.availableBalance || 0,
   };
 
   const allData = { ...initialData, ...initialData1 };

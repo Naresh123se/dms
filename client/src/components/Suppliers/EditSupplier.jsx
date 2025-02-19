@@ -18,9 +18,10 @@ function EditSupplier() {
 
   const distributorData = supplier?.distributor || {};
 
-  const handleSubmit = async (id) => {
+  const handleSubmit = async (data) => {
+    data.id = id;
     try {
-      const response = await updateSupplier({ id }).unwrap();
+      const response = await updateSupplier(data).unwrap();
       if (response.success) {
         toast.success("Supplier Updated Successfully");
         navigate("/admin/suppliers");

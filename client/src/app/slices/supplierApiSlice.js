@@ -13,10 +13,11 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
     }),
 
     editSupplier: builder.mutation({
-      query: (id) => ({
-        url: `${supplier_url}/${id}`,
+      query: (data) => ({
+        url: `${supplier_url}/${data.id}`,
         method: "PUT",
         credentials: "include",
+        body:data,
       }),
     }),
     getAllSupplier: builder.query({

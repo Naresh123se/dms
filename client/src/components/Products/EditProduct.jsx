@@ -27,20 +27,13 @@ export default function EditProduct() {
   const [updateProduct, { isLoading: isUpdating }] = useEditProductMutation();
   const {
     data: productData,
-    isLoading: isLoadingJournal,
+    isLoading: isLoadingProduct,
     refetch,
   } = useGetSingleProductQuery(id);
 
   const product = productData?.product || {}; // Default to empty object
 
-  console.log(product);
-  // console.log(productData.product[0])
-
-  const allValueData = {
-    productName: product.name,
-    price: product.price,
-  };
-  const db = { ...product, ...allValueData };
+  console.log(product); 
   const {
     control,
     getValues,
@@ -50,8 +43,15 @@ export default function EditProduct() {
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: db,
+    defaultValues: product,
   });
+
+  useEffect(() => {
+    if (product) {
+      reset(product); 
+    }
+  }, [product, reset]); 
+
 
   const onSubmit = async (data) => {
     if (imagePreviews.length === 0 && existingImages.length === 0) {
@@ -110,7 +110,7 @@ export default function EditProduct() {
     }
   };
 
-  if (isLoadingJournal) {
+  if (isLoadingProduct) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="animate-pulse text-xl font-semibold text-gray-700">
