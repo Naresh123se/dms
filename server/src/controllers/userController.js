@@ -11,8 +11,7 @@ import { sendToken } from "../utils/jwt.js";
 
 const registerUser = asyncHandler(async (req, res, next) => {
   try {
-    const { name, email, password, shop } = req.body;
-    console.log(req.body);
+    const { name, email, password, address, phone } = req.body;
 
     if (!name) {
       return next(new ErrorHandler("Name cannot be empty", 400));
@@ -37,7 +36,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
       name,
       email,
       password,
-      shop,
+      address,
+      phone,
     };
 
     const activationToken = createActivationToken(user);
@@ -87,7 +87,7 @@ const activateUser = asyncHandler(async (req, res, next) => {
       return next(new ErrorHandler("Invalid activation Code", 400));
     }
 
-    const { name, email, password, shop } = newUser?.userdata;
+    const { name, email, password, address, phone } = newUser?.userdata;
     console.log(newUser?.userdata);
 
     const existUser = await User.findOne({ email });
@@ -100,7 +100,8 @@ const activateUser = asyncHandler(async (req, res, next) => {
       name,
       email,
       password,
-      shop,
+      address,
+      phone,
     });
 
     res.status(201).json({

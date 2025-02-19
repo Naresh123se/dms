@@ -12,5 +12,11 @@ distributorRouter.post(
 );
 distributorRouter.get("/", DistributorController.fetchAllDistributors);
 distributorRouter.get("/:id", DistributorController.fetchSingleDistributor);
+distributorRouter.put(
+  "/:id",
+  isAuthenticated,
+  authorizeRoles("admin"),
+  DistributorController.updateDistributor
+);
 
 export default distributorRouter;

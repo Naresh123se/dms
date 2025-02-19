@@ -12,7 +12,7 @@ import { sendToken } from "../utils/jwt.js";
 class AuthController {
   static registration = asyncHandler(async (req, res, next) => {
     try {
-      const { name, email, password, shop } = req.body;
+      const { name, email, password, address, phone } = req.body;
       console.log(req.body);
 
       if (!name) {
@@ -25,8 +25,11 @@ class AuthController {
       if (!password) {
         return next(new ErrorHandler("Name cannot be empty", 400));
       }
-      if (!shop) {
-        return next(new ErrorHandler("Shop cannot be empty", 400));
+      if (!address) {
+        return next(new ErrorHandler("Address cannot be empty", 400));
+      }
+      if (!phone) {
+        return next(new ErrorHandler("Phone cannot be empty", 400));
       }
       const isEmailExist = await User.findOne({ email });
 
@@ -38,7 +41,8 @@ class AuthController {
         name,
         email,
         password,
-        shop,
+        address,
+        phone,
       };
 
       const activationToken = createActivationToken(user);
@@ -89,7 +93,7 @@ class AuthController {
         return next(new ErrorHandler("Invalid activation Code", 400));
       }
 
-      const { name, email, password, shop } = newUser?.userdata;
+      const { name, email, password, address, phone } = newUser?.userdata;
       console.log(newUser?.userdata);
 
       const existUser = await User.findOne({ email });
@@ -102,7 +106,8 @@ class AuthController {
         name,
         email,
         password,
-        shop,
+        address,
+        phone,
       });
 
       res.status(201).json({
