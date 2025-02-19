@@ -13,11 +13,11 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
     }),
 
     editSupplier: builder.mutation({
-      query: (id, ...data) => ({
-        url: `${supplier_url}/edit-distributor/${id}`,
-        method: "POST",
-        body: data,
+      query: (data) => ({
+        url: `${supplier_url}/${data.id}`,
+        method: "PUT",
         credentials: "include",
+        body:data,
       }),
     }),
     getAllSupplier: builder.query({
@@ -27,8 +27,18 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
+    getSingleSupplier: builder.query({
+      query: ( id) => ({
+        url: `${supplier_url}/${id}`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useAddSupplierMutation, useGetAllSupplierQuery , useEditSupplierMutation} =
-  supplierApiSlice;
+export const {
+  useAddSupplierMutation,
+  useGetAllSupplierQuery,
+  useGetSingleSupplierQuery,
+  useEditSupplierMutation,
+} = supplierApiSlice;

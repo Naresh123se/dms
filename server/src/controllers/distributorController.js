@@ -7,6 +7,10 @@ import sendMail from "../utils/sendMail.js";
 import User from "../models/userModel.js";
 import Distributor from "../models/distributorModel.js";
 import mongoose from "mongoose";
+import cloudinary from "cloudinary";
+
+
+
 
 class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
@@ -27,6 +31,7 @@ class DistributorController {
         zipCode,
         vat,
       } = req.body;
+
 
       const warehousedetails = {
         address: location,
@@ -147,7 +152,7 @@ class DistributorController {
   static fetchSingleDistributor = asyncHandler(async (req, res, next) => {
     const id = req.params.id;
     try {
-      const distributor = await Distributor.findById(id);
+      const distributor = await Distributor.findById(id).populate("user");;
       if (!distributor) {
         return next(new ErrorHandler("Distributor not found", 400));
       }
@@ -160,13 +165,14 @@ class DistributorController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-
+  
   static updateDistributor = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
-      const distributorId = req.params.id; // Distributor ID from params
+      const distributorId = req.params.id;
+      console.log(distributorId) // Distributor ID from params
       const {
         name,
         email,
@@ -180,6 +186,7 @@ class DistributorController {
         zipCode,
         vat,
       } = req.body;
+      // console.log(req.body)
 
       // Find the distributor by ID
       const distributor = await Distributor.findById(distributorId).session(
@@ -222,7 +229,7 @@ class DistributorController {
           url: result.secure_url,
         };
       } 
-      if (uploadedImage) user.avatar = uploadedImage;
+      user.avatar = uploadedImage || user.avatar;
       await user.save({ session });
 
       // Update distributor details if provided

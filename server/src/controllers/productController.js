@@ -1,11 +1,13 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import Product from "../models/productModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
+import cloudinary from "cloudinary";
 
 class ProductController {
   static createProduct = asyncHandler(async (req, res, next) => {
     try {
       const { name, description, price, images, category, quantity } = req.body;
+      // console.log(req.body);
       const product = await Product.findOne({ name: name });
       if (product) {
         return next(new ErrorHandler("Product name already exists", 400));
@@ -47,7 +49,7 @@ class ProductController {
 
   static fetchAllProducts = asyncHandler(async (req, res, next) => {
     try {
-      const products = await Product.find();
+      const products = await Product.find().populate("owner");
       if (!products) {
         return res.status(200).json({
           success: false,
