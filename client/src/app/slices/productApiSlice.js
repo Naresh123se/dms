@@ -13,10 +13,11 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
 
     editProduct: builder.mutation({
-      query: (id) => ({
-        url: `${product_url}/${id}`,
+      query: (data) => ({
+        url: `${product_url}/${data.id}`,
         method: "PUT",
         credentials: "include",
+        body:data,
       }),
     }),
     getAllProduct: builder.query({

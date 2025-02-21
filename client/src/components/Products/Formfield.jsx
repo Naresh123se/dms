@@ -118,7 +118,8 @@ export default function Formfield({
             Max size: 5MB per image
           </p>
         </div>
-
+{console.log(existingImages)
+}
         <div className="space-y-2">
           {/* Display existing images */}
           {existingImages?.map((preview, index) => (

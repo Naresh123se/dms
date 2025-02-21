@@ -9,12 +9,15 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 function SupplierForm({
+
   initialData,
-  isEdit = false,
+  initialImage,
+  isEdit,
   onSubmit,
   onCancel,
   isLoading,
-  initialImage,
+  selectedImage,
+  onImageChange,
 }) {
 
   // Define initial form values from distributorData
@@ -151,7 +154,7 @@ function SupplierForm({
                     <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
                       <div className="relative">
                         <Avatar className="w-32 h-32">
-                          <AvatarImage src={initialImage} />
+                        <AvatarImage src={selectedImage || initialImage} />
                           <AvatarFallback>
                             <Image className="w-12 h-12" />
                           </AvatarFallback>
@@ -167,7 +170,8 @@ function SupplierForm({
                             type="file"
                             className="hidden"
                             accept="image/jpeg,image/png,image/gif"
-                            onChange={initialImage}
+                            onChange={  onImageChange
+                            }
                           />
                         </Label>
                       </div>

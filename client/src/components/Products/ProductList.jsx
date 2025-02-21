@@ -33,7 +33,6 @@ function ProductList() {
   const navigate = useNavigate();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
-  console.log(allProducts);
 
   return (
     <ScrollArea className="h-screen">
@@ -109,8 +108,10 @@ function ProductList() {
                   {/* Product Image */}
                   <div className="md:w-1/3 lg:w-1/4">
                     <img
-                      className="h-full  w-full object-fit"
-                      src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&auto=format&fit=crop&q=60"
+                      className=" object-fit"
+                      src={product.images[0]?.url}
+                      width={300}
+                      
                       alt={product.images}
                     />
                   </div>

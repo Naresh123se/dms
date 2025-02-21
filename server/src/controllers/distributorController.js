@@ -214,7 +214,6 @@ class DistributorController {
         zipCode,
         vat,
       } = req.body;
-      // console.log(req.body)
 
       // Find the distributor by ID
       const distributor = await Distributor.findById(distributorId).session(
@@ -246,6 +245,7 @@ class DistributorController {
       if (phone) user.phone = phone;
 
       // TODO: UPload iamge to cloudinary
+      let uploadedImage = user.avatar;
       let uploadedImage = user.avatar;
       if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {

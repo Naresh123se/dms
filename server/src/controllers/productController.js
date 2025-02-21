@@ -7,7 +7,6 @@ class ProductController {
   static createProduct = asyncHandler(async (req, res, next) => {
     try {
       const { name, description, price, images, category, quantity } = req.body;
-      // console.log(req.body);
       const product = await Product.findOne({ name: name });
       if (product) {
         return next(new ErrorHandler("Product name already exists", 400));
@@ -86,13 +85,23 @@ class ProductController {
 
   static updateProductDetails = asyncHandler(async (req, res, next) => {
     try {
-      const { name, description, price, images, category, quantity } = req.body;
+      const { name, description, price,  category, quantity } = req.body;
+    console.log(req.body);
+    
       const id = req.params.id;
       const product = await Product.findById(id);
       if (!product) {
         return next(new ErrorHandler("No product found", 400));
       }
-      const imagesLinks = product.images;
+      let images = [];
+
+      // If images are passed as a string (for a single image)
+      if (typeof req.body.images === "string") {
+        images.push(req.body.images);
+      } else {
+        images = req.body.images;
+      }
+      const imagesLinks = [];
       if (images) {
         // handle image update with cloudianry
         for (let i = 0; i < images.length; i++) {

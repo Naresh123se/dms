@@ -54,8 +54,8 @@ function AddSupplier() {
       onSubmit={handleSubmit}
       onCancel={() => navigate(-1)}
       isLoading={isLoading}
-      selectedImage1={selectedImage} // Pass selectedImage as a prop
-      onImageChange={handleImageChange} // Pass image change handler as a prop
+      selectedImage={selectedImage}
+      onImageChange={handleImageChange}
     />
   );
 }

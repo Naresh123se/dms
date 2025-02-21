@@ -13,7 +13,6 @@ class AuthController {
   static registration = asyncHandler(async (req, res, next) => {
     try {
       const { name, email, password, address, phone } = req.body;
-      console.log(req.body);
 
       if (!name) {
         return next(new ErrorHandler("Name cannot be empty", 400));
@@ -58,7 +57,6 @@ class AuthController {
         "../mails/activationMail.ejs"
       );
 
-      // console.log('This is the mailPath', mailPath);
       const html = await ejs.renderFile(mailPath, data);
 
       // Send mail function call
@@ -94,7 +92,6 @@ class AuthController {
       }
 
       const { name, email, password, address, phone } = newUser?.userdata;
-      console.log(newUser?.userdata);
 
       const existUser = await User.findOne({ email });
 

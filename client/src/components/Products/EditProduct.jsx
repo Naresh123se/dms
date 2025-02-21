@@ -21,7 +21,7 @@ export default function EditProduct() {
   const navigate = useNavigate();
   const [existingImages, setExistingImages] = useState([]); // Store existing images
   const [imagePreviews, setImagePreviews] = useState([]); // Store new images
-
+}
   const [errorMessage, setErrorMessage] = useState("");
 
   const [updateProduct, { isLoading: isUpdating }] = useEditProductMutation();
@@ -33,7 +33,6 @@ export default function EditProduct() {
 
   const product = productData?.product || {}; // Default to empty object
 
-  console.log(product); 
   const {
     control,
     getValues,
@@ -50,7 +49,13 @@ export default function EditProduct() {
     if (product) {
       reset(product); 
     }
+    if (product.images && Array.isArray(product.images)) {
+      setExistingImages(product.images.map((img) => img.url)); // Set existing images safely
+    } else {
+      setExistingImages([]); // Set as empty array if images are undefined
+    }
   }, [product, reset]); 
+  
 
 
   const onSubmit = async (data) => {
@@ -61,14 +66,14 @@ export default function EditProduct() {
     try {
       const updatedData = {
         ...data,
-        _id: id,
+         id,
         images: [...existingImages, ...imagePreviews], // Combine existing and new images
       };
       await updateProduct(updatedData).unwrap();
       refetch();
       reset();
       toast.success("Product entry updated successfully!");
-      navigate(`/product/${id}`);
+      navigate("/admin/products");
     } catch (error) {
       console.error("Error updating product:", error);
       toast.error(error?.data?.message || "Failed to update product entry");
@@ -152,12 +157,13 @@ export default function EditProduct() {
                 setErrorMessage={setErrorMessage}
                 handleImageChange={handleImageChange}
                 removeImage={removeImage}
+                existingImages={existingImages}
               />
               <div className="flex justify-end gap-4 mt-8">
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate(`/product/${id}`)}
+                  onClick={() => navigate(-1)}
                 >
                   Cancel
                 </Button>

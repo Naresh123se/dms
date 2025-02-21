@@ -98,10 +98,9 @@ function AddProduct() {
     try {
       const addData = { ...data };
       const res = await addProduct(addData).unwrap();
-      console.log("Journal created:", res);
       refetch();
       reset();
-      toast.success("Journal entry created successfully!");
+      toast.success(res.message);
       setImagePreviews([]);
     } catch (error) {
       console.error("Error creating journal:", error);

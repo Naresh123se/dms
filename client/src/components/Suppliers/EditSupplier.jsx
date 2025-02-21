@@ -15,13 +15,13 @@ function EditSupplier() {
 
   const [updateSupplier, { isLoading }] = useEditSupplierMutation();
   const [selectedImage, setSelectedImage] = useState();
-
   const distributorData = supplier?.distributor || {};
 
   const handleSubmit = async (data) => {
     data.id = id;
+
     try {
-      const response = await updateSupplier(data).unwrap();
+      const response = await updateSupplier({...data, avatar: selectedImage}).unwrap();
       if (response.success) {
         toast.success("Supplier Updated Successfully");
         navigate("/admin/suppliers");
@@ -61,8 +61,9 @@ function EditSupplier() {
       onSubmit={handleSubmit}
       onCancel={() => navigate(-1)}
       isLoading={isLoading}
-      selectedImage1={selectedImage} // Pass selectedImage as a prop
-      onImageChange={handleImageChange} // Pass image change handler as a prop
+      selectedImage={selectedImage}
+      onImageChange={handleImageChange}
+    
     />
   );
 }
