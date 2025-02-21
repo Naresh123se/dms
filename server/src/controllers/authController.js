@@ -167,6 +167,29 @@ class AuthController {
       return next(new ErrorHandler(error.message, 400));
     }
   });
+
+  
+  static changePassword = asyncHandler(async (req, res, next) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+      const user = await User.findById(req.user._id).select("+password");
+      const passwordMatch = user.comparePassword(currentPassword);
+      if (!passwordMatch) {
+        return next(new ErrorHandler("Password is incorrect"));
+      }
+      if (currentPassword === newPassword) {
+        return next(new ErrorHandler("New password is already used", 400));
+      }
+      // Now update the old password with new password
+      user.password = newPassword;
+      await user.save();
+      return res
+        .status(200)
+        .json({ success: true, message: "Password updated successfully" });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
 
 export default AuthController;

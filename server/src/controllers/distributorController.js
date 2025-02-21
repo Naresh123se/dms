@@ -9,9 +9,6 @@ import Distributor from "../models/distributorModel.js";
 import mongoose from "mongoose";
 import cloudinary from "cloudinary";
 
-
-
-
 class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
@@ -31,7 +28,6 @@ class DistributorController {
         zipCode,
         vat,
       } = req.body;
-
 
       const warehousedetails = {
         address: location,
@@ -59,7 +55,7 @@ class DistributorController {
         await session.abortTransaction();
         session.endSession();
         return next(
-          new ErrorHandler("Dentist with this email already exists.", 400)
+          new ErrorHandler("Distributor with this email already exists.", 400)
         );
       }
 
@@ -115,6 +111,38 @@ class DistributorController {
       session.endSession();
 
       // TODO: SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
+      const mailData = {
+        name: distributorUser.name,
+        email: distributorUser.email,
+        password: password,
+      };
+
+      // getting the current directory
+      const __filename = fileURLToPath(import.meta.url);
+      const currentDirectory = path.dirname(__filename);
+
+      const mailPath = path.join(
+        currentDirectory,
+        "../mails/welomeDistributor.ejs"
+      );
+
+      // console.log('This is the mailPath', mailPath);
+      const html = await ejs.renderFile(mailPath, mailData);
+
+      
+    // Sending the mail to the distributor for his account creation
+    try {
+      if (distributorUser && newDistributor) {
+        await sendMail({
+          email: distributorUser.email,
+          subject: 'Account Credentials and Confirmation',
+          template: 'welcomeDistributor.ejs',
+          data: mailData,
+        });
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
 
       res.status(201).json({
         success: true,
@@ -152,7 +180,7 @@ class DistributorController {
   static fetchSingleDistributor = asyncHandler(async (req, res, next) => {
     const id = req.params.id;
     try {
-      const distributor = await Distributor.findById(id).populate("user");;
+      const distributor = await Distributor.findById(id).populate("user");
       if (!distributor) {
         return next(new ErrorHandler("Distributor not found", 400));
       }
@@ -165,14 +193,14 @@ class DistributorController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-  
+
   static updateDistributor = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
       const distributorId = req.params.id;
-      console.log(distributorId) // Distributor ID from params
+      console.log(distributorId); // Distributor ID from params
       const {
         name,
         email,
@@ -218,7 +246,7 @@ class DistributorController {
       if (phone) user.phone = phone;
 
       // TODO: UPload iamge to cloudinary
-      let uploadedImage = {};
+      let uploadedImage = user.avatar;
       if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
           folder: "avatars", // Optional: Save images in a specific folder
@@ -228,8 +256,7 @@ class DistributorController {
           public_id: result.public_id,
           url: result.secure_url,
         };
-      } 
-      user.avatar = uploadedImage || user.avatar;
+      }
       await user.save({ session });
 
       // Update distributor details if provided

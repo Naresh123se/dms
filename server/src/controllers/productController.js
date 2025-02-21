@@ -36,6 +36,7 @@ class ProductController {
         price,
         category,
         quantity,
+        images: imagesLinks,
       });
       return res.status(200).json({
         success: true,

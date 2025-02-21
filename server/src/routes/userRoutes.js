@@ -10,7 +10,11 @@ userRouter.post("/register", AuthController.registration);
 userRouter.post("/activate", AuthController.activation);
 userRouter.post("/login", AuthController.login);
 userRouter.post("/logout", isAuthenticated, AuthController.logout);
-
+userRouter.put(
+  "/change-password",
+  isAuthenticated,
+  AuthController.changePassword
+);
 
 // ********************* PROFILE MANAGEMENT ROUTES *********************
 // userRouter.put(
