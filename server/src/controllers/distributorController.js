@@ -13,6 +13,7 @@ class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
     const session = await mongoose.startSession();
     session.startTransaction();
+    let transactionCommitted = false; // Track if transaction was committed
 
     try {
       const {
@@ -53,7 +54,6 @@ class DistributorController {
       const existsDistributor = await User.findOne({ email }).session(session);
       if (existsDistributor) {
         await session.abortTransaction();
-        session.endSession();
         return next(
           new ErrorHandler("Distributor with this email already exists.", 400)
         );
@@ -63,8 +63,8 @@ class DistributorController {
       let uploadedImage = {};
       if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
-          folder: "avatars", // Optional: Save images in a specific folder
-          resource_type: "auto", // Automatically detect the file type
+          folder: "avatars",
+          resource_type: "auto",
         });
         uploadedImage = {
           public_id: result.public_id,
@@ -107,51 +107,52 @@ class DistributorController {
         { session }
       );
 
+      // Commit the transaction
       await session.commitTransaction();
-      session.endSession();
+      transactionCommitted = true; // Mark transaction as committed
 
-      // TODO: SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
+      // SEND MAIL TO THE EMAIL OF THE ADDED DISTRIBUTOR
       const mailData = {
-        name: distributorUser.name,
-        email: distributorUser.email,
+        name: distributorUser[0].name,
+        email: distributorUser[0].email,
         password: password,
       };
 
-      // getting the current directory
       const __filename = fileURLToPath(import.meta.url);
       const currentDirectory = path.dirname(__filename);
-
       const mailPath = path.join(
         currentDirectory,
-        "../mails/welomeDistributor.ejs"
+        "../mails/welcomeDistributor.ejs"
       );
 
-      // console.log('This is the mailPath', mailPath);
       const html = await ejs.renderFile(mailPath, mailData);
 
-      
-    // Sending the mail to the distributor for his account creation
-    try {
-      if (distributorUser && newDistributor) {
-        await sendMail({
-          email: distributorUser.email,
-          subject: 'Account Credentials and Confirmation',
-          template: 'welcomeDistributor.ejs',
-          data: mailData,
-        });
+      // Sending the mail to the distributor for his account creation
+      try {
+        if (distributorUser && newDistributor) {
+          await sendMail({
+            email: distributorUser[0].email,
+            subject: "Account Credentials and Confirmation",
+            template: "welcomeDistributor.ejs",
+            data: mailData,
+          });
+        }
+      } catch (mailError) {
+        console.error("Mail sending failed:", mailError);
+        return next(new ErrorHandler("Failed to send email.", 500));
       }
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
 
       res.status(201).json({
         success: true,
         message: "Distributor Added successfully.",
       });
     } catch (error) {
-      await session.abortTransaction();
-      session.endSession();
+      if (!transactionCommitted) {
+        await session.abortTransaction(); // Only abort if transaction is NOT committed
+      }
       return next(new ErrorHandler(error.message, 500));
+    } finally {
+      session.endSession();
     }
   });
 
@@ -246,7 +247,7 @@ class DistributorController {
 
       // TODO: UPload iamge to cloudinary
       let uploadedImage = user.avatar;
-      let uploadedImage = user.avatar;
+
       if (avatar) {
         const result = await cloudinary.v2.uploader.upload(avatar, {
           folder: "avatars", // Optional: Save images in a specific folder
