@@ -169,6 +169,7 @@ class AuthController {
   static changePassword = asyncHandler(async (req, res, next) => {
     try {
       const { currentPassword, newPassword } = req.body;
+      console.log(req.body)
       const user = await User.findById(req.user._id).select("+password");
       const passwordMatch = user.comparePassword(currentPassword);
       if (!passwordMatch) {

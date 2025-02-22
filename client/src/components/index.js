@@ -13,6 +13,9 @@ import AdminNav from "./AdminNav"
 import AddProduct from "./Products/AddProduct"
 import ProductList from "./Products/ProductList"
 import EditProduct from "./Products/EditProduct"
+import AdminDashboard from "./Admin/AdminDashboard";
+import  ChangePassword from "./ChangePassword";
+
 
 export {
   Login,
@@ -21,7 +24,6 @@ export {
   LogoutButton,
   Nav,
   Sidebar,
-  Dashboard,
   SupplierList,
   AddSupplier,
   AdminNav,
@@ -29,5 +31,8 @@ export {
   EditSupplier,
   ProductList,
   EditProduct,
+  AdminDashboard,
+  Dashboard,
+  ChangePassword,
   Footer,
   };

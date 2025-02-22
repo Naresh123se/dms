@@ -12,7 +12,7 @@ userRouter.post("/login", AuthController.login);
 userRouter.post("/logout", isAuthenticated, AuthController.logout);
 userRouter.put(
   "/change-password",
-  isAuthenticated,
+  // isAuthenticated,
   AuthController.changePassword
 );
 
