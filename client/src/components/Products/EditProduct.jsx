@@ -21,7 +21,7 @@ export default function EditProduct() {
   const navigate = useNavigate();
   const [existingImages, setExistingImages] = useState([]); // Store existing images
   const [imagePreviews, setImagePreviews] = useState([]); // Store new images
-}
+
   const [errorMessage, setErrorMessage] = useState("");
 
   const [updateProduct, { isLoading: isUpdating }] = useEditProductMutation();
@@ -66,7 +66,7 @@ export default function EditProduct() {
     try {
       const updatedData = {
         ...data,
-         id,
+        id,
         images: [...existingImages, ...imagePreviews], // Combine existing and new images
       };
       await updateProduct(updatedData).unwrap();
