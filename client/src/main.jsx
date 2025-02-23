@@ -16,6 +16,7 @@ import {
   ProductList,
   EditProduct,
   AdminDashboard,
+  PageNotFound,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -32,6 +33,10 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <HomePage />,
+      },
+      {
+        path: "*",
+        element: <PageNotFound />,
       },
 
       {
@@ -118,6 +123,7 @@ const router = createBrowserRouter([
           },
         ],
       },
+
       // DashBoard
       {
         path: "/dashboard",

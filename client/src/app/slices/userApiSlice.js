@@ -25,6 +25,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
         url: `${user_url}/change-password`,
         method: "PUT",
         body: data,
+        credentials: 'include'
       }),
     }),
 

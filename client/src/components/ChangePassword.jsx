@@ -12,6 +12,7 @@ const ChangePassword = ({ open, setOpen }) => {
     register,
     handleSubmit,
     watch,
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -24,7 +25,9 @@ const ChangePassword = ({ open, setOpen }) => {
   const onSubmit = async (data) => {
     try {
       const res = await changeData(data);
-      console.log( res);
+      reset()
+      navigate=('/dashboard')
+
       toast.success(res.data?.message);
     } catch (error) {
       toast.error("Invalid Password");

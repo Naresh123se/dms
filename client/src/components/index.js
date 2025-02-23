@@ -15,6 +15,7 @@ import ProductList from "./Products/ProductList"
 import EditProduct from "./Products/EditProduct"
 import AdminDashboard from "./Admin/AdminDashboard";
 import  ChangePassword from "./ChangePassword";
+import PageNotFound from "./PageNotFound";
 
 
 export {
@@ -33,6 +34,7 @@ export {
   EditProduct,
   AdminDashboard,
   Dashboard,
+  PageNotFound,
   ChangePassword,
   Footer,
   };

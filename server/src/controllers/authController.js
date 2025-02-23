@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
 import createActivationToken from "../utils/activation.js";
 import { sendToken } from "../utils/jwt.js";
+import Distributor from "../models/distributorModel.js";
 
 class AuthController {
   static registration = asyncHandler(async (req, res, next) => {
@@ -165,11 +166,10 @@ class AuthController {
     }
   });
 
-  
+
   static changePassword = asyncHandler(async (req, res, next) => {
     try {
       const { currentPassword, newPassword } = req.body;
-      console.log(req.body)
       const user = await User.findById(req.user._id).select("+password");
       const passwordMatch = user.comparePassword(currentPassword);
       if (!passwordMatch) {
@@ -181,6 +181,14 @@ class AuthController {
       // Now update the old password with new password
       user.password = newPassword;
       await user.save();
+      const distributor = await Distributor.findOne({ user: user._id });
+      if (distributor) {
+        await Distributor.findByIdAndUpdate(
+          distributor._id,
+          { firstlogin: false },
+          { new: true, runValidators: true }
+        );
+      }
       return res
         .status(200)
         .json({ success: true, message: "Password updated successfully" });
@@ -189,5 +197,6 @@ class AuthController {
     }
   });
 }
+
 
 export default AuthController;

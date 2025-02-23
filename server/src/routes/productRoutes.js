@@ -12,14 +12,14 @@ productRouter.post(
 );
 productRouter.get(
   "/",
-  // isAuthenticated,
-  // authorizeRoles("admin"),
+  isAuthenticated,
+  authorizeRoles("admin"),
   ProductController.fetchAllProducts
 );
 productRouter.get(
   "/:id",
-  // isAuthenticated,
-  // authorizeRoles("admin"),
+  isAuthenticated,
+  authorizeRoles("admin"),
   ProductController.fetchSingleProduct
 );
 productRouter.put(

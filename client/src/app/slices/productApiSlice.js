@@ -25,12 +25,14 @@ export const productApiSlice = apiSlice.injectEndpoints({
         url: `${product_url}/`,
         method: "GET",
         body: data,
+        credentials: 'include'
       }),
     }),
     getSingleProduct: builder.query({
       query: ( id) => ({
         url: `${product_url}/${id}`,
         method: "GET",
+        credentials: 'include'
       }),
     }),
   }),
