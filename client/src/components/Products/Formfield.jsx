@@ -1,18 +1,13 @@
 import { Input } from "@/components/ui/input";
 
 import { Button } from "@/components/ui/button";
-import { ImageIcon, MapPin, Tag, SmilePlus, X } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 
 export default function Formfield({
-  control,
   register,
   errors,
-  setValue,
-  getValues,
   imagePreviews,
-  setImagePreviews,
   errorMessage,
-  setErrorMessage,
   handleImageChange,
   removeImage,
   existingImages,

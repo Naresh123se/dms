@@ -6,9 +6,7 @@ import {
   Package2,
   DollarSign,
   ShoppingCart,
-  Activity,
   User,
-  Hash,
   FileText,
   Tag,
   Percent,
@@ -16,7 +14,6 @@ import {
   Box,
   Package,
   Layers,
-  PenIcon,
   PenBoxIcon,
 } from "lucide-react";
 import { useGetAllProductQuery } from "@/app/slices/productApiSlice";
@@ -33,6 +30,10 @@ function ProductList() {
   const navigate = useNavigate();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
+  const inStock = allProducts.filter((product) => product.quantity > 0).length;
+  const outStock = products.length - inStock
+  const categories = new Set(allProducts.map((product) => product.category));
+  const categoryCount = categories.size;
 
   return (
     <ScrollArea className="h-screen">
@@ -68,7 +69,7 @@ function ProductList() {
                 <Box className="text-blue-600 h- w-10" />
                 <div>
                   <h4 className="text-gray-500 text-sm">Total Products</h4>
-                  <p className="text-xl font-bold">{stats.totalProducts}</p>
+                  <p className="text-xl font-bold">{products.length}</p>
                 </div>
               </div>
 
@@ -76,7 +77,7 @@ function ProductList() {
                 <Package className="text-green-600 h-10 w-10" />
                 <div>
                   <h4 className="text-gray-500 text-sm">In Stock</h4>
-                  <p className="text-xl font-bold">{stats.inStock}</p>
+                  <p className="text-xl font-bold">{inStock}</p>
                 </div>
               </div>
 
@@ -84,7 +85,7 @@ function ProductList() {
                 <Package className="text-red-600 h-10 w-10" />
                 <div>
                   <h4 className="text-gray-500 text-sm">Out of Stock</h4>
-                  <p className="text-xl font-bold">{stats.outOfStock}</p>
+                  <p className="text-xl font-bold">{outStock}</p>
                 </div>
               </div>
 
@@ -92,7 +93,7 @@ function ProductList() {
                 <Layers className="text-yellow-600 h-10 w-10" />
                 <div>
                   <h4 className="text-gray-500 text-sm">Total Categories</h4>
-                  <p className="text-xl font-bold">{stats.totalCategories}</p>
+                  <p className="text-xl font-bold">{categoryCount}</p>
                 </div>
               </div>
             </div>
@@ -111,7 +112,6 @@ function ProductList() {
                       className=" object-fit"
                       src={product.images[0]?.url}
                       width={300}
-                      
                       alt={product.images}
                     />
                   </div>

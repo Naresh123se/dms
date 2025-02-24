@@ -3,6 +3,7 @@ import {
   useEditSupplierMutation,
   useGetSingleSupplierQuery,
 } from "@/app/slices/supplierApiSlice";
+
 import SupplierForm from "./SupplierForm ";
 import { toast } from "react-toastify";
 import { useState } from "react";
@@ -10,8 +11,12 @@ import { useState } from "react";
 function EditSupplier() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: supplier, isLoading: isFetching } =
-    useGetSingleSupplierQuery(id);
+
+  const {
+    data: supplier,
+    isLoading: isFetching,
+    refetch,
+  } = useGetSingleSupplierQuery(id);
 
   const [updateSupplier, { isLoading }] = useEditSupplierMutation();
   const [selectedImage, setSelectedImage] = useState();
@@ -21,8 +26,12 @@ function EditSupplier() {
     data.id = id;
 
     try {
-      const response = await updateSupplier({...data, avatar: selectedImage}).unwrap();
+      const response = await updateSupplier({
+        ...data,
+        avatar: selectedImage,
+      }).unwrap();
       if (response.success) {
+        refetch();
         toast.success("Supplier Updated Successfully");
         navigate("/admin/suppliers");
       }
@@ -52,7 +61,6 @@ function EditSupplier() {
 
   if (isFetching) return <div>Loading...</div>;
 
-  // const allData = { ...distributorData}
   return (
     <SupplierForm
       initialData={distributorData}
@@ -63,7 +71,6 @@ function EditSupplier() {
       isLoading={isLoading}
       selectedImage={selectedImage}
       onImageChange={handleImageChange}
-    
     />
   );
 }

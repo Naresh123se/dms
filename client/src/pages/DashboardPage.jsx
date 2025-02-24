@@ -1,9 +1,9 @@
-import { Sidebar, AdminNav } from "../components";
+import { DashboardSidebar, AdminNav } from "../components";
 import { Outlet } from "react-router-dom";
 const DashboardPage = () => {
   return (
     <div className="flex">
-      <Sidebar />
+      <DashboardSidebar />
       <AdminNav/>
       <div className=" w-full">
       <Outlet/>

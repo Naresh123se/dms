@@ -14,7 +14,7 @@ import {
   
   function AdminDashboard() {
     return (
-      <ScrollArea className="flex-1 h-[calc(100vh-25px)]  ">
+      <ScrollArea className="flex-1 h-[calc(100vh-1px)]  ">
         <div>
      
          {/* Main Content */}

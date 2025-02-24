@@ -8,11 +8,20 @@ import {
   Clock,
   XCircle,
   MapPin,
-  Warehouse,
   Pencil,
   Package,
   Phone,
   Dock,
+  Mail,
+  PhoneCall,
+  Signpost,
+  ScrollText,
+  Map,
+  Shield,
+  Calendar,
+  UserCheck,
+  UserX,
+  Users,
 } from "lucide-react";
 import {
   Dialog,
@@ -22,9 +31,10 @@ import {
 } from "@/components/ui/dialog";
 import { useGetAllSupplierQuery } from "@/app/slices/supplierApiSlice";
 import { useNavigate } from "react-router-dom";
+import { Badge } from "../ui/badge";
 
 function SupplierList() {
-  const { data, refetch, isLoading, isError } = useGetAllSupplierQuery();
+  const { data, isLoading, isError } = useGetAllSupplierQuery();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
   const navigate = useNavigate();
@@ -60,30 +70,51 @@ function SupplierList() {
               </Link>
             </div>
             {/* Dashboard Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Total Suppliers
-                </h3>
-                <p className="text-2xl font-bold text-indigo-600">
-                  {suppliers.length}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Active Suppliers
-                </h3>
-                <p className="text-2xl font-bold text-green-600">
-                  {verifiedSuppliers}
-                </p>
-              </div>
-              <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200 text-center">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Inactive Suppliers
-                </h3>
-                <p className="text-2xl font-bold text-red-600">
-                  {unverifiedSuppliers}
-                </p>
+            <div className=" ">
+              <div className="flex  justify-between gap-6">
+                <div className="bg-gray-50 p-4 rounded-xl shadow-md  transition-all hover:shadow-lg">
+                  <div className="flex gap-3 items-center">
+                    <div className="p-3 bg-green-50 rounded-full ">
+                      <Users className="w-8 h-8 text-indigo-600" />
+                    </div>
+                    <div className="">
+                      <h3 className="text-md text-gray-900">Total Suppliers</h3>
+                      <p className="text-2xl  font-bold text-indigo-600 ">
+                        {suppliers.length}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl shadow-md  transition-all hover:shadow-lg">
+                  <div className="flex gap-3 items-center">
+                    <div className="p-3 bg-green-50 rounded-full ">
+                      <UserCheck className="w-8 h-8 text-green-600" />
+                    </div>
+                    <div className="">
+                      <h3 className="text-md text-gray-900">
+                        Active Suppliers
+                      </h3>
+                      <p className="text-2xl font-bold text-green-600 ">
+                        {verifiedSuppliers}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-gray-50 p-4 rounded-xl shadow-md  transition-all hover:shadow-lg">
+                  <div className="flex gap-3 items-center">
+                    <div className="p-3 bg-green-50 rounded-full ">
+                      <UserX className="w-8 h-8 text-red-600" />
+                    </div>
+                    <div className="">
+                      <h3 className="text-md text-gray-900">
+                        Inactive Suppliers
+                      </h3>
+                      <p className="text-2xl font-bold text-red-600 ">
+                        {unverifiedSuppliers}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -158,18 +189,6 @@ function SupplierList() {
                     </div>
                   </div>
 
-                  {/* <div className="mt-6">
-                    <button
-                      className="w-full bg-gray-50 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-                      onClick={() => {
-                        setSelectedSupplier(supplier);
-                        setIsDialogOpen(true);
-                      }}
-                    >
-                      View Details
-                    </button>
-                  </div> */}
-
                   <div
                     className="mt-4 pt-4 border-t border-gray-100"
                     onClick={() => {
@@ -197,90 +216,161 @@ function SupplierList() {
 
         {/* Supplier Details Dialog */}
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          {selectedSupplier && (
-            <DialogContent className="sm:max-w-[600px] rounded-xl">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute right-12 top-2 text-gray-500 hover:text-indigo-600 border rounded-lg"
-                onClick={() => {
-                  setIsDialogOpen(false);
-                  navigate(`/admin/edit-supplier/${selectedSupplier._id}`);
-                }}
-              >
-                <Pencil className="w-4 " />
-                Edit
-              </Button>
-              <DialogHeader className="flex flex-row items-center">
-                <DialogTitle className="text-lg font-semibold">
-                  Supplier Profile
-                </DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="bg-indigo-100 p-3 rounded-lg">
-                    <Warehouse className="h-6 w-6 text-indigo-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900">
-                      {selectedSupplier.user.name}
-                    </h3>
-                    <p className="text-sm text-indigo-600 font-medium">
-                      {selectedSupplier.company}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div className="space-y-1">
-                    <p className="text-gray-500">Contact Email</p>
-                    <p className="font-medium">{selectedSupplier.user.email}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-gray-500">Phone Number</p>
-                    <p className="font-medium">
-                      {selectedSupplier.user.phone || "N/A"}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-gray-500">Registered Date</p>
-                    <p className="font-medium">
-                      {new Date(
-                        selectedSupplier.createdAt
-                      ).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-gray-500">Verification Status</p>
-                    <p
-                      className={`font-medium ${
-                        selectedSupplier.user.isVerified
-                          ? "text-green-600"
-                          : "text-amber-600"
-                      }`}
+          <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-xl">
+            {selectedSupplier && (
+              <>
+                {/* Header with background */}
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+                  <div className="flex justify-between items-start">
+                    <DialogHeader>
+                      <DialogTitle className="text-2xl font-bold text-white">
+                        Supplier Details
+                      </DialogTitle>
+                    </DialogHeader>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      className="bg-white/10 hover:bg-white/20 text-white border-0 mr-3"
+                      onClick={() => {
+                        setIsDialogOpen(true);
+                        navigate(
+                          `/admin/edit-supplier/${selectedSupplier._id}`
+                        );
+                      }}
                     >
-                      {selectedSupplier.user.isVerified
-                        ? "Verified"
-                        : "Pending Approval"}
-                    </p>
+                      <Pencil className="w-4 h-4 " />
+                      Edit
+                    </Button>
+                  </div>
+
+                  {/* Profile Section */}
+                  <div className="flex items-center gap-4 mt-6">
+                    <div className="h-20 w-20 rounded-full overflow-hidden border-4 border-white/20">
+                      <img
+                        src={selectedSupplier.user.avatar.url}
+                        alt={selectedSupplier.user.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold">
+                        {selectedSupplier.user.name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge
+                          variant="secondary"
+                          className={`${
+                            selectedSupplier.user.isVerified
+                              ? "bg-emerald-500/20"
+                              : "bg-amber-500/20"
+                          } text-white hover:bg-white/30 flex items-center gap-1`}
+                        >
+                          <Shield className="w-3 h-3" />
+                          {selectedSupplier.user.isVerified
+                            ? "Verified Supplier"
+                            : "Pending Verification"}
+                        </Badge>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
-                {/* <div className="pt-4 border-t border-gray-100">
+                {/* Content */}
+                <div className="p-6 bg-gray-50">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <Mail className="h-5 w-5 text-indigo-600" />
+                        <p>Email Address</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.user.email}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <PhoneCall className="h-5 w-5 text-indigo-600" />
+                        <p>Phone Number</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.user.phone}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <MapPin className="h-5 w-5 text-indigo-600" />
+                        <p>Location</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.user.address}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <Signpost className="h-5 w-5 text-indigo-600" />
+                        <p>Zip Code</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.zipCode}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <ScrollText className="h-5 w-5 text-indigo-600" />
+                        <p>VAT Number</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.vat}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <Map className="h-5 w-5 text-indigo-600" />
+                        <p>Area Covered</p>
+                      </div>
+                      <p className="ml-7">{selectedSupplier.areaCovered}</p>
+                      <hr className="mt-1 bg-gray-400 w-full ml-1" />
+                    </div>
+                    <div className="">
+                      <div className=" flex gap-2 items-center">
+                        <Calendar className="h-5 w-5 text-indigo-600" />
+                        <p>Registration Date</p>
+                      </div>
+                      <p className="ml-7">
+                        {new Date(
+                          selectedSupplier.createdAt
+                        ).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+
                   {!selectedSupplier.user.isVerified && (
-                    <div className="flex gap-3">
-                      <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                    <div className="mt-6 flex gap-3">
+                      <Button
+                        className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white"
+                        onClick={() => {
+                          // Handle approval
+                        }}
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
                         Approve Supplier
                       </Button>
-                      <Button variant="destructive" className="flex-1">
+                      <Button
+                        variant="destructive"
+                        className="flex-1"
+                        onClick={() => {
+                          // Handle rejection
+                        }}
+                      >
                         Reject Application
                       </Button>
                     </div>
                   )}
-                </div> */}
-              </div>
-            </DialogContent>
-          )}
+                </div>
+              </>
+            )}
+          </DialogContent>
         </Dialog>
       </div>
     </ScrollArea>

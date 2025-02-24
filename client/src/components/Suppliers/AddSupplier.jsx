@@ -11,7 +11,6 @@ function AddSupplier() {
   const navigate = useNavigate();
   const [addSupplier, { isLoading }] = useAddSupplierMutation();
   const [selectedImage, setSelectedImage] = useState("");
-
   const { refetch } = useGetAllSupplierQuery();
 
   const handleSubmit = async (data) => {
