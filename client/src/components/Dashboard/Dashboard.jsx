@@ -12,6 +12,7 @@ function Dashboard() {
   // const user = useSelector((state) => state.auth.user._id)
   const navigate = useNavigate()
   const { data, isLoading } = useGetDistributorProfileQuery();
+  console.log(data);
   const isFirst = data?.distributor.firstlogin;
   const [open, setOpen] = useState(false);
 
