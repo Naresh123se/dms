@@ -13,6 +13,7 @@ function Dashboard() {
   const navigate = useNavigate()
   const { data, isLoading } = useGetDistributorProfileQuery();
   const isFirst = data?.distributor.firstlogin;
+  console.log(isFirst)
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
