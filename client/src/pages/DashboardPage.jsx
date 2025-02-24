@@ -1,6 +1,6 @@
 import { Sidebar, AdminNav } from "../components";
 import { Outlet } from "react-router-dom";
-const AdminDashboardPage = () => {
+const DashboardPage = () => {
   return (
     <div className="flex">
       <Sidebar />
@@ -12,4 +12,4 @@ const AdminDashboardPage = () => {
   );
 }; 
 
-export default AdminDashboardPage;
+export default DashboardPage;

@@ -11,6 +11,7 @@ distributorRouter.post(
   DistributorController.addDistributor
 );
 distributorRouter.get("/", DistributorController.fetchAllDistributors);
+distributorRouter.get("/distributor-profile",  DistributorController.getDistributorProfile);
 distributorRouter.get("/:id", DistributorController.fetchSingleDistributor);
 distributorRouter.get("/distributor-profile", isAuthenticated, DistributorController.getDistributorProfile);
 distributorRouter.put(

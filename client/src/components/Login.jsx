@@ -35,6 +35,9 @@ const Login = () => {
       }else if (res.user.role === 'admin'){
         navigate('/admin')
       }
+      else if (res.user.role === 'distributor'){
+        navigate('/dashboard')
+      }
       toast.success("Login Successful");
     } catch (error) {
       toast.error("Invalid Email or Password");

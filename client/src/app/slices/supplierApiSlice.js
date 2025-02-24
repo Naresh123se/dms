@@ -25,12 +25,21 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
         url: `${supplier_url}/`,
         method: "GET",
         body: data,
+        credentials: 'include'
+      }),
+    }),
+    getDistributorProfile : builder.query({
+      query: () => ({
+        url: `${supplier_url}/distributor-profile`,
+        method: "GET",
+        credentials: 'include'
       }),
     }),
     getSingleSupplier: builder.query({
       query: ( id) => ({
         url: `${supplier_url}/${id}`,
         method: "GET",
+        credentials: 'include'
       }),
     }),
   }),
@@ -41,4 +50,5 @@ export const {
   useGetAllSupplierQuery,
   useGetSingleSupplierQuery,
   useEditSupplierMutation,
+  useGetDistributorProfileQuery
 } = supplierApiSlice;

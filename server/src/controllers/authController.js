@@ -166,7 +166,7 @@ class AuthController {
     }
   });
 
-  
+
   static changePassword = asyncHandler(async (req, res, next) => {
     try {
       const { currentPassword, newPassword } = req.body;
@@ -192,6 +192,14 @@ class AuthController {
       // Now update the old password with new password
       user.password = newPassword;
       await user.save();
+      const distributor = await Distributor.findOne({ user: user._id });
+      if (distributor) {
+        await Distributor.findByIdAndUpdate(
+          distributor._id,
+          { firstlogin: false },
+          { new: true, runValidators: true }
+        );
+      }
       return res
         .status(200)
         .json({ success: true, message: "Password updated successfully" });
@@ -200,5 +208,6 @@ class AuthController {
     }
   });
 }
+
 
 export default AuthController;

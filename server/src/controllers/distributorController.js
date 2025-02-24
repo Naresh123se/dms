@@ -304,5 +304,21 @@ class DistributorController {
       return next(new ErrorHandler(err.message, 500));
     }
   });
+  
+  static getDistributorProfile = asyncHandler(async (req, res, next) => {
+    // Assuming you want to fetch the first distributor from the DB
+    const distributor = await Distributor.findOne().populate('user');
+  
+    if (!distributor) {
+      return next(new ErrorHandler("Distributor not found", 400));
+    }
+  
+    return res.status(200).json({
+      success: true,
+      message: "Distributor Profile fetched",
+      distributor
+    });
+  });
+  
 }
 export default DistributorController;

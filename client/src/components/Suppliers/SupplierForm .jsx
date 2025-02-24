@@ -1,12 +1,10 @@
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Camera, Image, Plus, User } from "lucide-react";
+import { ArrowLeft, Image, Plus } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Label } from "@radix-ui/react-label";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useState } from "react";
-import { toast } from "react-toastify";
 
 function SupplierForm({
 
@@ -20,7 +18,6 @@ function SupplierForm({
   onImageChange,
 }) {
 
-  // Define initial form values from distributorData
   const initialData1 = {
     name: initialData?.user?.name || "",
     email: initialData?.user?.email || "",
@@ -37,12 +34,9 @@ function SupplierForm({
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: allData, // Use initialData1 here
+    defaultValues: allData, 
   });
 
-  // Log the initial form data to verify
-
-  // const [isEditing, setIsEditing] = useState(false);
 
   const onSubmitForm = async (data) => {
     try {
@@ -53,7 +47,6 @@ function SupplierForm({
     }
   };
 
-  // const handleImageChange = (e) => {
   //   const file = e.target.files[0];
   //   if (file) {
   //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {

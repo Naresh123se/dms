@@ -9,11 +9,9 @@ import {
   XCircle,
   MapPin,
   Warehouse,
-  DollarSign,
   Pencil,
   Package,
   Phone,
-  Paperclip,
   Dock,
 } from "lucide-react";
 import {
