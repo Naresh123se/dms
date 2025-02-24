@@ -6,7 +6,6 @@ import { LogoutButton } from "@/components";
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
-  console.log(user);
 
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
