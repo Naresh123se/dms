@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-
 import { ArrowLeft } from "lucide-react";
 import { toast } from "react-toastify";
-
 import {
   useGetSingleProductQuery,
+  useGetAllProductQuery,
   useEditProductMutation,
 } from "@/app/slices/productApiSlice";
 import Formfield from "./Formfield";
@@ -27,9 +26,10 @@ export default function EditProduct() {
   const [updateProduct, { isLoading: isUpdating }] = useEditProductMutation();
   const {
     data: productData,
+    refetch:editrefetch,
     isLoading: isLoadingProduct,
-    refetch,
   } = useGetSingleProductQuery(id);
+  const { refetch } = useGetAllProductQuery();
 
   const product = productData?.product || {}; // Default to empty object
 
@@ -47,16 +47,14 @@ export default function EditProduct() {
 
   useEffect(() => {
     if (product) {
-      reset(product); 
+      reset(product);
     }
     if (product.images && Array.isArray(product.images)) {
       setExistingImages(product.images.map((img) => img.url)); // Set existing images safely
     } else {
       setExistingImages([]); // Set as empty array if images are undefined
     }
-  }, [product, reset]); 
-  
-
+  }, [product, reset]);
 
   const onSubmit = async (data) => {
     if (imagePreviews.length === 0 && existingImages.length === 0) {
@@ -64,16 +62,18 @@ export default function EditProduct() {
       return;
     }
     try {
-      const updatedData = {
+      const response = await updateProduct({
         ...data,
         id,
         images: [...existingImages, ...imagePreviews], // Combine existing and new images
-      };
-      await updateProduct(updatedData).unwrap();
-      refetch();
-      reset();
-      toast.success("Product entry updated successfully!");
-      navigate("/admin/products");
+      }).unwrap();
+      if (response.success) {
+        refetch();
+        editrefetch();
+        reset();
+        toast.success(response.message);
+        navigate("/admin/products");
+      }
     } catch (error) {
       console.error("Error updating product:", error);
       toast.error(error?.data?.message || "Failed to update product entry");

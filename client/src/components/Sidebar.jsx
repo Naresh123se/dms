@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   LayoutDashboard,
-  Package,
   Truck,
   Users,
   Warehouse,
@@ -11,7 +10,6 @@ import {
   LineChart,
   ChevronRight,
   PackagePlusIcon,
-  LogOut,
 } from "lucide-react";
 import { LogoutButton } from ".";
 
@@ -25,16 +23,10 @@ const Sidebar = () => {
     { icon: PackagePlusIcon, text: "Products", path: "/admin/products" },
     { icon: Truck, text: "Shipments", path: "/shipments" },
     { icon: Users, text: "Customers", path: "/customers" },
-    { icon: Warehouse, text: "Warehouses", path: "/warehouses" },
+    // { icon: Warehouse, text: "Warehouses", path: "/warehouses" },
     { icon: CircleDollarSign, text: "Finance", path: "/finance" },
     { icon: LineChart, text: "Analytics", path: "/analytics" },
   ];
-
-  const handleLogout = () => {
-    // Add actual logout logic here
-    console.log("Logging out...");
-    navigate("/login"); // Redirect to login page
-  };
 
   return (
     <div className="w-72 h-screen border-r border-gray-200 bg-white flex flex-col justify-between">

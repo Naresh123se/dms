@@ -5,9 +5,9 @@ import { ArrowLeft, Image, Plus } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { Label } from "@radix-ui/react-label";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useGetAllSupplierQuery } from "@/app/slices/supplierApiSlice";
 
 function SupplierForm({
-
   initialData,
   initialImage,
   isEdit,
@@ -17,7 +17,6 @@ function SupplierForm({
   selectedImage,
   onImageChange,
 }) {
-
   const initialData1 = {
     name: initialData?.user?.name || "",
     email: initialData?.user?.email || "",
@@ -34,56 +33,19 @@ function SupplierForm({
     reset,
     formState: { errors },
   } = useForm({
-    defaultValues: allData, 
+    defaultValues: allData,
   });
-
+  const { refetch } = useGetAllSupplierQuery();
 
   const onSubmitForm = async (data) => {
     try {
       await onSubmit(data);
       reset();
+      refetch();
     } catch (error) {
       console.log(error);
     }
   };
-
-  //   const file = e.target.files[0];
-  //   if (file) {
-  //     if (!["image/jpeg", "image/png", "image/gif"].includes(file.type)) {
-  //       toast.error("Please upload only JPG, PNG or GIF images");
-  //       return;
-  //     }
-  //     if (file.size > 5 * 1024 * 1024) {
-  //       toast.error("File size should be less than 5MB");
-  //       return;
-  //     }
-  //     const reader = new FileReader();
-  //     reader.onloadend = async () => {
-  //       setSelectedImage(reader.result);
-  //       const data = {
-  //         image: reader.result,
-  //       };
-  //       // Update the image using API CALL TO THE BACKEND
-  //       try {
-  //         // Send the base64 string to the backend
-  //         const response = await updateAvatar(data).unwrap();
-  //         // Handle the response
-  //         if (response.success) {
-  //           toast.success("Profile image updated successfully!");
-  //           // setSelectedImage(response.avatar.url); // Update the displayed image
-  //            refetch();
-  //         } else {
-  //           toast.error("Failed to update profile image");
-  //         }
-  //       } catch (error) {
-  //         toast.error(error.message);
-  //       } finally {
-  //         // setIsEditing(false);
-  //       }
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-50px)] mt-12">
@@ -147,7 +109,7 @@ function SupplierForm({
                     <div className="absolute top-0 left-0 w-full h-full flex justify-center items-center">
                       <div className="relative">
                         <Avatar className="w-32 h-32">
-                        <AvatarImage src={selectedImage || initialImage} />
+                          <AvatarImage src={selectedImage || initialImage} />
                           <AvatarFallback>
                             <Image className="w-12 h-12" />
                           </AvatarFallback>
@@ -163,8 +125,7 @@ function SupplierForm({
                             type="file"
                             className="hidden"
                             accept="image/jpeg,image/png,image/gif"
-                            onChange={  onImageChange
-                            }
+                            onChange={onImageChange}
                           />
                         </Label>
                       </div>
@@ -391,7 +352,7 @@ function SupplierForm({
                   </Button>
                   <Button
                     type="submit"
-                  className="bg-[#2F71F0] hover:bg-[#2F71F0]/90 text-white px-8"
+                    className="bg-[#2F71F0] hover:bg-[#2F71F0]/90 text-white px-8"
                     disabled={isLoading}
                   >
                     {isLoading
