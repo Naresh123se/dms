@@ -25,16 +25,14 @@ const ChangePassword = ({ open, setOpen }) => {
   const onSubmit = async (data) => {
     try {
       const res = await changeData(data);
-      reset()
-      navigate=('/dashboard')
+      reset();
+      navigate("/dashboard");
 
       toast.success(res.data?.message);
     } catch (error) {
       toast.error("Invalid Password");
     }
   };
-
-
 
   return (
     <Dialog
@@ -81,7 +79,9 @@ const ChangePassword = ({ open, setOpen }) => {
             <div className="relative">
               <input
                 type={showPreviousPassword ? "text" : "password"}
-                {...register("currentPassword", { required: "This field is required" })}
+                {...register("currentPassword", {
+                  required: "This field is required",
+                })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Enter previous password"
               />
@@ -90,7 +90,11 @@ const ChangePassword = ({ open, setOpen }) => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-indigo-600"
                 onClick={() => setShowPreviousPassword(!showPreviousPassword)}
               >
-                {showPreviousPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showPreviousPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.currentPassword && (
@@ -108,7 +112,9 @@ const ChangePassword = ({ open, setOpen }) => {
             <div className="relative">
               <input
                 type={showNewPassword ? "text" : "password"}
-                {...register("newPassword", { required: "This field is required" })}
+                {...register("newPassword", {
+                  required: "This field is required",
+                })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 placeholder="Enter new password"
               />
@@ -116,9 +122,12 @@ const ChangePassword = ({ open, setOpen }) => {
                 type="button"
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-indigo-600"
                 onClick={() => setShowNewPassword(!showNewPassword)}
-
               >
-                {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showNewPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.newPassword && (
@@ -149,7 +158,11 @@ const ChangePassword = ({ open, setOpen }) => {
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-indigo-600"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               >
-                {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                {showConfirmPassword ? (
+                  <EyeOff className="w-5 h-5" />
+                ) : (
+                  <Eye className="w-5 h-5" />
+                )}
               </button>
             </div>
             {errors.confirmPassword && (
@@ -160,7 +173,6 @@ const ChangePassword = ({ open, setOpen }) => {
           </div>
 
           {/* Submit Button */}
-
 
           <Button
             type="submit"
