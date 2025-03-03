@@ -22,7 +22,7 @@ import {
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
 
-import { DashboardPage, DistributorPage,  HomePage } from "./pages";
+import { DashboardPage, DistributorPage, HomePage } from "./pages";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminLayout from "./routes/AdminLayout";
 
@@ -139,52 +139,16 @@ const router = createBrowserRouter([
             element: <Distributor />,
           },
           {
-            path: "suppliers",
-            element: (
-              <AdminLayout>
-                <SupplierList />
-              </AdminLayout>
-            ),
-          },
-          {
-            path: "add-supplier",
-            element: (
-              <AdminLayout>
-                <AddSupplier />
-              </AdminLayout>
-            ),
-          },
-          {
-            path: "edit-supplier/:id",
-            element: (
-              <AdminLayout>
-                <EditSupplier />
-              </AdminLayout>
-            ),
-          },
-          {
             path: "inventory",
-            element: (
-              <AdminLayout>
-                <ProductList />
-              </AdminLayout>
-            ),
+            element: <ProductList />,
           },
           {
             path: "add-product",
-            element: (
-              <AdminLayout>
-                <AddProduct />
-              </AdminLayout>
-            ),
+            element: <AddProduct />,
           },
           {
             path: "edit-product/:id",
-            element: (
-              <AdminLayout>
-                <EditProduct />
-              </AdminLayout>
-            ),
+            element: <EditProduct />,
           },
         ],
       },
@@ -199,10 +163,6 @@ const router = createBrowserRouter([
             element: <Dashboard />,
           },
 
-
-
-
-          
           {
             path: "",
             element: (

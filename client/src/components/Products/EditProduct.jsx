@@ -72,7 +72,7 @@ export default function EditProduct() {
         editrefetch();
         reset();
         toast.success(response.message);
-        navigate("/admin/products");
+        navigate("/distributor/inventory");
       }
     } catch (error) {
       console.error("Error updating product:", error);
