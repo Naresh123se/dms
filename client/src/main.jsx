@@ -17,11 +17,12 @@ import {
   EditProduct,
   AdminDashboard,
   PageNotFound,
+  Distributor,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
 
-import { DashboardPage, HomePage } from "./pages";
+import { DashboardPage, DistributorPage,  HomePage } from "./pages";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminLayout from "./routes/AdminLayout";
 
@@ -70,12 +71,12 @@ const router = createBrowserRouter([
         element: <AdminDashboardPage />,
         children: [
           {
-            index: "admin",
+            index: true,
             element: (
               <AdminLayout>
                 <AdminDashboard />
               </AdminLayout>
-          ),
+            ),
           },
           {
             path: "suppliers",
@@ -128,14 +129,14 @@ const router = createBrowserRouter([
         ],
       },
 
-      // DashBoard
+      // Distributor
       {
-        path: "/dashboard",
-        element: <DashboardPage />,
+        path: "/distributor",
+        element: <DistributorPage />,
         children: [
           {
             index: true,
-            element: <Dashboard />,
+            element: <Distributor />,
           },
           {
             path: "suppliers",
@@ -162,7 +163,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "products",
+            path: "inventory",
             element: (
               <AdminLayout>
                 <ProductList />
@@ -179,6 +180,31 @@ const router = createBrowserRouter([
           },
           {
             path: "edit-product/:id",
+            element: (
+              <AdminLayout>
+                <EditProduct />
+              </AdminLayout>
+            ),
+          },
+        ],
+      },
+
+      //Dashboard
+      {
+        path: "/dashboard",
+        element: <DashboardPage />,
+        children: [
+          {
+            index: true,
+            element: <Dashboard />,
+          },
+
+
+
+
+          
+          {
+            path: "",
             element: (
               <AdminLayout>
                 <EditProduct />

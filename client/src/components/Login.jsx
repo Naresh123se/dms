@@ -35,7 +35,7 @@ const Login = () => {
         navigate('/admin')
       }
       else if (res.user.role === 'distributor'){
-        navigate('/dashboard')
+        navigate('/distributor')
       }
       toast.success("Login Successful");
     } catch (error) {

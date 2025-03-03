@@ -15,9 +15,9 @@ const DashboardSidebar = () => {
   const navigate = useNavigate();
 
   const menuItems = [
-    { icon: BarChart3, text: "Dashboard", count: null, path: "/dashboard" },
+    { icon: BarChart3, text: "Dashboard", count: null, path: "/distributor" },
     { icon: ShoppingCart, text: "Orders", count: 24, path: "/orders" },
-    { icon: WarehouseIcon, text: "Inventory", count: 156 },
+    { icon: WarehouseIcon, text: "Inventory", path: "/distributor/inventory" },
     { icon: TruckIcon, text: "Shipments", count: 8 },
     { icon: Users, text: "Customers", count: 43 },
   ];

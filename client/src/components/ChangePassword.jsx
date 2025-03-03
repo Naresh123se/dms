@@ -26,11 +26,10 @@ const ChangePassword = ({ open, setOpen }) => {
     try {
       const res = await changeData(data);
       reset();
-      navigate("/dashboard");
-
+      setOpen(false);
       toast.success(res.data?.message);
     } catch (error) {
-      toast.error("Invalid Password");
+      toast.error(error.message);
     }
   };
 
@@ -38,16 +37,13 @@ const ChangePassword = ({ open, setOpen }) => {
     <Dialog
       open={open}
       onOpenChange={(isOpen) => {
-        // Prevent closing the dialog unless the "X" button is clicked
         if (!isOpen) return;
         setOpen(isOpen);
       }}
       onInteractOutside={(e) => {
-        // Prevent closing when clicking outside
         e.preventDefault();
       }}
       onEscapeKeyDown={(e) => {
-        // Prevent closing when pressing the Esc key
         e.preventDefault();
       }}
     >
@@ -71,7 +67,6 @@ const ChangePassword = ({ open, setOpen }) => {
   `}
         </style>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Previous Password */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
               Previous Password
