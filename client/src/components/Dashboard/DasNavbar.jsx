@@ -1,4 +1,4 @@
-import  { useState } from "react";
+import { useState } from "react";
 import {
   ShoppingCart,
   Package,
@@ -12,8 +12,9 @@ import {
   Truck,
   BarChart3,
 } from "lucide-react";
-
-const NavBar = () => {
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+const DasNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -21,18 +22,19 @@ const NavBar = () => {
     setIsOpen(!isOpen);
   };
 
+  const cartItems = useSelector((state) => state.cart.items);
+  const itemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+
   return (
-    <nav className="bg-indigo-700 shadow-lg">
+    <nav className="bg-[#1E3A8A] shadow-lg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           {/* Logo and brand */}
           <div className="flex items-center">
-            <div className="flex-shrink-0 flex items-center">
+            <Link className="flex-shrink-0 flex items-center">
               <Package className="h-8 w-8 text-white" />
-              <span className="ml-2 text-white font-bold text-lg">
-                RetailConnect
-              </span>
-            </div>
+              <span className="ml-2 text-white font-bold text-lg">DISTRO</span>
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
@@ -45,7 +47,7 @@ const NavBar = () => {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-indigo-600 text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 sm:text-sm transition duration-150 ease-in-out"
+                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-[#1E3A8A]/90 text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 sm:text-sm transition duration-150 ease-in-out"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -54,38 +56,43 @@ const NavBar = () => {
             {/* Navigation Links */}
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <Home className="h-5 w-5 mr-1" />
-             Inventory
+              Inventory
             </a>
-            <a
+            <Link
+              to={"./cart"}
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <ShoppingCart className="h-5 w-5 mr-1" />
-            Cart
-            </a>
+              Cart
+              {itemCount > 0 && (
+                <span className="ml-1 bg-white text-[#1E3A8A]/90 rounded-full h-5 w-5 flex items-center justify-center text-xs font-bold">
+                  {itemCount}
+                </span>
+              )}
+            </Link>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <ClipboardList className="h-5 w-5 mr-1" />
               Orders
             </a>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <Truck className="h-5 w-5 mr-1" />
               Suppliers
             </a>
 
-
             {/* Notification Icon */}
-            <button className="text-gray-200 hover:bg-indigo-600 hover:text-white p-2 rounded-full relative">
+            <button className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white p-2 rounded-full relative">
               <Bell className="h-6 w-6" />
-              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-indigo-700"></span>
+              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#1E3A8A]"></span>
             </button>
 
             {/* User Profile */}
@@ -104,7 +111,7 @@ const NavBar = () => {
           <div className="flex md:hidden items-center">
             <button
               onClick={toggleMenu}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-indigo-600 focus:outline-none"
+              className="inline-flex items-center justify-center p-2 rounded-md text-gray-200 hover:text-white hover:bg-[#1E3A8A]/90 focus:outline-none"
             >
               {isOpen ? (
                 <X className="block h-6 w-6" />
@@ -127,42 +134,42 @@ const NavBar = () => {
               <input
                 type="text"
                 placeholder="Search products..."
-                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-indigo-600 text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 sm:text-sm transition duration-150 ease-in-out"
+                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-[#1E3A8A]/90 text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 sm:text-sm transition duration-150 ease-in-out"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Home className="h-5 w-5 mr-2" />
               Dashboard
             </a>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
               New Order
             </a>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <ClipboardList className="h-5 w-5 mr-2" />
               Order History
             </a>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Truck className="h-5 w-5 mr-2" />
               Suppliers
             </a>
             <a
               href="#"
-              className="text-gray-200 hover:bg-indigo-600 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
+              className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <BarChart3 className="h-5 w-5 mr-2" />
               Reports
@@ -185,4 +192,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default DasNavbar;

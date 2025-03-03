@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
-import { ArrowLeft, Box, Package, Layers } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import productImage from "../../../public/order.png";
@@ -15,12 +15,7 @@ import {
 function AddProduct() {
   const navigate = useNavigate();
   // Dummy stats data (Replace with API data)
-  const stats = {
-    totalProducts: 120,
-    inStock: 95,
-    outOfStock: 25,
-    totalCategories: 10,
-  };
+
   const [imagePreviews, setImagePreviews] = useState([]);
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   const [errorMessage, setErrorMessage] = useState("");

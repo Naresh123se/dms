@@ -18,7 +18,9 @@ import ChangePassword from "./ChangePassword";
 import PageNotFound from "./PageNotFound";
 import DashboardSidebar from "./Distributor/Distributor";
 import Dashboard from "./Dashboard/Dashboard";
-
+import Cart from "./Dashboard/Cart";
+import Checkout from "./Dashboard/Checkout";
+import DasNavbar from "./Dashboard/DasNavbar";
 export {
   Login,
   Register,
@@ -32,12 +34,16 @@ export {
   AddProduct,
   EditSupplier,
   ProductList,
+  DasNavbar,
   EditProduct,
   AdminDashboard,
   Dashboard,
   Distributor,
   PageNotFound,
   ChangePassword,
+  Cart,
+  Checkout,
   DashboardSidebar,
+  
   Footer,
 };

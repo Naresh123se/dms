@@ -18,6 +18,8 @@ import {
   AdminDashboard,
   PageNotFound,
   Distributor,
+  Cart,
+  Checkout,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -162,14 +164,13 @@ const router = createBrowserRouter([
             index: true,
             element: <Dashboard />,
           },
-
           {
-            path: "",
-            element: (
-              <AdminLayout>
-                <EditProduct />
-              </AdminLayout>
-            ),
+            path: "cart",
+            element: <Cart />,
+          },
+          {
+            path: "checkout",
+            element: <Checkout />,
           },
         ],
       },

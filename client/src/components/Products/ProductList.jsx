@@ -18,21 +18,13 @@ import {
 } from "lucide-react";
 import { useGetAllProductQuery } from "@/app/slices/productApiSlice";
 
-const stats = {
-  totalProducts: 120,
-  inStock: 492,
-  outOfStock: 30,
-  totalCategories: 8,
-};
-
 function ProductList() {
   const { data } = useGetAllProductQuery();
   const navigate = useNavigate();
-  console.log(data);
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
   const inStock = allProducts.filter((product) => product?.quantity > 0).length;
-  const outStock = products.length - inStock
+  const outStock = products.length - inStock;
   const categories = new Set(allProducts.map((product) => product.category));
   const categoryCount = categories.size;
 
@@ -134,8 +126,6 @@ function ProductList() {
                       <button
                         className="flex gap-2 bg-blue-100 p-1 rounded-sm shadow-md  hover:bg-blue-200"
                         onClick={() => {
-                          // setIsDialogOpen(false);
-
                           navigate(`/distributor/edit-product/${product._id}`);
                         }}
                       >
