@@ -29,7 +29,7 @@ function ProductList() {
   const categoryCount = categories.size;
 
   return (
-    <ScrollArea className="h-screen">
+    <ScrollArea className="flex-1 h-[calc(100vh-65px)]">
       <div className="mt-10 bg-gray-50">
         <div className="container mx-auto px-6 py-8">
           {/* Header Section */}

@@ -5,22 +5,23 @@ import Activate from "./Activate";
 import Nav from "./Header/Nav/NavBar";
 import Footer from "./Footer/Footer";
 import Sidebar from "./Sidebar";
-import Distributor from "./Distributor/DistributorSidebar";
+import Distributor from "./Distributor/Distributor";
 import SupplierList from "./Suppliers/SupplierList";
 import AddSupplier from "./Suppliers/AddSupplier";
 import EditSupplier from "./Suppliers/EditSupplier";
-import AdminNav from "./AdminNav";
+import AdminNav from "./Admin/AdminNav";
 import AddProduct from "./Products/AddProduct";
 import ProductList from "./Products/ProductList";
 import EditProduct from "./Products/EditProduct";
 import AdminDashboard from "./Admin/AdminDashboard";
 import ChangePassword from "./ChangePassword";
 import PageNotFound from "./PageNotFound";
-import DashboardSidebar from "./Distributor/Distributor";
+import DistributorSidebar from "./Distributor/DistributorSidebar";
 import Dashboard from "./Dashboard/Dashboard";
 import Cart from "./Dashboard/Cart";
 import Checkout from "./Dashboard/Checkout";
 import DasNavbar from "./Dashboard/DasNavbar";
+import DisNavbar from "./Distributor/DisNavbar";
 export {
   Login,
   Register,
@@ -43,7 +44,7 @@ export {
   ChangePassword,
   Cart,
   Checkout,
-  DashboardSidebar,
-  
+  DistributorSidebar,
+  DisNavbar,
   Footer,
 };
