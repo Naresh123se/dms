@@ -22,6 +22,7 @@ import Cart from "./Dashboard/Cart";
 import Checkout from "./Dashboard/Checkout";
 import DasNavbar from "./Dashboard/DasNavbar";
 import DisNavbar from "./Distributor/DisNavbar";
+import Request from "./Request/Request";
 export {
   Login,
   Register,
@@ -46,5 +47,6 @@ export {
   Checkout,
   DistributorSidebar,
   DisNavbar,
+  Request,
   Footer,
 };

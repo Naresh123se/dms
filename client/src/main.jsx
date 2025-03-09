@@ -20,6 +20,7 @@ import {
   Distributor,
   Cart,
   Checkout,
+  Request,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -68,6 +69,7 @@ const router = createBrowserRouter([
         ),
       },
 
+      //Admin
       {
         path: "/admin",
         element: <AdminDashboardPage />,
@@ -125,6 +127,14 @@ const router = createBrowserRouter([
             element: (
               <AdminLayout>
                 <EditProduct />
+              </AdminLayout>
+            ),
+          },
+          {
+            path: "request",
+            element: (
+              <AdminLayout>
+                <Request />
               </AdminLayout>
             ),
           },

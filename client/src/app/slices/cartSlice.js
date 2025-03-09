@@ -1,27 +1,51 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-// Load cart items from localStorage (if available)
-const loadCartFromStorage = () => {
-  const storedCart = localStorage.getItem("cart");
-  return storedCart ? JSON.parse(storedCart) : [];
+// Load cart items from localStorage based on userId
+const loadCartFromStorage = (userId) => {
+  try {
+    if (!userId) return [];
+    const storedCart = localStorage.getItem(`cart_${userId}`);
+    return storedCart ? JSON.parse(storedCart) : [];
+  } catch (error) {
+    console.error("Failed to load cart from localStorage:", error);
+    return [];
+  }
 };
 
-// Initial state for the cart
+// Save cart items to localStorage based on userId
+const saveCartToStorage = (userId, items) => {
+  try {
+    if (!userId) return;
+    localStorage.setItem(`cart_${userId}`, JSON.stringify(items));
+  } catch (error) {
+    console.error("Failed to save cart to localStorage:", error);
+  }
+};
+
+// Initial state
 const initialState = {
-  items: loadCartFromStorage(), // Load items from localStorage
+  userId: JSON.parse(localStorage.getItem("user"))?._id || null, // Auto-load userId
+  items:
+    JSON.parse(
+      localStorage.getItem(
+        `cart_${JSON.parse(localStorage.getItem("user"))?._id}`
+      )
+    ) || [],
 };
 
-// Save cart items to localStorage
-const saveCartToStorage = (items) => {
-  localStorage.setItem("cart", JSON.stringify(items));
-};
-
-// Cart slice to handle adding/removing items
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    // Sync user ID with cart when authenticated
+    setUser(state, action) {
+      const userId = action.payload;
+      state.userId = userId;
+      state.items = loadCartFromStorage(userId); // Load cart for this user
+    },
+
     addToCart: (state, action) => {
+      if (!state.userId) return; // Prevent adding if no user
       const existingItem = state.items.find(
         (item) => item._id === action.payload._id
       );
@@ -30,27 +54,58 @@ const cartSlice = createSlice({
       } else {
         state.items.push({ ...action.payload, quantity: 1 });
       }
-      saveCartToStorage(state.items);
+      saveCartToStorage(state.userId, state.items);
     },
+
     removeFromCart: (state, action) => {
-      state.items = state.items.filter((item) => item._id !== action.payload._id);
-      saveCartToStorage(state.items); // Save updated cart to localStorage
+      if (!state.userId) return;
+      state.items = state.items.filter(
+        (item) => item._id !== action.payload._id
+      );
+      saveCartToStorage(state.userId, state.items);
     },
+
     updateQuantity: (state, action) => {
-      const item = state.items.find((item) => item._id === action.payload._id);
-      if (item) {
-        item.quantity = action.payload.quantity;
+      if (!state.userId) return;
+      const { _id, quantity } = action.payload;
+      const item = state.items.find((item) => item._id === _id);
+      if (item && quantity > 0) {
+        item.quantity = quantity;
+      } else if (item && quantity <= 0) {
+        state.items = state.items.filter((i) => i._id !== _id);
       }
-      saveCartToStorage(state.items);
+      saveCartToStorage(state.userId, state.items);
     },
+
     clearCart: (state) => {
+      if (!state.userId) return;
       state.items = [];
-      saveCartToStorage(state.items); // Clear cart in localStorage
+      saveCartToStorage(state.userId, state.items);
+    },
+
+    // Handle logout (clear user and cart)
+    logout: (state) => {
+      state.userId = null;
+      state.items = [];
     },
   },
 });
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart } =
-  cartSlice.actions;
+// Export actions
+export const {
+  setUser,
+  addToCart,
+  removeFromCart,
+  updateQuantity,
+  clearCart,
+  logout,
+} = cartSlice.actions;
+
+// Selectors
+export const selectCartItemCount = (state) =>
+  state.cart.items.reduce((total, item) => total + (item.quantity || 0), 0);
+
+export const selectCartItems = (state) => state.cart.items;
+export const selectUserId = (state) => state.cart.userId;
 
 export default cartSlice.reducer;

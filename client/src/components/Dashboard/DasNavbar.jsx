@@ -152,8 +152,8 @@ const DasNavbar = () => {
                       <Settings className="mr-2 ml-2 w-4 h-4" />
                       <span className="font-medium text-sm">Settings</span>
                     </DropdownMenuItem>
-                    <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
                   </Link>
+                  <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
                   <DropdownMenuSeparator />
                 </DropdownMenuContent>
               </DropdownMenu>

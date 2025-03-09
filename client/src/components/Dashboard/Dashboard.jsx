@@ -2,6 +2,9 @@ import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/slices/cartSlice";
 import { useGetAllProductQuery } from "@/app/slices/productApiSlice";
 import { ScrollArea } from "../ui/scroll-area";
+import { Button } from "../ui/button";
+import { toast } from "react-toastify";
+import { LucideUnlink } from "lucide-react";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const handleAddToCart = (product) => {
@@ -10,6 +13,39 @@ const Dashboard = () => {
   const { data } = useGetAllProductQuery();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
+
+  const handleRequestSupplier = async () => {
+    try {
+      const res = await supplier().unwrap();
+      if (res.success) {
+        toast.success(res.message);
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(error.data.message || "Failed  Supplier Request");
+    }
+  };
+
+  if (allProducts.length === 0) {
+    return (
+      <>
+        <div className="flex flex-col h-[70vh] text-center justify-center text-gray-600">
+          <p className="flex justify-center">
+            <LucideUnlink className="size-8" />
+          </p>
+          <h2 className="text-2xl font-semibold mb-2">
+            No Suppliers Available
+          </h2>
+          <p className="text-base mb-4">
+            It looks like there are no suppliers at the moment.
+          </p>
+          <div className="">
+            <Button onClick={handleRequestSupplier}>Request a Supplier</Button>
+          </div>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
@@ -43,11 +79,6 @@ const Dashboard = () => {
                   <h3 className="text-lg font-semibold text-gray-800 mb-1 truncate">
                     {product.name}
                   </h3>
-
-                  {/* <div className="flex items-center mb-2">
-                  <div className="flex text-yellow-400">.....</div>
-                  
-                </div> */}
 
                   <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                     {product.description}
