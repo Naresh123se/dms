@@ -166,17 +166,16 @@ class AuthController {
     }
   });
 
-
   static changePassword = asyncHandler(async (req, res, next) => {
     try {
       const { currentPassword, newPassword } = req.body;
       const user = await User.findById(req.user._id).select("+password");
-      const distributorUser = await Distributor.findOne({user:user._id});
-      if(distributorUser){
+      const distributorUser = await Distributor.findOne({ user: user._id });
+      if (distributorUser) {
         await Distributor.findByIdAndUpdate(
-          {id:distributorUser._id},
+          distributorUser._id,
           {
-            firstLogin: false
+            firstLogin: false,
           },
           { new: true, runValidators: true }
         );
@@ -208,6 +207,5 @@ class AuthController {
     }
   });
 }
-
 
 export default AuthController;

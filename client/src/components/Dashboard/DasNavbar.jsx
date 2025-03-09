@@ -28,11 +28,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-
 const DasNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
@@ -78,7 +77,7 @@ const DasNavbar = () => {
               Inventory
             </Link>
             <Link
-              to="/cart"
+              to="cart"
               className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <ShoppingCart className="h-5 w-5 mr-1" />
