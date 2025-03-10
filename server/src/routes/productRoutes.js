@@ -17,6 +17,12 @@ productRouter.get(
   ProductController.fetchAllProducts
 );
 productRouter.get(
+  "/distributor-products",
+  isAuthenticated,
+  authorizeRoles('shop'),
+  ProductController.fetchDistributorProduct
+);
+productRouter.get(
   "/:id",
   isAuthenticated,
   authorizeRoles("distributor"),
@@ -31,14 +37,8 @@ productRouter.put(
 productRouter.patch(
   "/:id",
   isAuthenticated,
-  authorizeRoles('distributor'),
+  authorizeRoles("distributor"),
   ProductController.updateProductStock
 );
-productRouter.get(
-  "/distributor-products",
- ProductController.fetchDistributorProduct
-);
-
-
 
 export default productRouter;

@@ -9,8 +9,6 @@ const router = express.Router();
 
 router.use("/api/v1/user", userRouter);
 router.use("/api/v1/distributor", distributorRouter);
-// router.use("/api/v1/journal", journalRoutes);
-// router.use("/api/v1/admin", adminRouter);
 router.use("/api/v1/product", productRouter);
 router.use("/api/v1/order", orderRouter);
 router.use("/api/v1/admin", adminRouter)
