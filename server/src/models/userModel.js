@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId, 
       ref: "Distributor", 
     },
+    requestDistributor :{
+      type: String,
+      enum:['pending', 'process', 'allocated'],
+      default:"pending"
+    },
     address: {
       type: String,
       required: true,

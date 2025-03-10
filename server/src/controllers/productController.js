@@ -3,7 +3,7 @@ import Product from "../models/productModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 import cloudinary from "cloudinary";
 import Distributor from "../models/distributorModel.js";
-
+import User from "../models/userModel.js"
 
 class ProductController {
   static createProduct = asyncHandler(async (req, res, next) => {
@@ -86,6 +86,23 @@ class ProductController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static fetchDistributorProduct =  asyncHandler(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+      const products = await Product.find({ owner: user.distributor });
+      // Send the products as a response
+      return res.status(200).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
 
   static updateProductDetails = asyncHandler(async (req, res, next) => {
     try {

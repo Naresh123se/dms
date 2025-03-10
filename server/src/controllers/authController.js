@@ -257,6 +257,23 @@ class AuthController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static requestDistributor = asyncHandler(async(req,res,next) =>{
+    try {
+      const user = await User.findById(req.user._id);
+      if(!user){
+        return next(new ErrorHandler("User not found", 400));
+      }
+      user.requestDistributor = "process";
+      await user.save();
+      return res.status(200).json({
+        success:true,
+        messaage: "Distributor requested successfully"
+      })
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
 }
 
 export default AuthController;
