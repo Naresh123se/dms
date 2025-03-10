@@ -18,6 +18,9 @@ import {
   AdminDashboard,
   PageNotFound,
   Distributor,
+  Cart,
+  Checkout,
+  Request,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -66,6 +69,7 @@ const router = createBrowserRouter([
         ),
       },
 
+      //Admin
       {
         path: "/admin",
         element: <AdminDashboardPage />,
@@ -126,6 +130,14 @@ const router = createBrowserRouter([
               </AdminLayout>
             ),
           },
+          {
+            path: "request",
+            element: (
+              <AdminLayout>
+                <Request />
+              </AdminLayout>
+            ),
+          },
         ],
       },
 
@@ -162,14 +174,13 @@ const router = createBrowserRouter([
             index: true,
             element: <Dashboard />,
           },
-
           {
-            path: "",
-            element: (
-              <AdminLayout>
-                <EditProduct />
-              </AdminLayout>
-            ),
+            path: "cart",
+            element: <Cart />,
+          },
+          {
+            path: "checkout",
+            element: <Checkout />,
           },
         ],
       },
