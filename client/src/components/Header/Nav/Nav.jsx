@@ -18,7 +18,7 @@ const Nav = () => {
   const user = useSelector((state) => state.auth.user);
 
   return (
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-white shadow-lg sticky top-0 z-50 md:px-10">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
