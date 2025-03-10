@@ -31,7 +31,7 @@ productRouter.put(
 productRouter.patch(
   "/:id",
   isAuthenticated,
-  authorizeRoles,
+  authorizeRoles('distributor'),
   ProductController.updateProductStock
 );
 productRouter.get("/distributor-products", isAuthenticated, ProductController.fetchDistributorProduct)

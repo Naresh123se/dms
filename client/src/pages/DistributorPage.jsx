@@ -4,10 +4,10 @@ const DistributorPage = () => {
   return (
     <div className="flex">
       {/* <AdminNav /> */}
-      <DistributorSidebar/>
+      <DistributorSidebar />
       <div className=" w-full">
-      <DisNavbar/>
-        
+        <DisNavbar />
+
         <Outlet />
       </div>
     </div>
