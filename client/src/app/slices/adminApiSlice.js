@@ -1,13 +1,13 @@
-import {admin_url } from "../constants";
+import { admin_url } from "../constants";
 import { apiSlice } from "./apiSlice";
 
 export const supplierApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     allocateDistrubitor: builder.mutation({
-      query: (data) => ({
+      query: ({ selectedSupplier: distributorId, userId }) => ({
         url: `${admin_url}/allocate-distributor`,
         method: "PUT",
-        body: data,
+        body: { distributorId, userId },
         credentials: "include",
       }),
     }),
@@ -44,7 +44,5 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
   }),
 });
 
-export const {
-useAllocateDistrubitorMutation,
-useGetAllocationRequestQuery
-} = supplierApiSlice;
+export const { useAllocateDistrubitorMutation, useGetAllocationRequestQuery } =
+  supplierApiSlice;
