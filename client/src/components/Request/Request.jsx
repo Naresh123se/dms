@@ -2,6 +2,7 @@ import { useState } from "react";
 import { CheckCircle, XCircle, Clock, Building2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ScrollArea } from "../ui/scroll-area";
+import { useGetAllocationRequestQuery } from "@/app/slices/adminApiSlice";
 
 function Request() {
   const initialRequests = [
@@ -37,9 +38,14 @@ function Request() {
 
   const supplierOptions = ["Custom", "Supplier A", "Supplier B", "Supplier C"];
 
-  const [requests, setRequests] = useState(initialRequests);
+  // const [requests, setRequests] = useState(initialRequests);
   const [supplierInput, setSupplierInput] = useState({});
   const [selectedSupplier, setSelectedSupplier] = useState({});
+  const { data, isLoading } = useGetAllocationRequestQuery();
+    const products = Array.isArray(data?.users) ? data.users : [];
+    const requests = [...products].reverse();
+
+
 
   const handleApprove = (requestId) => {
     const supplier =
@@ -69,20 +75,20 @@ function Request() {
     );
   };
 
-  const handleReject = (requestId) => {
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.requestId === requestId ? { ...req, status: "rejected" } : req
-      )
-    );
-      toast.error("Please select or enter a supplier name.");
+  // const handleReject = (requestId) => {
+  //   setRequests((prev) =>
+  //     prev.map((req) =>
+  //       req.requestId === requestId ? { ...req, status: "rejected" } : req
+  //     )
+  //   );
+  //     toast.error("Please select or enter a supplier name.");
 
-    // Success toast for rejection
-    toast.success(`Request #${requestId} rejected.`, {
-      position: "top-right",
-      autoClose: 3000,
-    });
-  };
+  //   // Success toast for rejection
+  //   toast.success(`Request #${requestId} rejected.`, {
+  //     position: "top-right",
+  //     autoClose: 3000,
+  //   });
+  // };
 
   const handleSupplierChange = (requestId, value) => {
     setSupplierInput((prev) => ({ ...prev, [requestId]: value }));
