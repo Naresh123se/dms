@@ -57,7 +57,7 @@ class OrderController {
   //   }
   // });
   
-  const createOrder = asyncHandler(async (req, res, next) => {
+  static createOrder = asyncHandler(async (req, res, next) => {
     try {
       const { orderItems, shippingAddress, paymentMethod, distributor } = req.body;
   
@@ -145,7 +145,7 @@ class OrderController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-  
+
   static generateBill = asyncHandler(async (req, res, next) => {
     try {
       const { id } = req.params;
