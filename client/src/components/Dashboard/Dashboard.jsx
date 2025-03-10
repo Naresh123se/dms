@@ -5,7 +5,10 @@ import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { toast } from "react-toastify";
 import { LucideUnlink } from "lucide-react";
-import { useRequestDistributorMutation } from "@/app/slices/userApiSlice";
+import {
+  useGetUserProfileQuery,
+  useRequestDistributorMutation,
+} from "@/app/slices/userApiSlice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const handleAddToCart = (product) => {
@@ -14,6 +17,10 @@ const Dashboard = () => {
   const { data } = useGetAvailableProductQuery();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
+  
+  const { data: userData } = useGetUserProfileQuery();
+  let user = userData?.user || {};
+
 
   const [requestDistributor] = useRequestDistributorMutation();
 
@@ -29,7 +36,7 @@ const Dashboard = () => {
     }
   };
 
-  if (allProducts.length === 0) {
+  if (user.requestDistributor === "pending") {
     return (
       <>
         <div className="flex flex-col h-[70vh] text-center justify-center text-gray-600">
@@ -48,6 +55,9 @@ const Dashboard = () => {
         </div>
       </>
     );
+  }
+  if (user.requestDistributor === "process") {
+    return <p> In process ....</p>;
   }
 
   return (

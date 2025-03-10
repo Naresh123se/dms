@@ -12,6 +12,7 @@ import Distributor from "../models/distributorModel.js";
 
 class AdminController {
   static allocateDistributor = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
     try {
       const { userId, distributorId } = req.body;
       const user = await User.findById(userId);

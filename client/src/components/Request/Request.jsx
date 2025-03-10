@@ -2,103 +2,52 @@ import { useState } from "react";
 import { CheckCircle, XCircle, Clock, Building2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ScrollArea } from "../ui/scroll-area";
-import { useGetAllocationRequestQuery } from "@/app/slices/adminApiSlice";
+import {
+  useGetAllocationRequestQuery,
+  useAllocateDistrubitorMutation,
+} from "@/app/slices/adminApiSlice";
+import { useGetAllSupplierQuery } from "@/app/slices/supplierApiSlice";
 
 function Request() {
-  const initialRequests = [
-    {
-      requestId: "req_001",
-      userId: "user123",
-      status: "pending",
-      supplier: null,
-      timestamp: "2025-03-09T10:00:00Z",
-    },
-    {
-      requestId: "req_002",
-      userId: "user456",
-      status: "pending",
-      supplier: null,
-      timestamp: "2025-03-09T12:00:00Z",
-    },
-    {
-      requestId: "req_003",
-      userId: "user456",
-      status: "pending",
-      supplier: null,
-      timestamp: "2025-03-09T12:00:00Z",
-    },
-    {
-      requestId: "req_004",
-      userId: "user456",
-      status: "pending",
-      supplier: null,
-      timestamp: "2025-03-09T12:00:00Z",
-    },
-  ];
-
-  const supplierOptions = ["Custom", "Supplier A", "Supplier B", "Supplier C"];
-
   // const [requests, setRequests] = useState(initialRequests);
-  const [supplierInput, setSupplierInput] = useState({});
-  const [selectedSupplier, setSelectedSupplier] = useState({});
-  const { data, isLoading } = useGetAllocationRequestQuery();
-    const products = Array.isArray(data?.users) ? data.users : [];
-    const requests = [...products].reverse();
+  const [selectedSupplier, setSelectedSupplier] = useState(" ");
 
+  const { data: suppliersData, isLoading: supplierLoading } =
+    useGetAllSupplierQuery();
+  const suppliers = Array.isArray(suppliersData?.distributors)
+    ? suppliersData.distributors
+    : [];
+  console.log(suppliers);
+  //   const products = Array.isArray(data) ? data : [];
+  // console.log(products);
+  const {
+    data: requestData,
+    isLoading,
+    refetch,
+  } = useGetAllocationRequestQuery();
+  let requests = Array.isArray(requestData?.users) ? requestData.users : [];
+  requests = [...requests].reverse();
 
+  const [allocateDistributor] = useAllocateDistrubitorMutation();
 
-  const handleApprove = (requestId) => {
-    const supplier =
-      selectedSupplier[requestId] === "Custom"
-        ? supplierInput[requestId] || ""
-        : selectedSupplier[requestId] || "";
-    if (!supplier) {
-      toast.error("Please select or enter a supplier name.")
-      return;
+  const handleApprove = async (userId) => {
+    console.log(selectedSupplier, userId);
+    try {
+      const res = await allocateDistributor({
+        selectedSupplier,
+        userId,
+      }).unwrap();
+      if (res.success) {
+        toast.success(res.message);
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.message);
     }
-
-    setRequests((prev) =>
-      prev.map((req) =>
-        req.requestId === requestId
-          ? { ...req, status: "approved", supplier }
-          : req
-      )
-    );
-    setSupplierInput((prev) => ({ ...prev, [requestId]: "" }));
-    setSelectedSupplier((prev) => ({ ...prev, [requestId]: "" }));
-      toast.error("Please select or enter a supplier name.");
-
-
-    // Success toast for approval
-    toast.success(
-      `Request #${requestId} approved and assigned to ${supplier}!`
-    );
   };
 
-  // const handleReject = (requestId) => {
-  //   setRequests((prev) =>
-  //     prev.map((req) =>
-  //       req.requestId === requestId ? { ...req, status: "rejected" } : req
-  //     )
-  //   );
-  //     toast.error("Please select or enter a supplier name.");
-
-  //   // Success toast for rejection
-  //   toast.success(`Request #${requestId} rejected.`, {
-  //     position: "top-right",
-  //     autoClose: 3000,
-  //   });
-  // };
-
-  const handleSupplierChange = (requestId, value) => {
-    setSupplierInput((prev) => ({ ...prev, [requestId]: value }));
-  };
-
-  const handleDropdownChange = (requestId, value) => {
-    setSelectedSupplier((prev) => ({ ...prev, [requestId]: value }));
-    if (value !== "Custom") {
-      setSupplierInput((prev) => ({ ...prev, [requestId]: "" }));
-    }
+  const handleDropdownChange = (value) => {
+    setSelectedSupplier(value);
   };
 
   const getStatusIcon = (status) => {
@@ -153,22 +102,17 @@ function Request() {
                           </span>
                         </div>
                         <h3 className="text-xl font-semibold text-gray-800 mb-1">
-                          Request #{request.requestId}
+                          Request By : {request.name}
                         </h3>
-                        <p className="text-gray-600">
-                          User ID: {request.userId}
-                        </p>
+                        <p className="text-gray-600">Shop ID : {request._id}</p>
+                        <p>Address : {request.address}</p>
+                        <p>Email : {request.email}</p>
                         <p className="text-sm text-gray-500">
                           {new Date(request.timestamp).toLocaleString()}
                         </p>
-                        {request.supplier && (
-                          <p className="mt-2 text-blue-600 font-medium">
-                            Assigned to: {request.supplier}
-                          </p>
-                        )}
                       </div>
 
-                      {request.status === "pending" && (
+                      {request.requestDistributor === "process" && (
                         <div className="mt-4 md:mt-0 flex space-x-3">
                           <button
                             onClick={() => handleReject(request.requestId)}
@@ -178,7 +122,7 @@ function Request() {
                             Reject
                           </button>
                           <button
-                            onClick={() => handleApprove(request.requestId)}
+                            onClick={() => handleApprove(request._id)}
                             className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center"
                           >
                             <CheckCircle className="w-4 h-4 mr-2" />
@@ -188,40 +132,20 @@ function Request() {
                       )}
                     </div>
 
-                    {request.status === "pending" && (
+                    {request.requestDistributor === "process" && (
                       <div className="mt-6 space-y-4">
                         <select
-                          value={selectedSupplier[request.requestId] || ""}
-                          onChange={(e) =>
-                            handleDropdownChange(
-                              request.requestId,
-                              e.target.value
-                            )
-                          }
+                          value={selectedSupplier || ""}
+                          onChange={(e) => handleDropdownChange(e.target.value)}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                         >
                           <option value="">Select a supplier</option>
-                          {supplierOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
+                          {suppliers?.map((option) => (
+                            <option key={option._id} value={option?._id}>
+                              {option?.user.name}
                             </option>
                           ))}
                         </select>
-
-                        {selectedSupplier[request.requestId] === "Custom" && (
-                          <input
-                            type="text"
-                            placeholder="Enter custom supplier name"
-                            value={supplierInput[request.requestId] || ""}
-                            onChange={(e) =>
-                              handleSupplierChange(
-                                request.requestId,
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                          />
-                        )}
                       </div>
                     )}
                   </div>
