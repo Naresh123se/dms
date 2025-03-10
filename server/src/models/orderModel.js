@@ -40,11 +40,6 @@ const orderSchema = mongoose.Schema(
       update_time: { type: String },
       email_address: { type: String },
     },
-    itemsPrice: {
-      type: Number,
-      required: true,
-      default: 0.0,
-    },
     taxPrice: {
       type: Number,
       required: true,
@@ -60,9 +55,14 @@ const orderSchema = mongoose.Schema(
       required: true,
       default: 0.0,
     },
+    status:{
+      type:String,
+      enum: ["pending", "process", "delivered"],
+      default: "pending",
+      required: true,
+    },
     isPaid: {
       type: Boolean,
-      required: true,
       default: false,
     },
     paidAt: {
@@ -70,7 +70,6 @@ const orderSchema = mongoose.Schema(
     },
     isDelivered: {
       type: Boolean,
-      required: true,
       default: false,
     },
     deliveredAt: {

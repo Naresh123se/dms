@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema(
       minlength: [6, "Password must be at least 6 characters"],
       select: false,
     },
+    distributor: { 
+      type: mongoose.Schema.Types.ObjectId, 
+      ref: "Distributor", 
+    },
     address: {
       type: String,
       required: true,
