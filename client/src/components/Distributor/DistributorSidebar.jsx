@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Box,
   Users,
@@ -7,6 +7,7 @@ import {
   ShoppingCart,
   BarChart3,
   TruckIcon,
+  Package,
 } from "lucide-react";
 import { LogoutButton } from "..";
 
@@ -16,7 +17,11 @@ const DashboardSidebar = () => {
 
   const menuItems = [
     { icon: BarChart3, text: "Dashboard", count: null, path: "/distributor" },
-    { icon: WarehouseIcon, text: "Inventories", path: "/distributor/inventory" },
+    {
+      icon: WarehouseIcon,
+      text: "Inventories",
+      path: "/distributor/inventory",
+    },
     { icon: ShoppingCart, text: "Orders", count: 24, path: "/orders" },
     { icon: TruckIcon, text: "Shipments", count: 8 },
     { icon: Users, text: "Customers", count: 43 },
@@ -26,12 +31,12 @@ const DashboardSidebar = () => {
     <div className="w-72 h-screen border-r border-gray-200 bg-white flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-3 p-6 border-b border-gray-100">
-          <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl">
-            <Box className="h-6 w-6 text-white" />
-          </div>
-          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
-            Dashboard
-          </h1>
+          <Link to="/distributor" className="flex-shrink-0 flex items-center">
+            <Package className="h-8 w-8 text-blue-600 mr-3" />
+            <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-blue-800 text-transparent bg-clip-text">
+              DISTRO
+            </h1>
+          </Link>
         </div>
 
         <div className="p-4">

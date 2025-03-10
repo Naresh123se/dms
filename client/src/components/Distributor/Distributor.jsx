@@ -4,14 +4,10 @@ import {
   Filter,
   TruckIcon,
   BoxIcon,
-  PackageSearch,
+
   ShoppingCart,
   Users,
-  BarChart3,
-  Settings,
-  ChevronDown,
-  Bell,
-  UserCircle,
+
 } from "lucide-react";
 import { useGetDistributorProfileQuery } from "@/app/slices/supplierApiSlice";
 
@@ -19,7 +15,6 @@ import { ChangePassword } from "../index";
 import { ScrollArea } from "../ui/scroll-area";
 
 function Dashboard() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("dashboard");
 
   const { data, isLoading } = useGetDistributorProfileQuery();

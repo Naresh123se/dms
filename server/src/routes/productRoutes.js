@@ -19,9 +19,10 @@ productRouter.get(
 productRouter.get(
   "/distributor-products",
   isAuthenticated,
-  authorizeRoles('shop'),
+  authorizeRoles("shop"),
   ProductController.fetchDistributorProduct
 );
+
 productRouter.get(
   "/:id",
   isAuthenticated,
