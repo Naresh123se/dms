@@ -145,6 +145,12 @@ class ProductController {
 
   static updateProductStock = asyncHandler(async (req, res, next) => {
     try {
+      const productId = req.params.id;
+      const {quantity} = req.body;
+      const product = await Product.findByIdAndUpdate(productId, {
+        quantity:quantity
+      },{new:true, runValidators:true})
+      
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

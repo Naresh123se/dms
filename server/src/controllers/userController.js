@@ -23,8 +23,8 @@ const registerUser = asyncHandler(async (req, res, next) => {
     if (!password) {
       return next(new ErrorHandler("Name cannot be empty", 400));
     }
-    if (!shop) {
-      return next(new ErrorHandler("Shop cannot be empty", 400));
+    if (!address) {
+      return next(new ErrorHandler("Address cannot be empty", 400));
     }
     const isEmailExist = await User.findOne({ email });
 

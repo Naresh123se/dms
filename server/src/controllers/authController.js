@@ -80,6 +80,7 @@ class AuthController {
       return next(new ErrorHandler(err.message, 400));
     }
   });
+
   static activation = asyncHandler(async (req, res, next) => {
     try {
       const { activation_code, activation_token } = req.body;
@@ -116,6 +117,7 @@ class AuthController {
       return next(new ErrorHandler(error.message, 400));
     }
   });
+
   static login = asyncHandler(async (req, res, next) => {
     try {
       const { email, password } = req.body;
@@ -151,6 +153,7 @@ class AuthController {
       return next(new ErrorHandler(error.message, 400));
     }
   });
+
   static logout = asyncHandler(async (req, res, next) => {
     try {
       res.cookie("jwt", "", {
@@ -166,21 +169,10 @@ class AuthController {
     }
   });
 
-
   static changePassword = asyncHandler(async (req, res, next) => {
     try {
       const { currentPassword, newPassword } = req.body;
       const user = await User.findById(req.user._id).select("+password");
-      const distributorUser = await Distributor.findOne({user:user._id});
-      if(distributorUser){
-        await Distributor.findByIdAndUpdate(
-          {id:distributorUser._id},
-          {
-            firstLogin: false
-          },
-          { new: true, runValidators: true }
-        );
-      }
       const passwordMatch = user.comparePassword(currentPassword);
       if (!passwordMatch) {
         return next(new ErrorHandler("Password is incorrect"));
@@ -207,7 +199,64 @@ class AuthController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-}
 
+  static updateProfile = asyncHandler(async (req, res, next) => {
+    try {
+      const { name, address, phone, avatar } = req.body;
+      const userId = req.user._id;
+      if (!name && !address && !phone && !avatar) {
+        return next(new ErrorHandler("Atleast one field is required", 400));
+      }
+      // Handle the image upload functionality
+      const uploadedImage = {};
+      if (avatar) {
+        // Upload the image to Cloudinary
+        const result = await cloudinary.v2.uploader.upload(image, {
+          folder: "avatars", // Optional: Save images in a specific folder
+          resource_type: "auto", // Automatically detect the file type
+        });
+        uploadedImage = {
+          public_id: result.public_id,
+          url: result.secure_url,
+        };
+      }
+
+      const user = await User.findByIdAndUpdate(
+        userId,
+        {
+          name: name,
+          address: address,
+          phone: phone,
+          avatar: uploadedImage,
+        },
+        { runValidators: true, new: true }
+      );
+      if (user) {
+        return res.status(200).json({
+          success: true,
+          message: "Profile Updated Successfully",
+        });
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static getProfile = asyncHandler(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(new ErrorHandler("user not found", 400));
+      }
+      return res.status(200).json({
+        success: true,
+        message: "user Profile",
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+}
 
 export default AuthController;
