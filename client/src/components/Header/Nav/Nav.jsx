@@ -1,4 +1,13 @@
-import { LogIn, Menu, Search, Settings, Truck, UserCircle, UserPlus, X } from "lucide-react";
+import {
+  LogIn,
+  Menu,
+  Search,
+  Settings,
+  Truck,
+  UserCircle,
+  UserPlus,
+  X,
+} from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -103,11 +112,22 @@ const Nav = () => {
                       <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
                     </DropdownMenuContent>
                   </DropdownMenu>
-                  <Link to="/dashboard">
-                    <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
-                      Dashboard
-                    </Button>
-                  </Link>
+
+                  {user?.role === "shop" ? (
+                    <Link to="/dashboard">
+                      <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
+                        Dashboard
+                      </Button>
+                    </Link>
+                  ) : user?.role === "distributor" ? (
+                    <Link to="/distributor">
+                      <Button className="bg-indigo-600 text-white hover:bg-indigo-700">
+                        Dashboard
+                      </Button>
+                    </Link>
+                  ) : (
+                    ""
+                  )}
                 </div>
               )}
             </div>

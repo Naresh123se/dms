@@ -1,6 +1,7 @@
 import { asyncHandler } from "../middlewares/asyncHandler.js";
 import Distributor from "../models/distributorModel.js";
 import Order from "../models/orderModel.js";
+import Product from "../models/productModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 class OrderController {
   // static createOrder = asyncHandler(async (req, res, next) => {
