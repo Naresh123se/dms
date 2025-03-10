@@ -1,22 +1,25 @@
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/slices/cartSlice";
-import { useGetAllProductQuery } from "@/app/slices/productApiSlice";
+import { useGetAvailableProductQuery } from "@/app/slices/productApiSlice";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { toast } from "react-toastify";
 import { LucideUnlink } from "lucide-react";
+import { useRequestDistributorMutation } from "@/app/slices/userApiSlice";
 const Dashboard = () => {
   const dispatch = useDispatch();
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
-  const { data } = useGetAllProductQuery();
+  const { data } = useGetAvailableProductQuery();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
 
+  const [requestDistributor] = useRequestDistributorMutation();
+
   const handleRequestSupplier = async () => {
     try {
-      const res = await supplier().unwrap();
+      const res = await requestDistributor().unwrap();
       if (res.success) {
         toast.success(res.message);
       }
