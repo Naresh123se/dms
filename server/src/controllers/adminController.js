@@ -23,6 +23,7 @@ class AdminController {
         return next(new ErrorHandler("Distributor not found", 400));
       }
       user.distributor = distributor._id;
+      user.requestDistributor = "allocated";
       await user.save();
       return res.status(200).json({
         success: true,
@@ -32,6 +33,27 @@ class AdminController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+  static fetchDistributorAllocationRequest = asyncHandler(
+    async (req, res, next) => {
+      try {
+        
+        const users = await User.find({requestDistributor:"process"})
+        if(!users){
+          return res.status(200).json({
+            success:true,
+            message: "No allocation request found"
+          })
+        }
+        return res.status(200).json({
+          success: true,
+          message: "Distributor allocation request fetched successfully",
+          users
+        });
+      } catch (error) {
+        return next(new ErrorHandler(error.message, 500));
+      }
+    }
+  );
 }
 
 export default AdminController;

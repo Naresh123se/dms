@@ -34,5 +34,8 @@ productRouter.patch(
   authorizeRoles,
   ProductController.updateProductStock
 );
+productRouter.get("/distributor-products", isAuthenticated, ProductController.fetchDistributorProduct)
+
+
 
 export default productRouter;

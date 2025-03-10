@@ -23,5 +23,5 @@ authRouter.put(
   AuthController.updateProfile
 );
 authRouter.get("/get-profile", isAuthenticated, AuthController.getProfile);
-
+authRouter.put("/request-distributor", isAuthenticated, AuthController.requestDistributor)
 export default authRouter;

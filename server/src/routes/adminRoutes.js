@@ -7,7 +7,7 @@ const adminRouter = express.Router();
 
 // ************************* AUTHENTICATION ROUTES **********************
 
-// adminRouter.post("/register-distributor", AdminController.Registration);
-
+adminRouter.put("/allocate-distributor", isAuthenticated, authorizeRoles('admin'), AdminController.allocateDistributor);
+adminRouter.get("/allocation-request", isAuthenticated, authorizeRoles('admin'), AdminController.fetchDistributorAllocationRequest)
 
 export default adminRouter;
