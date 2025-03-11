@@ -2,6 +2,7 @@ import { asyncHandler } from "../middlewares/asyncHandler.js";
 import Distributor from "../models/distributorModel.js";
 import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
+import User from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 class OrderController {
   // static createOrder = asyncHandler(async (req, res, next) => {
@@ -61,34 +62,38 @@ class OrderController {
 
   static createOrder = asyncHandler(async (req, res, next) => {
     try {
-      const { orderItems, shippingAddress, paymentMethod, distributor } =
-        req.body;
-
+      const {
+        orderItems,
+        shippingAddress,
+        paymentMethod,
+        taxPrice,
+        shippingPrice,
+        totalPrice,
+      } = req.body;
       // Check if orderItems is empty
       if (!orderItems || orderItems.length === 0) {
         return next(new ErrorHandler("No order items", 400));
       }
 
-      // Check if the distributor exists
-      const distributorExists = await Distributor.findById(distributor);
-      if (!distributorExists) {
-        return next(new ErrorHandler("Distributor not found", 404));
-      }
+      // // Check if the distributor exists
+      // const distributorExists = await Distributor.findById(distributor);
+      // if (!distributorExists) {
+      //   return next(new ErrorHandler("Distributor not found", 404));
+      // }
 
-      // Check if the user is assigned to the distributor
-      const userAssignedToDistributor = distributorExists.shopKeepers.includes(
-        req.user._id
-      );
-      if (!userAssignedToDistributor) {
-        return next(
-          new ErrorHandler("You are not assigned to this distributor", 403)
-        );
-      }
+      // // Check if the user is assigned to the distributor
+      // const userAssignedToDistributor = distributorExists.shopKeepers.includes(
+      //   req.user._id
+      // );
+      // if (!userAssignedToDistributor) {
+      //   return next(
+      //     new ErrorHandler("You are not assigned to this distributor", 403)
+      //   );
+      // }
 
       // Get the ordered items from the database
       const itemsFromDB = await Product.find({
-        _id: { $in: orderItems.map((x) => x._id) },
-        distributor: distributor,
+        _id: { $in: orderItems.map((x) => x.product) },
       });
 
       // Check if all products are from the specified distributor
@@ -104,11 +109,11 @@ class OrderController {
       // Map over the order items and use the price from our items from database
       const dbOrderItems = orderItems.map((itemFromClient) => {
         const matchingItemFromDB = itemsFromDB.find(
-          (itemFromDB) => itemFromDB._id.toString() === itemFromClient._id
+          (itemFromDB) => itemFromDB._id.toString() === itemFromClient.product
         );
 
         // Check if the product is in stock
-        if (matchingItemFromDB.countInStock < itemFromClient.qty) {
+        if (matchingItemFromDB.quantity < itemFromClient.qty) {
           return next(
             new ErrorHandler(
               `Not enough stock for ${matchingItemFromDB.name}`,
@@ -119,25 +124,24 @@ class OrderController {
 
         return {
           ...itemFromClient,
-          product: itemFromClient._id,
+          product: itemFromClient.product,
           price: matchingItemFromDB.price,
-          distributor: distributor,
           _id: undefined,
         };
       });
 
       // Calculate prices
-      const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
-        calcPrices(dbOrderItems);
+      // const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
+      //   calcPrices(dbOrderItems);
 
       // Create the order
+      const user = await User.findById(req.user._id);
       const order = new Order({
         orderItems: dbOrderItems,
         user: req.user._id,
-        distributor: distributor,
+        distributor: user.distributor,
         shippingAddress,
         paymentMethod,
-        itemsPrice,
         taxPrice,
         shippingPrice,
         totalPrice,
@@ -149,7 +153,7 @@ class OrderController {
       // Update the stock for each product
       for (const item of dbOrderItems) {
         const product = await Product.findById(item.product);
-        product.countInStock -= item.qty;
+        product.quantity -= item.qty;
         await product.save();
       }
 
@@ -203,8 +207,10 @@ class OrderController {
   static getShopOrders = asyncHandler(async (req, res, next) => {
     try {
       // Fetch orders where the logged-in user is the 'user'
-      const orders = await Order.find({ user: req.user._id })
-        .populate("distributor", "name email") // Populate distributor details (only name and email)
+      const orders = await Order.find({ user: req.user._id }).populate(
+        "distributor",
+        "name email"
+      ); // Populate distributor details (only name and email)
 
       // Send the orders as a response
       res.status(200).json({

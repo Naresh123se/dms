@@ -22,6 +22,7 @@ import Cart from "./Dashboard/Cart";
 import Checkout from "./Dashboard/Checkout";
 import DasNavbar from "./Dashboard/DasNavbar";
 import DisNavbar from "./Distributor/DisNavbar";
+import ShopOrders from './Dashboard/ShopOrders'
 import Request from "./Request/Request";
 export {
   Login,
@@ -49,4 +50,5 @@ export {
   DisNavbar,
   Request,
   Footer,
+  ShopOrders
 };

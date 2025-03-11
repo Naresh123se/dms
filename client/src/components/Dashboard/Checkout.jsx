@@ -1,37 +1,57 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { CreditCard, Truck, CheckCircle } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { clearCart } from "@/app/slices/cartSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
+import { useGetUserProfileQuery } from "@/app/slices/userApiSlice";
+import { useCreateOrderMutation } from "@/app/slices/orderApiSlice";
+import { toast } from "react-toastify";
 
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.items);
+  const { data: userData } = useGetUserProfileQuery();
+  const user = userData?.user;
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [orderComplete, setOrderComplete] = useState(false);
+
+  const [createOrder] = useCreateOrderMutation();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset
   } = useForm({
     defaultValues: {
-      firstName: "",
-      lastName: "",
+      shopName: "",
       email: "",
+      phoneNumber: "",
       address: "",
       city: "",
       state: "",
       zipCode: "",
-      cardName: "",
-      cardNumber: "",
-      expDate: "",
-      cvv: "",
     },
   });
+
+  // Update form when user data is available
+  useEffect(() => {
+    if (user) {
+      reset({
+        shopName: user.name || "",
+        email: user.email || "",
+        phoneNumber: user.phone || "",
+        address: user.address || "",
+        city: user.city || "",
+        state: user.state || "",
+        zipCode: user.zipCode || "",
+      });
+    }
+  }, [user, reset]);
 
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
@@ -41,15 +61,55 @@ const Checkout = () => {
   const tax = totalPrice * 0.13;
   const orderTotal = totalPrice + shipping + tax;
 
-  const onSubmit = (data) => {
-    setIsSubmitting(true);
+  const onSubmit = async (formData) => {
+    try {
+      setIsSubmitting(true);
 
-    // Simulate order processing
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setOrderComplete(true);
+      // Transform cart items to match the complete order model structure
+      const orderItems = cartItems.map(item => ({
+        name: item.name,
+        qty: item.quantity,
+        image: item.images[0]?.url || "",
+        price: item.price,
+        product: item._id, // This should be the MongoDB ObjectId of the product
+      }));
+
+      const orderData = {
+        orderItems,
+        shippingAddress: {
+          address: formData.address,
+          city: formData.city,
+          postalCode: formData.zipCode,
+          country: "Nepal", // Assuming the country is Nepal since using Khalti
+          phoneNumber: formData.phoneNumber,
+        },
+        paymentMethod: "Khalti",
+        paymentResult: {
+          id: "", // Will be populated after Khalti payment
+          status: "pending",
+          update_time: new Date().toISOString(),
+          email_address: formData.email,
+        },
+        taxPrice: tax,
+        shippingPrice: shipping,
+        totalPrice: orderTotal,
+        status: "pending",
+        isPaid: false,
+        isDelivered: false,
+        distributor: cartItems[0]?.distributor, // Assuming all items are from same distributor
+      };
+
+      const response = await createOrder(orderData).unwrap();
+      
       dispatch(clearCart());
-    }, 2000);
+      setOrderComplete(true);
+      toast.success("Order placed successfully!");
+      
+    } catch (err) {
+      toast.error(err?.data?.message || "Failed to create order");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (orderComplete) {
@@ -61,7 +121,7 @@ const Checkout = () => {
             Order Confirmed!
           </h2>
           <p className="text-gray-600 mb-4">
-            Thank you for your purchase. Your order is on its way!
+            Thank you for your purchase. Your order is being processed!
           </p>
           <p className="text-gray-500 mb-8">
             Check your email for order details.
@@ -70,7 +130,7 @@ const Checkout = () => {
             to="/"
             className="inline-block bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-all duration-200 transform hover:-translate-y-1"
           >
-            Shop More
+            Continue Shopping
           </Link>
         </div>
       </div>
@@ -82,7 +142,7 @@ const Checkout = () => {
       <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4 py-16">
         <div className="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
           <h2 className="text-3xl font-bold text-gray-800 mb-4">
-            Cart is Empty
+            Your Cart is Empty
           </h2>
           <p className="text-gray-600 mb-8">
             Add some items to your cart to proceed with checkout.
@@ -99,7 +159,7 @@ const Checkout = () => {
   }
 
   return (
-    <div className=" bg-gray-100 pt-5 px-4 sm:px-6 lg:px-8">
+    <div className="bg-gray-100 pt-5 px-4 sm:px-6 lg:px-8">
       <h1 className="text-4xl font-extrabold text-gray-900 mb-5 text-center tracking-tight">
         Checkout
       </h1>
@@ -169,7 +229,7 @@ const Checkout = () => {
                 </div>
                 <div className="flex items-center text-sm text-gray-600">
                   <CreditCard className="h-5 w-5 mr-2 text-indigo-600" />
-                  <p>All major credit cards accepted</p>
+                  <p>Secure payment with Khalti</p>
                 </div>
               </div>
             </div>
@@ -184,53 +244,30 @@ const Checkout = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
                       <label
-                        htmlFor="firstName"
+                        htmlFor="shopName"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        First Name
+                        Shop Name
                       </label>
                       <input
-                        id="firstName"
-                        {...register("firstName", {
-                          required: "First name is required",
+                        id="shopName"
+                        {...register("shopName", {
+                          required: "Shop Name is required",
                         })}
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.firstName
+                          errors.shopName
                             ? "border-red-500"
                             : "border-gray-300"
                         }`}
                       />
-                      {errors.firstName && (
+                      {errors.shopName && (
                         <p className="mt-2 text-xs text-red-500">
-                          {errors.firstName.message}
+                          {errors.shopName.message}
                         </p>
                       )}
                     </div>
 
                     <div>
-                      <label
-                        htmlFor="lastName"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Last Name
-                      </label>
-                      <input
-                        id="lastName"
-                        {...register("lastName", {
-                          required: "Last name is required",
-                        })}
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.lastName ? "border-red-500" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.lastName && (
-                        <p className="mt-2 text-xs text-red-500">
-                          {errors.lastName.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="md:col-span-2">
                       <label
                         htmlFor="email"
                         className="block text-sm font-medium text-gray-700 mb-2"
@@ -254,6 +291,35 @@ const Checkout = () => {
                       {errors.email && (
                         <p className="mt-2 text-xs text-red-500">
                           {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="phoneNumber"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        id="phoneNumber"
+                        type="tel"
+                        {...register("phoneNumber", {
+                          required: "Phone number is required",
+                          pattern: {
+                            value: /^[0-9]{10}$/,
+                            message: "Please enter a valid 10-digit phone number",
+                          },
+                        })}
+                        placeholder="1234567890"
+                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
+                          errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                        }`}
+                      />
+                      {errors.phoneNumber && (
+                        <p className="mt-2 text-xs text-red-500">
+                          {errors.phoneNumber.message}
                         </p>
                       )}
                     </div>
@@ -356,123 +422,24 @@ const Checkout = () => {
                   </div>
 
                   <h2 className="text-xl font-semibold text-gray-800 mb-6">
-                    Payment
+                    Payment Method
                   </h2>
-                  {/* <div className="grid grid-cols-1 gap-6 mb-8">
-                  <div>
-                    <label
-                      htmlFor="cardName"
-                      className="block text-sm font-medium text-gray-700 mb-2"
+                  <div className="mb-8">
+                    <Button
+                      type="button"
+                      className="w-full bg-[#5C2D91] hover:bg-[#4A2275] text-white"
+                      onClick={() => {
+                        // Implement Khalti payment integration here
+                        toast.info("Khalti payment integration coming soon!");
+                      }}
                     >
-                      Name on Card
-                    </label>
-                    <input
-                      id="cardName"
-                      {...register("cardName", {
-                        required: "Name on card is required",
-                      })}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                        errors.cardName ? "border-red-500" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.cardName && (
-                      <p className="mt-2 text-xs text-red-500">
-                        {errors.cardName.message}
-                      </p>
-                    )}
+                      Pay with Khalti
+                    </Button>
                   </div>
-
-                  <div>
-                    <label
-                      htmlFor="cardNumber"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Card Number
-                    </label>
-                    <input
-                      id="cardNumber"
-                      {...register("cardNumber", {
-                        required: "Card number is required",
-                        pattern: {
-                          value: /^\d{16}$/,
-                          message: "Card number must be 16 digits",
-                        },
-                      })}
-                      placeholder="XXXX XXXX XXXX XXXX"
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                        errors.cardNumber ? "border-red-500" : "border-gray-300"
-                      }`}
-                    />
-                    {errors.cardNumber && (
-                      <p className="mt-2 text-xs text-red-500">
-                        {errors.cardNumber.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label
-                        htmlFor="expDate"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        Expiration Date
-                      </label>
-                      <input
-                        id="expDate"
-                        {...register("expDate", {
-                          required: "Expiration date is required",
-                          pattern: {
-                            value: /^\d{2}\/\d{2}$/,
-                            message: "Use format MM/YY",
-                          },
-                        })}
-                        placeholder="MM/YY"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.expDate ? "border-red-500" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.expDate && (
-                        <p className="mt-2 text-xs text-red-500">
-                          {errors.expDate.message}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
-                      <label
-                        htmlFor="cvv"
-                        className="block text-sm font-medium text-gray-700 mb-2"
-                      >
-                        CVV
-                      </label>
-                      <input
-                        id="cvv"
-                        {...register("cvv", {
-                          required: "CVV is required",
-                          pattern: {
-                            value: /^\d{3,4}$/,
-                            message: "CVV must be 3 or 4 digits",
-                          },
-                        })}
-                        placeholder="XXX"
-                        className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.cvv ? "border-red-500" : "border-gray-300"
-                        }`}
-                      />
-                      {errors.cvv && (
-                        <p className="mt-2 text-xs text-red-500">
-                          {errors.cvv.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </div> */}
-                  <Button>Khalti</Button>
 
                   <div className="flex justify-between items-center">
                     <Link
-                      to="../cart"
+                      to="/cart"
                       className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors duration-200"
                     >
                       Back to Cart
@@ -486,7 +453,7 @@ const Checkout = () => {
                     >
                       {isSubmitting
                         ? "Processing..."
-                        : `Pay $${orderTotal.toFixed(2)}`}
+                        : `Complete Order ($${orderTotal.toFixed(2)})`}
                     </button>
                   </div>
                 </form>

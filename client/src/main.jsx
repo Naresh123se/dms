@@ -21,6 +21,7 @@ import {
   Cart,
   Checkout,
   Request,
+  ShopOrders
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -181,6 +182,10 @@ const router = createBrowserRouter([
           {
             path: "checkout",
             element: <Checkout />,
+          },
+          {
+            path: "orders",
+            element: <ShopOrders />,
           },
         ],
       },

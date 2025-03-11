@@ -19,6 +19,6 @@ orderRouter.get(
   OrderController.getDistributorsOrders
 );
 
-orderRouter.get("/get-orders/shop", isAuthenticated, authorizeRoles("shop", OrderController.getShopOrders))
+orderRouter.get("/get-orders/shop", isAuthenticated, authorizeRoles("shop") , OrderController.getShopOrders)
 
 export default orderRouter;
