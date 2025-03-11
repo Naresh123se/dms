@@ -8,6 +8,7 @@ import User from "../models/userModel.js";
 import Distributor from "../models/distributorModel.js";
 import mongoose from "mongoose";
 import cloudinary from "cloudinary";
+import crypto from 'crypto'
 
 class DistributorController {
   static addDistributor = asyncHandler(async (req, res, next) => {
@@ -19,7 +20,6 @@ class DistributorController {
       const {
         name,
         email,
-        password,
         address,
         phone,
         avatar,
@@ -38,7 +38,6 @@ class DistributorController {
       if (
         !name ||
         !email ||
-        !password ||
         !phone ||
         !address ||
         !zipCode ||
@@ -49,7 +48,8 @@ class DistributorController {
           new ErrorHandler("Please fill in all required fields.", 400)
         );
       }
-
+      // generate random password
+      const password = crypto.randomBytes(5).toString("hex").toUpperCase();
       // Check if the distributor already exists
       const existsDistributor = await User.findOne({ email }).session(session);
       if (existsDistributor) {
@@ -115,7 +115,7 @@ class DistributorController {
       const mailData = {
         name: distributorUser[0].name,
         email: distributorUser[0].email,
-        password: password,
+        OneTimePassword: password,
       };
 
       const __filename = fileURLToPath(import.meta.url);
@@ -285,18 +285,20 @@ class DistributorController {
     }
   });
 
-  static getDistributorProfile = asyncHandler(async(req,res,next) =>{
+  static getDistributorProfile = asyncHandler(async (req, res, next) => {
     const id = req.user?._id;
-    const distributor = await Distributor.findOne({user:id}).populate('user')
-    if(!distributor){
-      return next(new ErrorHandler("Distributor not found", 404))
+    const distributor = await Distributor.findOne({ user: id }).populate(
+      "user"
+    );
+    if (!distributor) {
+      return next(new ErrorHandler("Distributor not found", 404));
     }
     return res.status(200).json({
-      success:true,
+      success: true,
       message: "Distributor Profile fetched",
-      distributor
-    })
-  })
+      distributor,
+    });
+  });
 
   static deleteDistributor = asyncHandler(async (req, res, next) => {
     try {
@@ -319,8 +321,5 @@ class DistributorController {
       distributor,
     });
   });
-
-  
-
 }
 export default DistributorController;
