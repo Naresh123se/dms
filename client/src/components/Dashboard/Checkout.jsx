@@ -25,7 +25,7 @@ const Checkout = () => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
   } = useForm({
     defaultValues: {
       shopName: "",
@@ -57,16 +57,15 @@ const Checkout = () => {
     (total, item) => total + item.price * item.quantity,
     0
   );
-  const shipping = 5.99;
   const tax = totalPrice * 0.13;
-  const orderTotal = totalPrice + shipping + tax;
+  const orderTotal = totalPrice + tax;
 
   const onSubmit = async (formData) => {
     try {
       setIsSubmitting(true);
 
       // Transform cart items to match the complete order model structure
-      const orderItems = cartItems.map(item => ({
+      const orderItems = cartItems.map((item) => ({
         name: item.name,
         qty: item.quantity,
         image: item.images[0]?.url || "",
@@ -91,7 +90,7 @@ const Checkout = () => {
           email_address: formData.email,
         },
         taxPrice: tax,
-        shippingPrice: shipping,
+
         totalPrice: orderTotal,
         status: "pending",
         isPaid: false,
@@ -100,11 +99,10 @@ const Checkout = () => {
       };
 
       const response = await createOrder(orderData).unwrap();
-      
+
       dispatch(clearCart());
       setOrderComplete(true);
       toast.success("Order placed successfully!");
-      
     } catch (err) {
       toast.error(err?.data?.message || "Failed to create order");
     } finally {
@@ -204,10 +202,7 @@ const Checkout = () => {
                     <p>Subtotal</p>
                     <p>${totalPrice.toFixed(2)}</p>
                   </div>
-                  <div className="flex justify-between text-sm text-gray-600">
-                    <p>Shipping</p>
-                    <p>${shipping.toFixed(2)}</p>
-                  </div>
+
                   <div className="flex justify-between text-sm text-gray-600">
                     <p>Tax (13%)</p>
                     <p>${tax.toFixed(2)}</p>
@@ -218,28 +213,14 @@ const Checkout = () => {
                   </div>
                 </div>
               </div>
-
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">
-                  Shipping & Payment
-                </h2>
-                <div className="flex items-center text-sm text-gray-600 mb-3">
-                  <Truck className="h-5 w-5 mr-2 text-indigo-600" />
-                  <p>Free shipping on orders over $100</p>
-                </div>
-                <div className="flex items-center text-sm text-gray-600">
-                  <CreditCard className="h-5 w-5 mr-2 text-indigo-600" />
-                  <p>Secure payment with Khalti</p>
-                </div>
-              </div>
             </div>
 
             {/* Checkout Form */}
             <div className="lg:col-span-2">
               <div className="bg-white rounded-xl shadow-lg p-8">
                 <form onSubmit={handleSubmit(onSubmit)}>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-6">
-                    Shipping Information
+                  <h2 className="text-xl font-semibold text-gray-800 mb-4">
+                    Supplier information
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <div>
@@ -255,9 +236,7 @@ const Checkout = () => {
                           required: "Shop Name is required",
                         })}
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.shopName
-                            ? "border-red-500"
-                            : "border-gray-300"
+                          errors.shopName ? "border-red-500" : "border-gray-300"
                         }`}
                       />
                       {errors.shopName && (
@@ -309,12 +288,15 @@ const Checkout = () => {
                           required: "Phone number is required",
                           pattern: {
                             value: /^[0-9]{10}$/,
-                            message: "Please enter a valid 10-digit phone number",
+                            message:
+                              "Please enter a valid 10-digit phone number",
                           },
                         })}
                         placeholder="1234567890"
                         className={`w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all duration-200 ${
-                          errors.phoneNumber ? "border-red-500" : "border-gray-300"
+                          errors.phoneNumber
+                            ? "border-red-500"
+                            : "border-gray-300"
                         }`}
                       />
                       {errors.phoneNumber && (
@@ -323,6 +305,12 @@ const Checkout = () => {
                         </p>
                       )}
                     </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 ">
+                    <h2 className="text-xl font-semibold text-gray-800 ">
+                      Shipping address
+                    </h2>
 
                     <div className="md:col-span-2">
                       <label
@@ -439,7 +427,7 @@ const Checkout = () => {
 
                   <div className="flex justify-between items-center">
                     <Link
-                      to="/cart"
+                      to="../cart"
                       className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors duration-200"
                     >
                       Back to Cart

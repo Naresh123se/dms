@@ -5,7 +5,6 @@ import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
 class OrderController {
-
   static createOrder = asyncHandler(async (req, res, next) => {
     try {
       const {
@@ -76,11 +75,6 @@ class OrderController {
         };
       });
 
-      // Calculate prices
-      // const { itemsPrice, taxPrice, shippingPrice, totalPrice } =
-      //   calcPrices(dbOrderItems);
-
-      // Create the order
       const user = await User.findById(req.user._id);
       const order = new Order({
         orderItems: dbOrderItems,
@@ -89,7 +83,6 @@ class OrderController {
         shippingAddress,
         paymentMethod,
         taxPrice,
-        shippingPrice,
         totalPrice,
       });
 
