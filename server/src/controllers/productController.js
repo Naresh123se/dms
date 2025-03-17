@@ -94,8 +94,8 @@ class ProductController {
         return next(new ErrorHandler("user not found", 400));
       }
       let products;
-      if (user.role === "user") {
-        products = await Product.find({ owner: user.distributor });
+      if (user.role === "shop") {
+        products = await Product.find({ owner: user.distributor }).populate("owner");
       } else if (user.role === "distributor") {
         const distributor = await Distributor.findOne({ user: req.user._id });
         if (!distributor) {

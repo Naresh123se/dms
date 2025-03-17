@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 import { addToCart } from "@/app/slices/cartSlice";
-import { useGetAvailableProductQuery } from "@/app/slices/productApiSlice";
+import { useGetDistributorProductsQuery } from "@/app/slices/productApiSlice";
 import { ScrollArea } from "../ui/scroll-area";
 import { Button } from "../ui/button";
 import { toast } from "react-toastify";
@@ -14,13 +14,13 @@ const Dashboard = () => {
   const handleAddToCart = (product) => {
     dispatch(addToCart(product));
   };
-  const { data } = useGetAvailableProductQuery();
+  const { data } = useGetDistributorProductsQuery();
+  console.log(data);
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
-  
+
   const { data: userData } = useGetUserProfileQuery();
   let user = userData?.user || {};
-
 
   const [requestDistributor] = useRequestDistributorMutation();
 
