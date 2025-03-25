@@ -17,10 +17,9 @@ const Dashboard = () => {
   const { data } = useGetAvailableProductQuery();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
-  
-  const { data: userData } = useGetUserProfileQuery();
-  let user = userData?.user || {};
 
+  const { data: userData, refetch } = useGetUserProfileQuery();
+  let user = userData?.user || {};
 
   const [requestDistributor] = useRequestDistributorMutation();
 
@@ -28,11 +27,12 @@ const Dashboard = () => {
     try {
       const res = await requestDistributor().unwrap();
       if (res.success) {
-        toast.success(res.message);
+        toast.success(res.messaage);
+        refetch();
       }
     } catch (error) {
       console.log(error);
-      toast.error(error.data.message || "Failed  Supplier Request");
+      toast.error(error.data.messaage || "Failed  Supplier Request");
     }
   };
 
@@ -57,7 +57,18 @@ const Dashboard = () => {
     );
   }
   if (user.requestDistributor === "process") {
-    return <p> In process ....</p>;
+    return (
+      <div className="flex flex-col h-[70vh] text-center justify-center text-gray-600">
+        <div className="flex justify-center mb-4">
+          <div className="animate-spin rounded-full h-10 w-10 border-t-4 border-blue-600"></div>
+        </div>
+        <h2 className="text-2xl font-semibold mb-2">Processing Request...</h2>
+        <p className="text-base mb-4">
+          Your supplier request is being reviewed. Please wait a moment.
+        </p>
+        <p className="text-sm text-gray-500">This might take a few minutes.</p>
+      </div>
+    );
   }
 
   return (
