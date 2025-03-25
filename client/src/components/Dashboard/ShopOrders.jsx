@@ -139,17 +139,17 @@ const ShopOrders = () => {
 
                 <div className="space-y-6">
                   {order.orderItems?.map((item) => (
-                    <div key={item._id} className="flex gap-6">
+                    <div key={item?._id} className="flex gap-6">
                       <img
-                        src={item.image}
-                        alt={item.name}
+                        src={item?.image}
+                        alt={item?.name}
                         className="w-24 h-24 object-cover rounded-lg"
                       />
 
                       <div className="flex-1 grid grid-cols-2 md:grid-cols-4 gap-6">
                         <div>
                           <h4 className="font-semibold text-gray-900">
-                            {item.name}
+                            {item?.name}
                           </h4>
                           <p className="text-sm text-gray-500">
                             Payment: {order.paymentMethod}
@@ -159,7 +159,7 @@ const ShopOrders = () => {
                         <div>
                           <p className="text-sm text-gray-500">Price</p>
                           <p className="text-gray-900 font-medium">
-                            ₹{item.price?.toFixed(2)}
+                            ₹{item?.price?.toFixed(2)}
                           </p>
                         </div>
 
@@ -179,7 +179,7 @@ const ShopOrders = () => {
 
                         <div className="col-span-2 md:col-span-4">
                           <p className="text-sm text-gray-500">
-                            Quantity: {item.qty}
+                            Quantity: {item?.qty}
                           </p>
                           <hr className="my-2" />
                           <div className="flex items-center gap-2">

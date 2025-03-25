@@ -35,7 +35,15 @@ export const productApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
-    getAvailableProduct: builder.query({
+    getProducts: builder.query({
+      query: () => ({
+        url: `${product_url}/products-list`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
+    getDistributorProducts: builder.query({
       query: () => ({
         url: `${product_url}/distributor-products`,
         method: "GET",
@@ -50,5 +58,6 @@ export const {
   useEditProductMutation,
   useGetAllProductQuery,
   useGetSingleProductQuery,
-  useGetAvailableProductQuery,
+  useGetProductsQuery,
+  useGetDistributorProductsQuery,
 } = productApiSlice;

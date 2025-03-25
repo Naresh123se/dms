@@ -13,13 +13,14 @@ productRouter.post(
 productRouter.get(
   "/",
   isAuthenticated,
-  authorizeRoles("distributor"),
+  authorizeRoles("admin"),
   ProductController.fetchAllProducts
 );
+
 productRouter.get(
   "/distributor-products",
   isAuthenticated,
-  authorizeRoles("shop"),
+  authorizeRoles("shop", "distributor"),
   ProductController.fetchDistributorProduct
 );
 

@@ -16,10 +16,11 @@ import {
   Layers,
   PenBoxIcon,
 } from "lucide-react";
-import { useGetAllProductQuery } from "@/app/slices/productApiSlice";
+import { useGetDistributorProductsQuery } from "@/app/slices/productApiSlice";
 
 function ProductList() {
-  const { data } = useGetAllProductQuery();
+  const { data } = useGetDistributorProductsQuery();
+  console.log(data);
   const navigate = useNavigate();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
