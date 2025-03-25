@@ -9,6 +9,7 @@ import sendMail from "../utils/sendMail.js";
 import createActivationToken from "../utils/activation.js";
 import { sendToken } from "../utils/jwt.js";
 import Distributor from "../models/distributorModel.js";
+import cloudinary from "cloudinary";
 
 class AuthController {
   static registration = asyncHandler(async (req, res, next) => {
@@ -202,18 +203,19 @@ class AuthController {
 
   static updateProfile = asyncHandler(async (req, res, next) => {
     try {
-      const { name, address, phone, avatar } = req.body;
+      const { name, address, phone, avatar, bio } = req.body;
       const userId = req.user._id;
+
       if (!name && !address && !phone && !avatar) {
-        return next(new ErrorHandler("Atleast one field is required", 400));
+        return next(new ErrorHandler("At least one field is required", 400));
       }
-      // Handle the image upload functionality
-      const uploadedImage = {};
+
+      // Handle image upload
+      let uploadedImage = {};
       if (avatar) {
-        // Upload the image to Cloudinary
-        const result = await cloudinary.v2.uploader.upload(image, {
-          folder: "avatars", // Optional: Save images in a specific folder
-          resource_type: "auto", // Automatically detect the file type
+        const result = await cloudinary.v2.uploader.upload(avatar, {
+          folder: "avatars",
+          resource_type: "auto",
         });
         uploadedImage = {
           public_id: result.public_id,
@@ -221,21 +223,26 @@ class AuthController {
         };
       }
 
-      const user = await User.findByIdAndUpdate(
-        userId,
-        {
-          name: name,
-          address: address,
-          phone: phone,
-          avatar: uploadedImage,
-        },
-        { runValidators: true, new: true }
-      );
+      // Build update object with only provided fields
+      const updateData = {};
+      if (name) updateData.name = name;
+      if (address) updateData.address = address;
+      if (phone) updateData.phone = phone;
+      if (bio) updateData.bio = bio;
+      if (avatar) updateData.avatar = uploadedImage;
+
+      const user = await User.findByIdAndUpdate(userId, updateData, {
+        runValidators: true,
+        new: true,
+      });
+
       if (user) {
         return res.status(200).json({
           success: true,
           message: "Profile Updated Successfully",
         });
+      } else {
+        return next(new ErrorHandler("User not found", 404));
       }
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -258,22 +265,22 @@ class AuthController {
     }
   });
 
-  static requestDistributor = asyncHandler(async(req,res,next) =>{
+  static requestDistributor = asyncHandler(async (req, res, next) => {
     try {
       const user = await User.findById(req.user._id);
-      if(!user){
+      if (!user) {
         return next(new ErrorHandler("User not found", 400));
       }
       user.requestDistributor = "process";
       await user.save();
       return res.status(200).json({
-        success:true,
-        messaage: "Distributor requested successfully"
-      })
+        success: true,
+        messaage: "Distributor requested successfully",
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
-  })
+  });
 }
 
 export default AuthController;
