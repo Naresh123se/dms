@@ -25,7 +25,12 @@ import { Button } from "@/components/ui/button";
 const Nav = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const user = useSelector((state) => state.auth.user);
-
+  const scrollToSection = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50 md:px-10">
       <div className="container mx-auto px-4">
@@ -37,21 +42,37 @@ const Nav = () => {
             </span>
           </div>
           <div className="hidden md:flex space-x-8">
-            <a href="#" className="text-gray-700 hover:text-blue-900">
+            <button
+              onClick={() => scrollToSection("home")}
+              className="text-gray-700 hover:text-blue-900"
+            >
               Home
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-900">
-              Solutions
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-900">
+            </button>
+            <button
+              onClick={() => scrollToSection("services")}
+              className="text-gray-700 hover:text-blue-900"
+            >
               Services
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-900">
-              Network
-            </a>
-            <a href="#" className="text-gray-700 hover:text-blue-900">
+            </button>
+            <button
+              onClick={() => scrollToSection("solutions")}
+              className="text-gray-700 hover:text-blue-900"
+            >
+              Solutions
+            </button>
+
+            <button
+              onClick={() => scrollToSection("choose")}
+              className="text-gray-700 hover:text-blue-900"
+            >
+              Why Us
+            </button>
+            <button
+              onClick={() => scrollToSection("resources")}
+              className="text-gray-700 hover:text-blue-900"
+            >
               Resources
-            </a>
+            </button>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <div className="relative">

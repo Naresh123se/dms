@@ -17,7 +17,7 @@ const HomePage = () => {
       <Hero />
       <Interactive />
       <StatsSection />
-      <ServicesSection />
+      <ServicesSection  />
       <Work />
       <BenefitCards />
       <Seamless />

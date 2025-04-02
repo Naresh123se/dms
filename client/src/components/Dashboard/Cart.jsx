@@ -7,6 +7,7 @@ import {
   clearCart,
 } from "@/app/slices/cartSlice";
 import { ScrollArea } from "../ui/scroll-area";
+import {BillGenerated} from "./BillGenerated";
 
 const Cart = () => {
   const nav = useNavigate();
@@ -149,6 +150,7 @@ const Cart = () => {
           </div>
         </div>
       </ScrollArea>
+      <BillGenerated />
     </div>
   );
 };
