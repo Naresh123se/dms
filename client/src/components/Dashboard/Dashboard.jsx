@@ -15,11 +15,10 @@ const Dashboard = () => {
     dispatch(addToCart(product));
   };
   const { data } = useGetDistributorProductsQuery();
-  console.log(data);
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
 
-  const { data: userData } = useGetUserProfileQuery();
+  const { data: userData, refetch: userDataRefetch } = useGetUserProfileQuery();
   let user = userData?.user || {};
 
   const [requestDistributor] = useRequestDistributorMutation();
@@ -29,6 +28,7 @@ const Dashboard = () => {
       const res = await requestDistributor().unwrap();
       if (res.success) {
         toast.success(res.message);
+        userDataRefetch();
       }
     } catch (error) {
       console.log(error);
