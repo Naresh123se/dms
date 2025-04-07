@@ -11,7 +11,7 @@ orderRouter.post("/", isAuthenticated, OrderController.createOrder);
 orderRouter.get(
   "/get-orders/distributor",
   isAuthenticated,
-  authorizeRoles("Distributor"),
+  authorizeRoles("distributor"),
   OrderController.getDistributorsOrders
 );
 
