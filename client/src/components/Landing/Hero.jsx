@@ -4,7 +4,7 @@ const Hero = () => {
   return (
     <>
       <div
-        className="relative bg-cover bg-center h-[600px] md:px-10"
+        className="relative bg-cover bg-center h-[600px] md:px-10" id="home"
         style={{
           backgroundImage:
             'url("https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',

@@ -2,11 +2,11 @@ import { ChevronRight } from "lucide-react"; // Assuming you want to use this ic
 
 export const ServicesSection = () => {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gray-50" id="services">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Distribution Solutions
+            Distribution Services
           </h2>
           <div className="w-20 h-1 bg-blue-900 mx-auto"></div>
         </div>

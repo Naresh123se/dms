@@ -29,6 +29,7 @@ import AuthLayout from "./routes/AuthLayout";
 import { DashboardPage, DistributorPage, HomePage } from "./pages";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
 import AdminLayout from "./routes/AdminLayout";
+import Profile from "./components/Profile";
 
 const router = createBrowserRouter([
   {
@@ -66,6 +67,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
             <Register />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <AuthLayout authentication={true}>
+            <Profile />
           </AuthLayout>
         ),
       },
