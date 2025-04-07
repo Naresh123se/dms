@@ -10,6 +10,7 @@ import createActivationToken from "../utils/activation.js";
 import { sendToken } from "../utils/jwt.js";
 import Distributor from "../models/distributorModel.js";
 import Product from "../models/productModel.js";
+import Order from "../models/orderModel.js";
 
 class AdminController {
   static allocateDistributor = asyncHandler(async (req, res, next) => {

@@ -21,7 +21,7 @@ const Sidebar = () => {
   const menuItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/admin" },
     { icon: Building2, text: "Suppliers", path: "/admin/suppliers" },
-    { icon: Truck, text: "Shipments", path: "/shipments" },
+    { icon: Truck, text: "Shipments", path: "/admin/shipments" },
     {
       icon: Users,
       text: "Customers",

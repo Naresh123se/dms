@@ -24,6 +24,7 @@ import {
   ShopOrders,
   Shipments,
   DistributorOrders,
+  AdminShipments,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -147,6 +148,14 @@ const router = createBrowserRouter([
             element: (
               <AdminLayout>
                 <Request />
+              </AdminLayout>
+            ),
+          },
+          {
+            path: "shipments",
+            element: (
+              <AdminLayout>
+                <AdminShipments />
               </AdminLayout>
             ),
           },

@@ -26,6 +26,7 @@ import ShopOrders from "./Dashboard/ShopOrders";
 import Request from "./Request/Request";
 import Shipments from "./Distributor/Shipments";
 import DistributorOrders from "./Distributor/DistributorOrders";
+import AdminShipments from "./Admin/AdminShipments";
 export {
   Login,
   Register,
@@ -54,5 +55,6 @@ export {
   ShopOrders,
   Shipments,
   DistributorOrders,
+  AdminShipments,
   Footer,
 };
