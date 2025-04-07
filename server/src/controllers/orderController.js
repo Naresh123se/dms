@@ -108,7 +108,49 @@ class OrderController {
 
   static generateBill = asyncHandler(async (req, res, next) => {
     try {
-      const order = await Order.findById(req.params.id);
+      const order = await Order.findById(req.params.id)
+        .populate("user", "name email") // Populate shopkeeper (user who placed order)
+        .populate({
+          path: "distributor",
+          select: "vat warehouseDetails", // Fields from Distributor model
+          populate: {
+            path: "user", // Now populate the user reference inside distributor
+            select: "name email address", // Fields from User model
+          },
+        });
+
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 404));
+      }
+
+      // Format the bill data
+      const billData = {
+        distributor: {
+          name: order.distributor.user.name,
+          vatNo: order.distributor.vat,
+          address: order.distributor.user.address,
+          taxInvoice: `INV-${order._id.toString().slice(-6).toUpperCase()}`,
+          issueDate: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
+        },
+        orderSummary: {
+          items: order.items.map((item) => ({
+            name: item.name,
+            quantity: item.quantity,
+            price: item.price,
+            total: item.quantity * item.price,
+          })),
+
+          vatAmount: order.vatAmount,
+          total: order.totalAmount,
+        },
+        orderId: order._id,
+        orderDate: order.createdAt.toISOString().split("T")[0],
+      };
+
+      res.status(200).json({
+        success: true,
+        billData,
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -117,7 +159,15 @@ class OrderController {
   /* DIstributor will accept the order from the retailer */
   static acceptOrder = asyncHandler(async (req, res, next) => {
     try {
-      const order = await Order.findById(req.params.id);
+      const order = await Order.findById(req.params.id)
+        .populate("user", "name email")
+        .populate({
+          path: "distributor",
+          populate: {
+            path: "user",
+            select: "name email",
+          },
+        });
       if (!order) {
         return next(new ErrorHandler("Order not found", 400));
       }
@@ -125,13 +175,49 @@ class OrderController {
 
       await order.save();
 
-      // TODO: SEND the mail to the User regarding accepted order and the bill summary
+      // SEND THE MAIL TO THE SHOPKEEPER
+      const mailData = {
+        shopkeeperName: order.user.name, // Name of the shopkeeper who placed the order
+        shopkeeperEmail: order.user.name, // (Optional: if used in the email template)
 
-      const billInfo = {};
+        // Order details
+        orderId: order._id, // Unique order ID
+        totalPrice: order.totalPrice, // Formatted total price (e.g., "$150.00" or "₹1,500")
+
+        // Distributor details
+        distributorName: order.distributor.user.name, // Name of the distributor who accepted the order
+        distributorContact: order.distributor.user.phone,
+
+        contactPerson: order.distributor.warehouseDetails.contactPerson,
+      };
+
+      const __filename = fileURLToPath(import.meta.url);
+      const currentDirectory = path.dirname(__filename);
+      const mailPath = path.join(
+        currentDirectory,
+        "../mails/orderAccepted.ejs"
+      );
+
+      const html = await ejs.renderFile(mailPath, mailData);
+
+      // Sending the mail to the distributor for his account creation
+      try {
+        if (order.status === "processs") {
+          await sendMail({
+            email: order.user.email,
+            subject: "Order has been accepted",
+            template: "orderAccepted.ejs",
+            data: mailData,
+          });
+        }
+      } catch (mailError) {
+        console.error("Mail sending failed:", mailError);
+        return next(new ErrorHandler("Failed to send email.", 500));
+      }
+
       return res.status(200).json({
         success: true,
         message: "Order accepted successsfully",
-        billInfo,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -147,6 +233,46 @@ class OrderController {
       order.status = "rejected";
       await order.save();
       // TODO: SEND MAIL TO the user regarding the order being rejected
+      // SEND THE MAIL TO THE SHOPKEEPER
+      const mailData = {
+        shopkeeperName: order.user.name, // Name of the shopkeeper who placed the order
+        shopkeeperEmail: order.user.name, // (Optional: if used in the email template)
+
+        // Order details
+        orderId: order._id, // Unique order ID
+        totalPrice: order.totalPrice, // Formatted total price (e.g., "$150.00" or "₹1,500")
+
+        // Distributor details
+        distributorName: order.distributor.user.name, // Name of the distributor who accepted the order
+        distributorContact: order.distributor.user.phone,
+
+        contactPerson: order.distributor.warehouseDetails.contactPerson,
+      };
+
+      const __filename = fileURLToPath(import.meta.url);
+      const currentDirectory = path.dirname(__filename);
+      const mailPath = path.join(
+        currentDirectory,
+        "../mails/orderRejected.ejs"
+      );
+
+      const html = await ejs.renderFile(mailPath, mailData);
+
+      // Sending the mail to the distributor for his account creation
+      try {
+        if (order.status === "processs") {
+          await sendMail({
+            email: order.user.email,
+            subject: "Order has been rejected",
+            template: "orderRejected.ejs",
+            data: mailData,
+          });
+        }
+      } catch (mailError) {
+        console.error("Mail sending failed:", mailError);
+        return next(new ErrorHandler("Failed to send email.", 500));
+      }
+
       return res.status(200).json({
         success: true,
         message: "Order rejected successfully",
@@ -201,7 +327,7 @@ class OrderController {
       const distributor = await Distributor.findOne({ user: user._id });
       const orders = await Order.find({ distributor: distributor._id })
         .populate("user", "name email") // Populate user details (only name and email)
-        .populate("distributor", "name email"); //FIXME: IF the product is being populated
+        .populate("distributor", "name email");
 
       // Send the orders as a response
       res.status(200).json({
@@ -211,6 +337,144 @@ class OrderController {
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  // ********************* Payment Method onlin ************************************
+  static initiatePayment = asyncHandler(async (req, res, next) => {
+    const { amount, purchaseOrderId, purchaseOrderName } = req.body;
+    const user = await User.findById(req.user._id);
+
+    const payload = {
+      return_url: "http://localhost:3000/dashboard/orders",
+      website_url: "http://localhost:3000",
+      amount: amount * 100,
+      purchase_order_id: purchaseOrderId,
+      purchase_order_name: purchaseOrderName,
+      customer_info: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone || 908832121,
+      },
+    };
+
+    try {
+      const response = await axios.post(
+        `${process.env.KHALTI_GATEWAY_URL}/api/v2/epayment/initiate/`,
+        payload,
+        {
+          headers: {
+            Authorization: `key ${process.env.KHALTI_SECRET_KEY}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // if (response.data.pidx) {
+      //   const order = await Order.findById(purchaseOrderId)
+      //     .populate("user", "name email")
+      //     .populate({
+      //       path: "distributor",
+      //       populate: {
+      //         path: "user",
+      //         select: "name",
+      //       },
+      //     });
+
+      //   order.paymentStatus = "Paid";
+      //   order.paymentMethod = "Khalti";
+      //   await appointment.save();
+
+      //   await Payment.create({
+      //     paidBy: user._id,
+      //     appointment: purchaseOrderId,
+      //     status: "Paid",
+      //     amount: amount,
+      //     paymentMethod: "Khalti",
+      //     pidx: response.data.pidx,
+      //   });
+
+      //   // Prepare mail data
+      //   const mailData = {
+      //     userName: user.name,
+      //     amount: amount,
+      //     appointmentId: appointment._id,
+      //     dentistName: appointment.dentist.user.name,
+      //     appointmentDate: format(new Date(appointment.date), "do MMMM yyyy"),
+      //     appointmentTime: appointment.timeSlot,
+      //     paymentMethod: "Khalti",
+      //     userEmail: user.email,
+      //   };
+
+      //   // Send email
+      //   try {
+      //     const __filename = fileURLToPath(import.meta.url);
+      //     const currentDirectory = path.dirname(__filename);
+      //     const mailPath = path.join(
+      //       currentDirectory,
+      //       "../mails/paymentSuccessfull.ejs"
+      //     );
+
+      //     const html = await ejs.renderFile(mailPath, mailData);
+
+      //     await sendMail({
+      //       email: user.email,
+      //       subject: "Payment Successful",
+      //       template: "paymentSuccessfull.ejs",
+      //       data: mailData,
+      //     });
+      //   } catch (mailError) {
+      //     console.error("Mail sending failed:", mailError);
+      //     // Don't fail the whole request if email fails
+      //   }
+      // }
+
+      res.json({
+        success: true,
+        payment_url: response.data.payment_url,
+        pidx: response.data.pidx,
+      });
+    } catch (error) {
+      console.error(error.response ? error.response.data : error.message);
+      res.status(500).json({
+        success: false,
+        message: "Payment initiation failed",
+      });
+    }
+  });
+
+  static completePayment = asyncHandler(async (req, res, next) => {
+    const { pidx } = req.query;
+    if (!pidx) {
+      return res
+        .status(400)
+        .json({ success: false, message: "pidx is required" });
+    }
+    const verificationResponse = await axios.post(
+      `${process.env.KHALTI_GATEWAY_URL}/api/v2/epayment/lookup/`,
+      { pidx },
+      {
+        headers: {
+          Authorization: `key ${process.env.KHALTI_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    const paymentInfo = verificationResponse.data;
+    paymentInfo.total_amount = paymentInfo.total_amount / 100;
+
+    if (paymentInfo.status === "Completed") {
+      res.json({
+        success: true,
+        message: "Payment verified ",
+        paymentInfo,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: "Payment not completed",
+        paymentInfo,
+      });
     }
   });
 }
