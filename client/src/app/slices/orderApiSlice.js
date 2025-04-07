@@ -19,27 +19,53 @@ export const productApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    generateBiil: builder.query({
+      query: (Id) => ({
+        url: `${order_url}/generateBill/${Id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
 
     getOrdersDistributor: builder.query({
-      query: () => ({
-        url: `${order_url}/`,
+      query: (data) => ({
+        url: `${order_url}/get-orders/distributor`,
         method: "GET",
         body: data,
         credentials: "include",
       }),
     }),
-    getOrdersAdmin: builder.query({
-      query: (id) => ({
-        url: `${product_url}/${id}`,
-        method: "GET",
+
+    deliverOrder: builder.mutation({
+      query: (Id) => ({
+        url: `${order_url}/delivered-order/${Id}`,
+        method: "PUT",
         credentials: "include",
       }),
     }),
-    
+    acceptOrder: builder.mutation({
+      query: (Id) => ({
+        url: `${order_url}/accept-order/${Id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+    }),
+    rejectOrder: builder.mutation({
+      query: (Id) => ({
+        url: `${order_url}/reject-order/${Id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
 export const {
   useCreateOrderMutation,
-  useGetOrdersShopQuery
+  useGetOrdersShopQuery,
+  useGetOrdersDistributorQuery,
+  useAcceptOrderMutation,
+  useDeliverOrderMutation,
+  useRejectOrderMutation,
+  useGenerateBiilQuery
 } = productApiSlice;

@@ -3,6 +3,7 @@ import { useGetOrdersShopQuery } from "@/app/slices/orderApiSlice";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
+import { BillGenerated } from "./BillGenerated";
 
 const ShopOrders = () => {
   const { data, refetch } = useGetOrdersShopQuery();
@@ -193,7 +194,12 @@ const ShopOrders = () => {
                               {order.shippingAddress.country}
                             </p>
                           </div>
+                          {order.status === "process" &&
+                            order.status === "delivered" &&
+                            !order.isPaid && <Button>Pay with Khalti</Button>}
                         </div>
+                          <BillGenerated id={order._id}/>
+                         
                       </div>
                     </div>
                   ))}

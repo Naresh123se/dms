@@ -1,10 +1,8 @@
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Box,
   Users,
   ChevronRight,
   WarehouseIcon,
-  ShoppingCart,
   BarChart3,
   TruckIcon,
   Package,
@@ -22,9 +20,9 @@ const DashboardSidebar = () => {
       text: "Inventories",
       path: "/distributor/inventory",
     },
-    { icon: ShoppingCart, text: "Orders", count: 24, path: "/orders" },
-    { icon: TruckIcon, text: "Shipments", count: 8 },
-    { icon: Users, text: "Customers", count: 43 },
+
+    { icon: TruckIcon, text: "Shipments", path: "/distributor/shipment" },
+    // { icon: Users, text: "Customers", },
   ];
 
   return (

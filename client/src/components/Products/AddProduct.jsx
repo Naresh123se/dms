@@ -9,7 +9,7 @@ import Formfield from "./Formfield";
 import { useState } from "react";
 import {
   useAddProductMutation,
-  useGetAllProductQuery,
+  useGetDistributorProductsQuery,
 } from "@/app/slices/productApiSlice";
 
 function AddProduct() {
@@ -20,7 +20,7 @@ function AddProduct() {
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   const [errorMessage, setErrorMessage] = useState("");
   const [addProduct, { isLoading }] = useAddProductMutation();
-  const { refetch } = useGetAllProductQuery();
+  const { refetch } = useGetDistributorProductsQuery();
 
   const {
     control,
@@ -106,7 +106,7 @@ function AddProduct() {
 
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-25px)]">
-      <div className="overflow-auto bg-gray-50 w-full py-8 px-4 sm:px-6 lg:px-8 mt-16">
+      <div className="overflow-auto bg-gray-50 w-full py-5 px-4 sm:px-6 lg:px-8 ">
         <div className="mb-8">
           <Button variant="ghost" onClick={() => navigate(-1)} className="mb-4">
             <ArrowLeft className="mr-2 h-4 w-4" />

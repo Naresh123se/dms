@@ -41,8 +41,19 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
+    getAllOrdersAdmin: builder.query({
+      query: () => ({
+        url: `${admin_url}/get-orders`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
-export const { useAllocateDistrubitorMutation, useGetAllocationRequestQuery } =
-  supplierApiSlice;
+export const {
+  useAllocateDistrubitorMutation,
+  useGetAllocationRequestQuery,
+  getAllOrdersAdmin,
+} = supplierApiSlice;

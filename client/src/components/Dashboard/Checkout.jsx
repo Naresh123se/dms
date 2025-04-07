@@ -98,7 +98,7 @@ const Checkout = () => {
         distributor: cartItems[0]?.distributor, // Assuming all items are from same distributor
       };
 
-      const response = await createOrder(orderData).unwrap();
+      // const response = await createOrder(orderData).unwrap();
 
       dispatch(clearCart());
       setOrderComplete(true);
@@ -409,23 +409,7 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <h2 className="text-xl font-semibold text-gray-800 mb-6">
-                    Payment Method
-                  </h2>
-                  <div className="mb-8">
-                    <Button
-                      type="button"
-                      className="w-full bg-[#5C2D91] hover:bg-[#4A2275] text-white"
-                      onClick={() => {
-                        // Implement Khalti payment integration here
-                        toast.info("Khalti payment integration coming soon!");
-                      }}
-                    >
-                      Pay with Khalti
-                    </Button>
-                  </div>
-
-                  <div className="flex justify-between items-center">
+                  <div className="flex justify-between  mt-10 items-center">
                     <Link
                       to="../cart"
                       className="text-indigo-600 hover:text-indigo-500 font-medium transition-colors duration-200"
@@ -435,13 +419,13 @@ const Checkout = () => {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-all duration-200 transform hover:-translate-y-1 ${
+                      className={`bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-all duration-200 transform${
                         isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                       }`}
                     >
                       {isSubmitting
                         ? "Processing..."
-                        : `Complete Order ($${orderTotal.toFixed(2)})`}
+                        : `Place Order ($${orderTotal.toFixed(2)})`}
                     </button>
                   </div>
                 </form>
