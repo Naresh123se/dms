@@ -9,10 +9,11 @@ import sendMail from "../utils/sendMail.js";
 import createActivationToken from "../utils/activation.js";
 import { sendToken } from "../utils/jwt.js";
 import Distributor from "../models/distributorModel.js";
+import Product from "../models/productModel.js";
 
 class AdminController {
   static allocateDistributor = asyncHandler(async (req, res, next) => {
-    console.log(req.body)
+    console.log(req.body);
     try {
       const { userId, distributorId } = req.body;
       const user = await User.findById(userId);
@@ -37,24 +38,49 @@ class AdminController {
   static fetchDistributorAllocationRequest = asyncHandler(
     async (req, res, next) => {
       try {
-        
-        const users = await User.find({requestDistributor:"process"})
-        if(!users){
+        const users = await User.find({ requestDistributor: "process" });
+        if (!users) {
           return res.status(200).json({
-            success:true,
-            message: "No allocation request found"
-          })
+            success: true,
+            message: "No allocation request found",
+          });
         }
         return res.status(200).json({
           success: true,
           message: "Distributor allocation request fetched successfully",
-          users
+          users,
         });
       } catch (error) {
         return next(new ErrorHandler(error.message, 500));
       }
     }
   );
+  static fetchAllOrders = asyncHandler(async (req, res, next) => {
+    try {
+      // Fetch all orders and populate both 'user' and 'distributor'
+      const orders = await Order.find()
+        .populate("user", "name email") // Populate user details (only name and email)
+        .populate("distributor", "name email"); // Populate distributor details (only name and email)
+
+      // Send the orders as a response
+      res.status(200).json({
+        success: true,
+        orders,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+  static fetchAllProducts = asyncHandler(async(req,res,next) =>{
+    try {
+      const products = await Product.find().populate('owner');
+      if(!products){
+        return next(new ErrorHandler("No Products foudn"))
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error.message,500))
+    }
+  })
 }
 
 export default AdminController;

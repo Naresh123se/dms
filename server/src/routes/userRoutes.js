@@ -1,6 +1,6 @@
 import express from "express";
 import AuthController from "../controllers/authController.js";
-import { isAuthenticated } from "../middlewares/auth.js";
+import { authorizeRoles, isAuthenticated } from "../middlewares/auth.js";
 
 const authRouter = express.Router();
 
@@ -23,5 +23,18 @@ authRouter.put(
   AuthController.updateProfile
 );
 authRouter.get("/get-profile", isAuthenticated, AuthController.getProfile);
-authRouter.put("/request-distributor", isAuthenticated, AuthController.requestDistributor)
+
+
+// ********************** DISTRIBUTOR LISTING AND REQUESTS ROUTES *********************
+authRouter.put(
+  "/request-distributor",
+  isAuthenticated,
+  AuthController.requestDistributor
+);
+authRouter.get(
+  "/view-suppliers",
+  isAuthenticated,
+  authorizeRoles("shop"),
+  AuthController.viewSuppliers
+);
 export default authRouter;

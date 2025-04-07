@@ -10,7 +10,6 @@ class OrderController {
       const {
         orderItems,
         shippingAddress,
-        paymentMethod,
         taxPrice,
         shippingPrice,
         totalPrice,
@@ -81,7 +80,6 @@ class OrderController {
         user: req.user._id,
         distributor: user.distributor,
         shippingAddress,
-        paymentMethod,
         taxPrice,
         totalPrice,
       });
@@ -106,15 +104,17 @@ class OrderController {
     }
   });
 
+  // Generate bill
+
   static generateBill = asyncHandler(async (req, res, next) => {
     try {
-      const { id } = req.params;
-      const order = await Order.findById(id);
+      const order = await Order.findById(req.params.id);
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   });
 
+  /* DIstributor will accept the order from the retailer */
   static acceptOrder = asyncHandler(async (req, res, next) => {
     try {
       const order = await Order.findById(req.params.id);
@@ -122,7 +122,35 @@ class OrderController {
         return next(new ErrorHandler("Order not found", 400));
       }
       order.status = "process";
+
       await order.save();
+
+      // TODO: SEND the mail to the User regarding accepted order and the bill summary
+
+      const billInfo = {};
+      return res.status(200).json({
+        success: true,
+        message: "Order accepted successsfully",
+        billInfo,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static rejectOrder = asyncHandler(async (req, res, next) => {
+    try {
+      const order = await Order.findById(req.params.id);
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 400));
+      }
+      order.status = "rejected";
+      await order.save();
+      // TODO: SEND MAIL TO the user regarding the order being rejected
+      return res.status(200).json({
+        success: true,
+        message: "Order rejected successfully",
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -137,11 +165,15 @@ class OrderController {
       }
       order.status = "delivered";
       await order.save();
+      return res.status(200).json({
+        success: true,
+        message: "Order marked as delivered",
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-  // ********* FOR Shop keepers
+
   // ********* FOR Shops
   static getShopOrders = asyncHandler(async (req, res, next) => {
     try {
@@ -167,25 +199,8 @@ class OrderController {
       // Fetch orders where the logged-in user is the 'distributor'
       const orders = await Order.find({ distributor: req.user._id })
         .populate("user", "name email") // Populate user details (only name and email)
-        .populate("distributor", "name email"); // Populate distributor details (only name and email)
-
-      // Send the orders as a response
-      res.status(200).json({
-        success: true,
-        orders,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  });
-
-  // ********* FOR Admin (fetch all orders)
-  static fetchAllOrders = asyncHandler(async (req, res, next) => {
-    try {
-      // Fetch all orders and populate both 'user' and 'distributor'
-      const orders = await Order.find()
-        .populate("user", "name email") // Populate user details (only name and email)
-        .populate("distributor", "name email"); // Populate distributor details (only name and email)
+        .populate("distributor", "name email") //FIXME: IF the product is being populated
+        .populate("orderItems.product", "name  images"); // Populate distributor details (only name and email)
 
       // Send the orders as a response
       res.status(200).json({

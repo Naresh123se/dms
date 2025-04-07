@@ -281,6 +281,26 @@ class AuthController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
+  static viewSuppliers = asyncHandler(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user._id);
+      if (!user) {
+        return next(new ErrorHandler("User Not Found", 400));
+      }
+      const distributor = await Distributor.findById(user.distributor);
+      if (!distributor) {
+        return next(new ErrorHandler("Distributor is not allocated", 400));
+      }
+      return res.status(200).json({
+        success: true,
+        message: "Shop Distributor fetched successfully",
+        distributor,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
 
 export default AuthController;
