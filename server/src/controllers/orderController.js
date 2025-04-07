@@ -133,15 +133,15 @@ class OrderController {
           issueDate: new Date().toISOString().split("T")[0], // YYYY-MM-DD format
         },
         orderSummary: {
-          items: order.items.map((item) => ({
+          items: order.orderItems.map((item) => ({
             name: item.name,
-            quantity: item.quantity,
+            quantity: item.qty,
             price: item.price,
-            total: item.quantity * item.price,
+            total: item.qty * item.price,
           })),
-
-          vatAmount: order.vatAmount,
-          total: order.totalAmount,
+          customerName: order.user.name,
+          vatAmount: order.taxPrice,
+          total: order.totalPrice
         },
         orderId: order._id,
         orderDate: order.createdAt.toISOString().split("T")[0],

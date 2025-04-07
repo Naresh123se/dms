@@ -32,7 +32,7 @@ const orderSchema = mongoose.Schema(
     },
     paymentMethod: {
       type: String,
-      enum: ["cash", "khalti"],
+      enum: ["cash", "Khalti"],
       default: "cash",
     },
     paymentResult: {
@@ -58,7 +58,7 @@ const orderSchema = mongoose.Schema(
     },
     status: {
       type: String,
-      enum: ["pending", "process", "delivered", "rejected", 'cancelled'],
+      enum: ["pending", "process", "delivered", "rejected", "cancelled"],
       default: "pending",
       required: true,
     },
