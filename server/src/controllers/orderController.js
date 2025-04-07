@@ -197,14 +197,16 @@ class OrderController {
   static getDistributorsOrders = asyncHandler(async (req, res, next) => {
     try {
       // Fetch orders where the logged-in user is the 'distributor'
-      const orders = await Order.find({ distributor: req.user._id })
+      const user = await User.findById(req.user._id);
+      const distributor = await Distributor.findOne({ user: user._id });
+      const orders = await Order.find({ distributor: distributor._id })
         .populate("user", "name email") // Populate user details (only name and email)
-        .populate("distributor", "name email") //FIXME: IF the product is being populated
-        .populate("orderItems.product", "name  images"); // Populate distributor details (only name and email)
+        .populate("distributor", "name email"); //FIXME: IF the product is being populated
 
       // Send the orders as a response
       res.status(200).json({
         success: true,
+        message: " Distributor  orders fetched successfully",
         orders,
       });
     } catch (error) {
