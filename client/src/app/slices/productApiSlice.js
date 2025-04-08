@@ -20,14 +20,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         body: data,
       }),
     }),
-    getAllProduct: builder.query({
-      query: (data) => ({
-        url: `${product_url}/`,
-        method: "GET",
-        body: data,
-        credentials: "include",
-      }),
-    }),
+
     getSingleProduct: builder.query({
       query: (id) => ({
         url: `${product_url}/${id}`,
@@ -35,6 +28,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+    
     getProducts: builder.query({
       query: () => ({
         url: `${product_url}/products-list`,
@@ -56,7 +50,6 @@ export const productApiSlice = apiSlice.injectEndpoints({
 export const {
   useAddProductMutation,
   useEditProductMutation,
-  useGetAllProductQuery,
   useGetSingleProductQuery,
   useGetProductsQuery,
   useGetDistributorProductsQuery,

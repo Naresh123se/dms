@@ -141,7 +141,7 @@ class OrderController {
           })),
           customerName: order.user.name,
           vatAmount: order.taxPrice,
-          total: order.totalPrice
+          total: order.totalPrice,
         },
         orderId: order._id,
         orderDate: order.createdAt.toISOString().split("T")[0],

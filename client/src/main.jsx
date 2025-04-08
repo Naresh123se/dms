@@ -21,7 +21,9 @@ import {
   Cart,
   Checkout,
   Request,
-  ShopOrders
+  ShopOrders,
+  Shipments,
+  DistributorOrders,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -171,6 +173,14 @@ const router = createBrowserRouter([
           {
             path: "edit-product/:id",
             element: <EditProduct />,
+          },
+          {
+            path: "orders",
+            element: <DistributorOrders />,
+          },
+          {
+            path: "shipment",
+            element: <Shipments />,
           },
         ],
       },

@@ -21,6 +21,12 @@ orderRouter.get(
   authorizeRoles("shop"),
   OrderController.getShopOrders
 );
+orderRouter.get(
+  "/generateBill/:id",
+  isAuthenticated,
+  authorizeRoles("shop"),
+  OrderController.generateBill
+);
 
 // ************ DISTRIBUTORS CONTROLS OVER THE ORDER *********************
 

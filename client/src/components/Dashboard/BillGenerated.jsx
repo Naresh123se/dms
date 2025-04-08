@@ -11,82 +11,25 @@ import {
 } from "../ui/dialog";
 import { Package } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { useGenerateBiilQuery } from "@/app/slices/orderApiSlice";
 
 // Separate the actual invoice content into its own component
-function InvoiceContent() {
-  const [billData] = useState({
-    companyName: "Tech Solutions Inc.",
-    vatNumber: "SA123456789",
-    billNumber: "INV-2024-001",
-    date: format(new Date(), "yyyy-MM-dd"),
-    companyAddress: "123 Business St, Riyadh, Saudi Arabia",
-    customerName: "ABC Corporation",
-    customerVAT: "SA987654321",
-    items: [
-      {
-        id: 1,
-        description: "Web Development Services",
-        quantity: 1,
-        price: 5000,
-        vat: 15,
-      },
-      {
-        id: 2,
-        description: "Cloud Hosting (Annual)",
-        quantity: 1,
-        price: 1200,
-        vat: 15,
-      },
-      {
-        id: 3,
-        description: "UX Consultation",
-        quantity: 5,
-        price: 200,
-        vat: 15,
-      },
-    ],
-  });
-
-  const calculateSubtotal = () => {
-    return billData.items.reduce(
-      (acc, item) => acc + item.quantity * item.price,
-      0
-    );
-  };
-
-  const calculateVAT = () => {
-    return billData.items.reduce(
-      (acc, item) => acc + item.quantity * item.price * (item.vat / 100),
-      0
-    );
-  };
-
-  const calculateTotal = () => {
-    return calculateSubtotal() + calculateVAT();
-  };
+function InvoiceContent({ orderId }) {
+  const { data } = useGenerateBiilQuery(orderId);
+  const billData = data?.billData;
 
   const qrCodeData = JSON.stringify({
-    sellerName: billData.companyName,
-    sellerVAT: billData.vatNumber,
-    buyerName: billData.customerName,
-    buyerVAT: billData.customerVAT,
-    invoiceNumber: billData.billNumber,
-    totalVAT: calculateVAT().toFixed(2),
-    totalAmount: calculateTotal().toFixed(2),
-    invoiceDate: billData.date,
+    sellerName: billData?.distributor?.name,
+    sellerVAT: billData?.distributor?.vatNo,
+    buyerName: billData?.orderSummary?.customerName,
+    invoiceNumber: billData?.distributor?.taxInvoice,
+    totalVAT: billData?.orderSummary?.vatAmount,
+    totalAmount: billData?.orderSummary?.total,
+    invoiceDate: billData?.distributor?.issueDate,
   });
 
   return (
     <div className="bg-white rounded-lg overflow-hidden border border-gray-200 print:shadow-none print:border-0 relative">
-      {/* Watermark - only visible when printing */}
-      <div className="hidden print:block absolute inset-0 pointer-events-none z-0 overflow-hidden">
-        <div className="absolute inset-0 flex items-center justify-center opacity-5 rotate-30 scale-150">
-          <div className="text-9xl font-bold tracking-wider text-gray-900 mr-16 ">
-            Distro
-          </div>
-        </div>
-      </div>
-
       {/* Header */}
       <div className="p-8 border-b border-gray-200 bg-gradient-to-r from-blue-50 to-gray-50 print:bg-white relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-start gap-6">
@@ -96,15 +39,17 @@ function InvoiceContent() {
                 TS
               </div>
               <h1 className="text-3xl font-bold text-gray-800">
-                {billData.companyName}
+                {billData?.distributor?.name}
               </h1>
             </div>
             <p className="text-gray-600 whitespace-pre-line">
-              {billData.companyAddress}
+              {billData?.distributor?.address}
             </p>
             <div className="mt-4">
               <span className="font-medium">VAT Number:</span>{" "}
-              <span className="text-gray-600">{billData.vatNumber}</span>
+              <span className="text-gray-600">
+                {billData?.distributor?.vatNo}
+              </span>
             </div>
           </div>
 
@@ -115,11 +60,13 @@ function InvoiceContent() {
             <div className="space-y-3">
               <div>
                 <span className="font-medium text-gray-600">Invoice No:</span>{" "}
-                <span className="font-medium">{billData.billNumber}</span>
+                <span className="font-medium">
+                  {billData?.distributor?.taxInvoice}
+                </span>
               </div>
               <div>
                 <span className="font-medium text-gray-600">Issue Date:</span>{" "}
-                <span>{billData.date}</span>
+                <span>{billData?.distributor?.issueDate}</span>
               </div>
             </div>
           </div>
@@ -129,34 +76,11 @@ function InvoiceContent() {
       {/* Customer Info */}
       <div className="p-8 border-b border-gray-200 relative z-10">
         <div className="flex flex-col md:flex-row justify-between gap-6">
-          <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              Bill To:
-            </h3>
-            <p className="font-medium">{billData.customerName}</p>
-            <p className="text-gray-600">VAT Number: {billData.customerVAT}</p>
-          </div>
-          <div className="md:text-right">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">
-              Payment Method
-            </h3>
-            <div className="inline-flex items-center gap-2 bg-blue-50 text-blue-800 px-4 py-2 rounded-lg">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-              >
-                <path d="M4 4a2 2 0 00-2 2v1h16V6a2 2 0 00-2-2H4z" />
-                <path
-                  fillRule="evenodd"
-                  d="M18 9H2v5a2 2 0 002 2h12a2 2 0 002-2V9zM4 13a1 1 0 011-1h1a1 1 0 110 2H5a1 1 0 01-1-1zm5-1a1 1 0 100 2h1a1 1 0 100-2H9z"
-                  clipRule="evenodd"
-                />
-              </svg>
-              <span>Bank Transfer</span>
-            </div>
-            <p className="mt-2 text-gray-600">Due upon receipt</p>
+          <div className="flex items-center gap-1">
+            <h3 className="text-lg font-semibold text-gray-800 ">Bill To :</h3>
+            <p className="font-base text-gray-800 ">
+              {billData?.orderSummary?.customerName}
+            </p>
           </div>
         </div>
       </div>
@@ -171,26 +95,20 @@ function InvoiceContent() {
               </th>
               <th className="py-3 px-4 font-semibold text-right">Qty</th>
               <th className="py-3 px-4 font-semibold text-right">Unit Price</th>
-              <th className="py-3 px-4 font-semibold text-right">VAT %</th>
               <th className="py-3 px-4 font-semibold text-right rounded-r-lg">
                 Amount
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
-            {billData.items.map((item) => (
+            {billData?.orderSummary?.items.map((item) => (
               <tr key={item.id} className="hover:bg-gray-50">
-                <td className="py-3 px-4">{item.description}</td>
+                <td className="py-3 px-4">{item.name}</td>
                 <td className="py-3 px-4 text-right">{item.quantity}</td>
-                <td className="py-3 px-4 text-right">
-                  ${item.price.toFixed(2)}
-                </td>
-                <td className="py-3 px-4 text-right">{item.vat}%</td>
+                <td className="py-3 px-4 text-right">Rs. {item.price}</td>
+
                 <td className="py-3 px-4 text-right font-medium">
-                  $
-                  {(item.quantity * item.price * (1 + item.vat / 100)).toFixed(
-                    2
-                  )}
+                  Rs. {item.total}
                 </td>
               </tr>
             ))}
@@ -231,37 +149,26 @@ function InvoiceContent() {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Subtotal:</span>
                   <span className="font-medium">
-                    ${calculateSubtotal().toFixed(2)}
+                    Rs.{" "}
+                    {billData?.orderSummary?.total -
+                      billData?.orderSummary?.vatAmount}
                   </span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-600">
-                    VAT ({billData.items[0]?.vat || 0}%):
-                  </span>
+                  <span className="text-gray-600">Vat Amount:</span>
+
                   <span className="font-medium">
-                    ${calculateVAT().toFixed(2)}
+                    Rs. {billData?.orderSummary?.vatAmount}
                   </span>
                 </div>
                 <div className="border-t border-gray-200 pt-3 mt-2">
                   <div className="flex justify-between text-lg font-bold">
                     <span>Total Amount:</span>
                     <span className="text-blue-600">
-                      ${calculateTotal().toFixed(2)}
+                      Rs.{billData?.orderSummary?.total}
                     </span>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <div className="mt-6 bg-blue-50 p-4 rounded-lg border border-blue-100 print:bg-white">
-              <h4 className="font-medium text-blue-800 mb-2">Bank Details</h4>
-              <div className="grid grid-cols-2 gap-2 text-sm">
-                <span className="text-gray-600">Bank Name:</span>
-                <span>Al Rajhi Bank</span>
-                <span className="text-gray-600">Account Name:</span>
-                <span>{billData.companyName}</span>
-                <span className="text-gray-600">IBAN:</span>
-                <span>SA03 8000 0000 6080 1016 7519</span>
               </div>
             </div>
           </div>
@@ -282,7 +189,8 @@ function InvoiceContent() {
 // For a logo-based watermark option
 
 // Wrapper component for both dialog view and printable view
-export function BillGenerated() {
+export function BillGenerated({ id }) {
+  console.log(id);
   // State to manage print mode
   const [isPrintMode, setIsPrintMode] = useState(false);
   // State to choose watermark type
@@ -300,21 +208,8 @@ export function BillGenerated() {
   // If in print mode, show only the invoice content for clean printing
   if (isPrintMode) {
     return (
-      <div className="print-only max-w-5xl mx-auto p-0 relative">
-        {/* Use text watermark by default */}
-        <div className="hidden print:block absolute inset-0 pointer-events-none z-0 overflow-hidden">
-          <div className="absolute inset-0 flex items-center justify-center opacity-5 rotate-30">
-            <div className="text-9xl font-bold tracking-wider text-gray-800 transform scale-150">
-              <div className="flex items-center">
-                <Package className="w-8 h-8 text-blue-900" />
-                <span className="ml-2 text-2xl font-bold text-blue-900">
-                  DISTRO
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-        <InvoiceContent />
+      <div className="print-only ">
+        <InvoiceContent orderId={id} />
       </div>
     );
   }
@@ -338,7 +233,7 @@ export function BillGenerated() {
         </DialogHeader>
         <ScrollArea className="h-[calc(100vh-200px)]">
           <div className="max-w-5xl mx-auto bg-gray-50 p-6 print:p-0 print:bg-white">
-            <InvoiceContent />
+            <InvoiceContent orderId={id} />
           </div>
         </ScrollArea>
       </DialogContent>

@@ -7,8 +7,7 @@ const DistributorPage = () => {
       <DistributorSidebar />
       <div className=" w-full">
         <DisNavbar />
-
-        <Outlet />
+          <Outlet />
       </div>
     </div>
   );

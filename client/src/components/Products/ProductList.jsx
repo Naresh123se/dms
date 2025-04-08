@@ -15,12 +15,12 @@ import {
   Package,
   Layers,
   PenBoxIcon,
+  IndianRupee,
 } from "lucide-react";
 import { useGetDistributorProductsQuery } from "@/app/slices/productApiSlice";
 
 function ProductList() {
   const { data } = useGetDistributorProductsQuery();
-  console.log(data);
   const navigate = useNavigate();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
@@ -31,8 +31,8 @@ function ProductList() {
 
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-65px)]">
-      <div className="mt-10 bg-gray-50">
-        <div className="container mx-auto px-6 py-8">
+      <div className=" bg-gray-50">
+        <div className="container mx-auto px-6 ">
           {/* Header Section */}
           <div className="overflow-auto bg-gray-50 w-full py-8 px-4 sm:px-6 lg:px-8">
             <div className="mb-8 flex justify-between">
@@ -46,7 +46,7 @@ function ProductList() {
                   Products
                 </h1>
                 <p className="text-gray-500 mt-1">
-                  Fresh stock updated – grab yours now!
+                  Add and Manage your Inventories.
                 </p>
               </div>
               <Link to="/distributor/add-product" className="w-full sm:w-auto">
@@ -103,9 +103,8 @@ function ProductList() {
                   {/* Product Image */}
                   <div className="md:w-1/3 lg:w-1/4">
                     <img
-                      className=" object-fit"
+                      className=" object-fit w-full h-52 rounded-lg"
                       src={product.images[0]?.url}
-                      width={300}
                       alt={product.images}
                     />
                   </div>
@@ -114,13 +113,11 @@ function ProductList() {
                   <div className="flex-1 p-3">
                     {/* Header with Status */}
                     <div className="flex justify-between items-start mb-6">
-                      <div className="space-y-2">
-                        <h4 className="text-xl font-medium text-gray-900 flex items-center gap-2">
-                          <Tag className="h-5 w5 text-blue-500" />
+                      <div className="space-y-2 ml-4">
+                        <h4 className="text-xl font-medium text-gray-900 flex ">
                           {product.name}
                         </h4>
-                        <p className="text-base text-gray-500 flex items-center gap-2">
-                          <FileText className="h-4 w-4" />
+                        <p className="text-base text-gray-500">
                           {product.description}
                         </p>
                       </div>
@@ -173,10 +170,10 @@ function ProductList() {
                       "
                       >
                         <div className="flex items-center gap-3 justify-self-center  rounded-lg">
-                          <DollarSign className="h-5 w-5 text-green-500" />
+                          <IndianRupee className="h-5 w-5 text-green-500" />
                           <div>
                             <div className="text-sm text-green-600">Price</div>
-                            <div className="font-medium">${product.price}</div>
+                            <div className="font-medium">Rs.{product.price}</div>
                           </div>
                         </div>
                       </div>
