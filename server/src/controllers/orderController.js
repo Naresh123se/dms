@@ -295,7 +295,7 @@ class OrderController {
         return next(new ErrorHandler(error.message, 500));
       }
       order.status = "delivered";
-      order.isDelivered = True;
+      order.isDelivered = true;
       await order.save();
       return res.status(200).json({
         success: true,

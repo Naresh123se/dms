@@ -45,7 +45,7 @@ export default function Shipments() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const orderRefs = useRef({});
   const [Accept, { isLoading: acceptLoading }] = useAcceptOrderMutation();
-  const [Delivered] = useDeliverOrderMutation();
+  const [Delivered, {isLoading:deliveredLoading}] = useDeliverOrderMutation();
   const [Reject, { isLoading: rejectLoading }] = useRejectOrderMutation();
 
   // Status counts for the dashboard
@@ -100,6 +100,7 @@ export default function Shipments() {
     try {
       const success = await Delivered(orderId); // Assume onMarkDelivered is defined elsewhere
       if (success) {
+        toast.success("Order delivered");
         refetch();
       }
     } catch (error) {
@@ -304,7 +305,7 @@ export default function Shipments() {
                                 </div>
                                 <div className="flex flex-col items-end gap-2">
                                   <p className="font-medium text-lg">
-                                    ${order.totalPrice.toFixed(2)}
+                                    Rs.{order.totalPrice.toFixed(2)}
                                   </p>
                                   <div className="flex flex-wrap gap-2">
                                     {order.status === "pending" && (
@@ -419,7 +420,7 @@ export default function Shipments() {
                                     </div>
                                   </div>
                                   <span className="font-medium">
-                                    ${order.totalPrice.toFixed(2)}
+                                    Rs.{order.totalPrice.toFixed(2)}
                                   </span>
                                 </div>
                               ))
@@ -465,7 +466,10 @@ export default function Shipments() {
                                     </CardTitle>
                                   </CardHeader>
                                   <CardContent>
-                                    <p className="text-sm font-medium">
+                                  <p className="text-sm font-medium">
+                                      Shop Name: <span className="text-gray-600 font-normal">{selectedOrder.user.name}</span>
+                                    </p>
+                                    <p className="text-sm font-medium mt-2">
                                       Shipping Address:
                                     </p>
                                     <p className="text-sm text-muted-foreground">
@@ -506,7 +510,7 @@ export default function Shipments() {
                                     <div className="flex justify-between font-bold">
                                       <span>Total:</span>
                                       <span>
-                                        ${selectedOrder.totalPrice.toFixed(2)}
+                                        Rs.{selectedOrder.totalPrice.toFixed(2)}
                                       </span>
                                     </div>
                                   </CardContent>
@@ -531,19 +535,20 @@ export default function Shipments() {
                                           <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 bg-accent rounded flex items-center justify-center">
                                               <Package2 className="w-5 h-5 text-muted-foreground" />
+                                              <img src={item.image} className="rounded-lg" srcset="" />
                                             </div>
                                             <div>
                                               <p className="font-medium">
                                                 {item.name}
                                               </p>
                                               <p className="text-xs text-muted-foreground">
-                                                Qty: {item.qty} × ${" "}
+                                                Qty: {item.qty} × Rs.{" "}
                                                 {(item.price || 0).toFixed(2)}
                                               </p>
                                             </div>
                                           </div>
                                           <p className="font-medium">
-                                            ${" "}
+                                            Rs.{" "}
                                             {(
                                               (item.price || 0) * item.qty
                                             ).toFixed(2)}
@@ -594,6 +599,7 @@ export default function Shipments() {
                                       onClick={() =>
                                         handleMarkDelivered(selectedOrder._id)
                                       }
+                                      disabled={deliveredLoading}
                                     >
                                       <TruckIcon className="w-4 h-4" />
                                       Mark as Delivered
