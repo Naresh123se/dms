@@ -12,14 +12,6 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    // editSupplier: builder.mutation({
-    //   query: (data) => ({
-    //     url: `${admin_url}/${data.id}`,
-    //     method: "PUT",
-    //     credentials: "include",
-    //     body: data,
-    //   }),
-    // }),
     getAllocationRequest: builder.query({
       query: () => ({
         url: `${admin_url}/allocation-request`,
@@ -34,6 +26,7 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
     getSingleSupplier: builder.query({
       query: (id) => ({
         url: `${admin_url}/${id}`,
@@ -44,7 +37,7 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
 
     getAllOrdersAdmin: builder.query({
       query: () => ({
-        url: `${admin_url}/get-orders`,
+        url: `${admin_url}/all-orders`,
         method: "GET",
         credentials: "include",
       }),
@@ -55,5 +48,5 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
 export const {
   useAllocateDistrubitorMutation,
   useGetAllocationRequestQuery,
-  getAllOrdersAdmin,
+  useGetAllOrdersAdminQuery,
 } = supplierApiSlice;

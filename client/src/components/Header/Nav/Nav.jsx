@@ -75,14 +75,7 @@ const Nav = () => {
             </button>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Track your shipment..."
-                className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-              />
-              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
-            </div>
+     
             <div className="hidden md:flex md:items-center md:space-x-4">
               {!user ? (
                 <>

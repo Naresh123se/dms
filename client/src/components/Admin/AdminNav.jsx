@@ -1,11 +1,4 @@
-import {
-  Bell,
-  LogIn,
-  Search,
-  Settings,
-  UserCircle,
-  UserPlus,
-} from "lucide-react";
+import { LogIn, Search, Settings, UserCircle, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -39,10 +32,7 @@ const AdminNav = () => {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <button className="p-2 hover:bg-gray-100 rounded-lg relative">
-            <Bell className="h-5 w-5 text-gray-600" />
-            <span className="absolute top-1 right-1 h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
-          </button>
+          <button className="p-2 hover:bg-gray-100 rounded-lg relative"></button>
           <div className="flex items-center gap-3 ml-4">
             <div className="hidden md:flex md:items-center md:space-x-4">
               {!user ? (
