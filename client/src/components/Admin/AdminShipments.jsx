@@ -36,6 +36,7 @@ import {
   DollarSign,
   RefreshCw,
   Clock,
+  IndianRupeeIcon,
 } from "lucide-react";
 
 const getStatusBadge = (status) => {
@@ -189,7 +190,7 @@ const AdminShipments = () => {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center font-medium">
-                        <DollarSign className="mr-1 h-4 w-4 text-gray-500" />
+                        <IndianRupeeIcon className="mr-1 h-4 w-4 text-gray-500" />
                         <span>{order.totalPrice.toFixed(2)}</span>
                       </div>
                     </TableCell>

@@ -35,6 +35,7 @@ import {
 import { formatDate, cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
+import { toast } from "react-toastify";
 
 export default function Shipments() {
   const { data, isLoading, refetch } = useGetOrdersDistributorQuery();
@@ -43,9 +44,9 @@ export default function Shipments() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedOrder, setSelectedOrder] = useState(null);
   const orderRefs = useRef({});
-  const [Accept] = useAcceptOrderMutation();
+  const [Accept, { isLoading: acceptLoading }] = useAcceptOrderMutation();
   const [Delivered] = useDeliverOrderMutation();
-  const [Reject] = useRejectOrderMutation();
+  const [Reject, { isLoading: rejectLoading }] = useRejectOrderMutation();
 
   // Status counts for the dashboard
   const statusCounts = orders.reduce((acc, order) => {
@@ -75,6 +76,7 @@ export default function Shipments() {
     try {
       const success = await Accept(orderId); // Assume onAccept is defined elsewhere
       if (success) {
+        toast.success("Order Accepted..");
         refetch();
       }
     } catch (error) {
@@ -83,11 +85,10 @@ export default function Shipments() {
   };
 
   const handleCancel = async (orderId) => {
-    console.log(orderId);
-
     try {
       const success = await Reject(orderId); // Assume onCancel is defined elsewhere
       if (success) {
+        toast.info("Order Rejected");
         refetch();
       }
     } catch (error) {
@@ -138,8 +139,8 @@ export default function Shipments() {
 
   return (
     <div className="container mx-auto p-4 md:p-6">
-        <ScrollArea className="h-[calc(100vh-120px)] ">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <ScrollArea className="h-[calc(100vh-120px)] ">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Dashboard Summary Cards */}
           <div className="md:col-span-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <Card className="shadow-sm">
@@ -312,13 +313,16 @@ export default function Shipments() {
                                           variant="default"
                                           size="sm"
                                           className="flex items-center gap-1"
+                                          disabled={acceptLoading}
                                           onClick={(e) => {
                                             e.stopPropagation();
                                             handleAccept(order._id);
                                           }}
                                         >
                                           <CheckCircle className="w-3 h-3" />
-                                          Accept
+                                          {acceptLoading
+                                            ? "Accepting..."
+                                            : "Accept"}
                                         </Button>
                                         <Button
                                           variant="outline"
@@ -328,9 +332,12 @@ export default function Shipments() {
                                             e.stopPropagation();
                                             handleCancel(order._id);
                                           }}
+                                          disabled={rejectLoading}
                                         >
                                           <XCircle className="w-3 h-3" />
-                                          Cancel
+                                          {rejectLoading
+                                            ? "Cancelling..."
+                                            : "Cancel"}
                                         </Button>
                                       </>
                                     )}
@@ -554,22 +561,28 @@ export default function Shipments() {
                                     <Button
                                       variant="default"
                                       className="flex items-center gap-2"
+                                      disabled={acceptLoading}
                                       onClick={() =>
                                         handleAccept(selectedOrder._id)
                                       }
                                     >
                                       <CheckCircle className="w-4 h-4" />
-                                      Accept Order
+                                      {acceptLoading
+                                        ? "Accepting.."
+                                        : "Accept Order"}
                                     </Button>
                                     <Button
                                       variant="outline"
                                       className="flex items-center gap-2 text-red-500 hover:text-red-700"
+                                      disabled={rejectLoading}
                                       onClick={() =>
                                         handleCancel(selectedOrder._id)
                                       }
                                     >
                                       <XCircle className="w-4 h-4" />
-                                      Cancel Order
+                                      {rejectLoading
+                                        ? "Cancelling.."
+                                        : "Cancel Order"}
                                     </Button>
                                   </>
                                 )}
@@ -605,8 +618,8 @@ export default function Shipments() {
               </CardContent>
             </Card>
           </div>
-      </div>
-        </ScrollArea>
+        </div>
+      </ScrollArea>
     </div>
   );
 }

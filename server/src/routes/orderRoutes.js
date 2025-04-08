@@ -30,7 +30,6 @@ orderRouter.get(
 
 // ************ DISTRIBUTORS CONTROLS OVER THE ORDER *********************
 
-
 orderRouter.put(
   "/accept-order/:id",
   isAuthenticated,
@@ -52,7 +51,11 @@ orderRouter.put(
   OrderController.makeOrderAsDelivered
 );
 
-
-
+orderRouter.post(
+  "/initiate-payment",
+  isAuthenticated,
+  // authorizeRoles("shop"),
+  OrderController.initiatePayment
+);
 
 export default orderRouter;

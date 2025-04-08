@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { useGetOrdersShopQuery } from "@/app/slices/orderApiSlice";
+import {
+  useGetOrdersShopQuery,
+  useInitiatePaymentMutation,
+} from "@/app/slices/orderApiSlice";
 import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
@@ -24,8 +27,12 @@ const ShopOrders = () => {
       label: "Pending",
       count: orders.filter((o) => o.status === "pending").length,
     },
-    { id: "to-ship", label: "To Ship", count: null },
-    { id: "to-receive", label: "To Receive", count: null },
+    { id: "to-receive", label: "To Receive", count: orders.filter((o) => o.status === "process").length },
+    {
+      id: "rejected",
+      label: "Rejected",
+      count: orders.filter((o) => o.status === "rejected").length,
+    },
     {
       id: "delivered",
       label: "Delivered",
@@ -39,10 +46,10 @@ const ShopOrders = () => {
     switch (activeTab) {
       case "pending":
         return order.status === "pending";
-      case "to-ship":
-        return order.status === "processing" && !order.isDelivered;
+      case "rejected":
+        return order.status === "rejected" && !order.isDelivered;
       case "to-receive":
-        return order.status === "shipped" && !order.isDelivered;
+        return order.status === "process" && !order.isDelivered;
       case "delivered":
         return order.isDelivered;
       default:
@@ -68,7 +75,17 @@ const ShopOrders = () => {
   };
 
   const displayOrders = getFilteredByTime(filteredOrders);
-
+  const [payment, {isLoading:paymentLoading}] = useInitiatePaymentMutation();
+  const initiatePayment = async () => {
+    try {
+      const res = await payment(data).unwrap();
+      if (res.success) {
+        window.location.href = res?.payment_url;
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Payment Initiation Failed");
+    }
+  };
   return (
     <div className=" bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -130,11 +147,12 @@ const ShopOrders = () => {
                         ? "text-yellow-700 bg-yellow-100"
                         : order.isDelivered
                         ? "text-green-700 bg-green-100"
+                        : order.status === "rejected"
+                        ? "text-red-700 bg-red-100"
                         : "text-blue-700 bg-blue-100"
                     }`}
                   >
                     {order.status}
-                    {order.isDelivered ? " (Delivered)" : ""}
                   </span>
                 </div>
 
@@ -194,12 +212,14 @@ const ShopOrders = () => {
                               {order.shippingAddress.country}
                             </p>
                           </div>
-                          {order.status === "process" &&
-                            order.status === "delivered" &&
-                            !order.isPaid && <Button>Pay with Khalti</Button>}
                         </div>
-                          <BillGenerated id={order._id}/>
-                         
+                        <BillGenerated id={order._id} />
+                        {["process", "delivered"].includes(order.status) &&
+                          !order.isPaid && (
+                            <Button onClick={initiatePayment} disabled={paymentLoading} >
+                              {paymentLoading? "Redirecting...":"Pay with Khalti"}
+                            </Button>
+                          )}
                       </div>
                     </div>
                   ))}

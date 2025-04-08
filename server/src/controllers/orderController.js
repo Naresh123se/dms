@@ -4,6 +4,11 @@ import Order from "../models/orderModel.js";
 import Product from "../models/productModel.js";
 import User from "../models/userModel.js";
 import ErrorHandler from "../utils/ErrorHandler.js";
+import ejs from "ejs";
+import path from "path";
+import { fileURLToPath } from "url";
+import sendMail from "../utils/sendMail.js";
+import axios from 'axios'
 class OrderController {
   static createOrder = asyncHandler(async (req, res, next) => {
     try {
@@ -178,7 +183,7 @@ class OrderController {
       // SEND THE MAIL TO THE SHOPKEEPER
       const mailData = {
         shopkeeperName: order.user.name, // Name of the shopkeeper who placed the order
-        shopkeeperEmail: order.user.name, // (Optional: if used in the email template)
+        shopkeeperEmail: order.user.email, // (Optional: if used in the email template)
 
         // Order details
         orderId: order._id, // Unique order ID
@@ -202,7 +207,7 @@ class OrderController {
 
       // Sending the mail to the distributor for his account creation
       try {
-        if (order.status === "processs") {
+        if (order.status === "process") {
           await sendMail({
             email: order.user.email,
             subject: "Order has been accepted",
@@ -290,6 +295,7 @@ class OrderController {
         return next(new ErrorHandler(error.message, 500));
       }
       order.status = "delivered";
+      order.isDelivered = True;
       await order.save();
       return res.status(200).json({
         success: true,
@@ -342,8 +348,11 @@ class OrderController {
 
   // ********************* Payment Method onlin ************************************
   static initiatePayment = asyncHandler(async (req, res, next) => {
-    const { amount, purchaseOrderId, purchaseOrderName } = req.body;
+    // const { amount, purchaseOrderId, purchaseOrderName } = req.body;
     const user = await User.findById(req.user._id);
+    const amount = 3000;
+    const purchaseOrderId = "randomassid";
+    const purchaseOrderName = "singapore beverages";
 
     const payload = {
       return_url: "http://localhost:3000/dashboard/orders",
@@ -428,7 +437,7 @@ class OrderController {
       //     // Don't fail the whole request if email fails
       //   }
       // }
-
+      console.log(response.data);
       res.json({
         success: true,
         payment_url: response.data.payment_url,

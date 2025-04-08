@@ -16,7 +16,7 @@
         height: 100vh;
       }
       .order-container {
-        background-color: #e69a9a;
+        background-color: #ffffff;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -25,7 +25,7 @@
         max-width: 500px;
       }
       h1 {
-        color: #c92222;
+        color: #155724;
         background-color: #d4edda;
         padding: 15px;
         border-radius: 5px;
@@ -88,10 +88,10 @@
         </svg>
       </div>
 
-      <h1>Your Order Has Been rejected!</h1>
+      <h1>Your Order Has Been Accepted!</h1>
       <p>
-        Hello , <%= shopkeeperName %>! Unfortunately, Your recent order with Distro Hub has
-        been <span>rejected</span> by the distributor. Due to internal reasons
+        Great news, <%= shopkeeperName %>! Your recent order with Distro Hub has
+        been accepted by the distributor and is now being processed.
       </p>
       <div class="order-details">
         <p><strong>Order ID:</strong> <%= orderId %></p>
@@ -99,13 +99,11 @@
         <p><strong>Distributor:</strong> <%= distributorName %></p>
       </div>
       <p>
-        Hopefully, you will try later to place the order again through the dashboard
+        Your order is now on the way and should reach you soon. You can track
+        your order status by logging into your Distro Hub account.
       </p>
-      <span
-        >You can contact <%= contactPerson %> via <%=distributorContact %> for more details
-      </span>
       <a href="http://localhost:3000/orders/<%= orderId %>" class="btn"
-        >View order</a
+        >View Order Details</a
       >
       <br />
       <p>
