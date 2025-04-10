@@ -27,7 +27,7 @@ productRouter.get(
 productRouter.get(
   "/:id",
   isAuthenticated,
-  authorizeRoles("distributor"),
+  authorizeRoles("distributor", "shop"),
   ProductController.fetchSingleProduct
 );
 productRouter.put(

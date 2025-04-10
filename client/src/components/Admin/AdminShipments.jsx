@@ -33,11 +33,11 @@ import {
   Package,
   User,
   MapPin,
-  DollarSign,
   RefreshCw,
   Clock,
   IndianRupeeIcon,
 } from "lucide-react";
+import { useGetSuppliersQuery } from "@/app/slices/userApiSlice";
 
 const getStatusBadge = (status) => {
   const statusConfig = {
@@ -56,6 +56,7 @@ const getStatusBadge = (status) => {
     </Badge>
   );
 };
+
 
 const AdminShipments = () => {
   const { data, isLoading, refetch } = useGetAllOrdersAdminQuery();
@@ -80,6 +81,8 @@ const AdminShipments = () => {
 
     return matchesSearch && matchesStatus;
   });
+  const { data: ff } = useGetSuppliersQuery();
+  console.log(ff);
 
   return (
     <Card className="w-full mt-16">
