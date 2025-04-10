@@ -28,7 +28,7 @@ const Sidebar = () => {
       text: "Customers",
       children: [
         { icon: User2, text: "Request Supplier", path: "./request" },
-        { icon: Users, text: "All Suppliers", path: "./allsupplier" },
+        { icon: Users, text: "All Suppliers", path: "./all-suppliers" },
       ],
     },
     { icon: CircleDollarSign, text: "Finance", path: "/finance" },

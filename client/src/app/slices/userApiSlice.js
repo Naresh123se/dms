@@ -61,6 +61,14 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    getSuppliers: builder.query({
+      query: () => ({
+        url: `${user_url}/view-suppliers`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
     updateUserProfile: builder.mutation({
       query: (data) => ({
         url: `${user_url}/update-profile`,
@@ -80,5 +88,6 @@ export const {
   useChangePasswordMutation,
   useRequestDistributorMutation,
   useGetUserProfileQuery,
-  useUpdateUserProfileMutation
+  useUpdateUserProfileMutation,
+  useGetSuppliersQuery
 } = userApiSlice;
