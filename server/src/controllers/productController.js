@@ -51,25 +51,6 @@ class ProductController {
     }
   });
 
-  static fetchAllProducts = asyncHandler(async (req, res, next) => {
-    try {
-      const products = await Product.find().populate("owner");
-      if (!products) {
-        return res.status(200).json({
-          success: false,
-          message: "No Products found",
-        });
-      }
-      return res.status(200).json({
-        success: true,
-        message: "Products fetched successfully",
-        products,
-      });
-    } catch (error) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  });
-
   static fetchSingleProduct = asyncHandler(async (req, res, next) => {
     try {
       const id = req.params.id;
@@ -95,7 +76,9 @@ class ProductController {
       }
       let products;
       if (user.role === "shop") {
-        products = await Product.find({ owner: user.distributor }).populate("owner");
+        products = await Product.find({ owner: user.distributor }).populate(
+          "owner"
+        );
       } else if (user.role === "distributor") {
         const distributor = await Distributor.findOne({ user: req.user._id });
         if (!distributor) {
@@ -206,6 +189,7 @@ class ProductController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
   static deleteProduct = asyncHandler(async (req, res, next) => {
     try {
     } catch (error) {

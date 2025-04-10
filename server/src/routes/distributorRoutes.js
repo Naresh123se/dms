@@ -4,13 +4,6 @@ import { isAuthenticated, authorizeRoles } from "../middlewares/auth.js";
 
 const distributorRouter = express.Router();
 
-distributorRouter.post(
-  "/add-distributor",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  DistributorController.addDistributor
-);
-
 distributorRouter.get("/", DistributorController.fetchAllDistributors);
 
 distributorRouter.get(
@@ -22,12 +15,11 @@ distributorRouter.get(
 
 distributorRouter.get("/:id", DistributorController.fetchSingleDistributor);
 
-
-distributorRouter.get(
-  "/distributor-profile",
+distributorRouter.post(
+  "/add-distributor",
   isAuthenticated,
-  authorizeRoles("distributor"),
-  DistributorController.getDistributorProfile
+  authorizeRoles("admin"),
+  DistributorController.addDistributor
 );
 
 distributorRouter.put(

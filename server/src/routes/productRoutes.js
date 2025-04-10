@@ -10,12 +10,6 @@ productRouter.post(
   authorizeRoles("distributor"),
   ProductController.createProduct
 );
-productRouter.get(
-  "/",
-  isAuthenticated,
-  authorizeRoles("admin"),
-  ProductController.fetchAllProducts
-);
 
 productRouter.get(
   "/distributor-products",
@@ -36,11 +30,12 @@ productRouter.put(
   authorizeRoles("distributor"),
   ProductController.updateProductDetails
 );
-productRouter.patch(
-  "/:id",
-  isAuthenticated,
-  authorizeRoles("distributor"),
-  ProductController.updateProductStock
-);
+
+// productRouter.patch(
+//   "/:id",
+//   isAuthenticated,
+//   authorizeRoles("distributor"),
+//   ProductController.updateProductStock
+// );
 
 export default productRouter;

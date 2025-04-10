@@ -72,16 +72,136 @@ class AdminController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
-  static fetchAllProducts = asyncHandler(async(req,res,next) =>{
+  static fetchAllProducts = asyncHandler(async (req, res, next) => {
     try {
-      const products = await Product.find().populate('owner');
-      if(!products){
-        return next(new ErrorHandler("No Products foudn"))
+      const products = await Product.find().populate("owner");
+      if (!products) {
+        return res.status(200).json({
+          success: true,
+          message: "No Products found",
+        });
       }
+      res.status(200).json({
+        success: true,
+        message: "Products Fetched Successfully",
+        products,
+      });
     } catch (error) {
-      return next(new ErrorHandler(error.message,500))
+      return next(new ErrorHandler(error.message, 500));
     }
-  })
+  });
+  static fetchAllCustomers = asyncHandler(async (req, res, next) => {
+    try {
+      const users = await User.find({ role: "shop" }).populate(
+        "distributor",
+        "name email"
+      );
+      if (!users) {
+        return res
+          .status(200)
+          .json({ success: true, message: "No user Found" });
+      }
+
+      return res.status(200).json({
+        success: true,
+        message: "Users Fetched successfully",
+        users,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static banUserByAdmin = asyncHandler(async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+      if (!user) {
+        return next(new ErrorHandler("User not found", 400));
+      }
+      if (user.isVerified) {
+        user.isVerified = false;
+      } else {
+        user.isVerified = true;
+      }
+      // TODO: Mail feature for handling the user ban
+      await user.save();
+      return res.status(200).json({
+        success: true,
+        message: "User banned successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static addUserByAdmin = asyncHandler(async (req, res, next) => {
+    try {
+      const { name, email, password, address, phone } = req.body;
+      if (!name) {
+        return next(new ErrorHandler("Name cannot be empty", 400));
+      }
+
+      if (!email) {
+        return next(new ErrorHandler("Email cannot be empty", 400));
+      }
+      if (!password) {
+        return next(new ErrorHandler("Password cannot be empty", 400));
+      }
+      if (!address) {
+        return next(new ErrorHandler("Address cannot be empty", 400));
+      }
+      if (!phone) {
+        return next(new ErrorHandler("Phone cannot be empty", 400));
+      }
+
+      const existUser = await User.findOne({ email });
+      if (existUser) {
+        return next(new ErrorHandler("User already exists", 400));
+      }
+      await User.create({
+        name,
+        email,
+        password,
+        isVerified: true,
+        address,
+        phone,
+      });
+      res.status(201).json({
+        success: true,
+        messaged: "User Added Successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static editUserByAdmin = asyncHandler(async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const user = await User.findById(userId);
+      const { name, email, phone, address } = req.body;
+      if (name) {
+        user.name = name;
+      }
+      if (email) {
+        user.email = email;
+      }
+      if (phone) {
+        user.phone = phone;
+      }
+      if (address) {
+        user.address = address;
+      }
+      await user.save()
+      return res.status(200).json({
+        success:true,
+        message: "User Updated Successfully",
+      })
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
 }
 
 export default AdminController;
