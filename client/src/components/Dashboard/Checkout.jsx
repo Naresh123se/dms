@@ -98,7 +98,7 @@ const Checkout = () => {
         distributor: cartItems[0]?.distributor, // Assuming all items are from same distributor
       };
 
-      // const response = await createOrder(orderData).unwrap();
+      const response = await createOrder(orderData).unwrap();
 
       dispatch(clearCart());
       setOrderComplete(true);

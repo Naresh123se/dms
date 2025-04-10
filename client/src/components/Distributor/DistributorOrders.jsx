@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function DistributorOrders() {
   const { data, isLoading } = useGetOrdersDistributorQuery();
   const orders = Array.isArray(data?.orders) ? data.orders : [];
-  const recentOrders = orders.slice(0, 5);
+  const recentOrders = orders.slice(0, 3);
 
   const getOrderItemSummary = (items) => {
     if (items.length === 0) return "No items";
