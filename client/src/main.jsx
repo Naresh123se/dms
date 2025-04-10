@@ -25,6 +25,7 @@ import {
   Shipments,
   DistributorOrders,
   AdminShipments,
+  ProductDetails,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -206,6 +207,10 @@ const router = createBrowserRouter([
           {
             path: "cart",
             element: <Cart />,
+          },
+          {
+            path: "product/:id",
+            element: <ProductDetails />,
           },
           {
             path: "checkout",

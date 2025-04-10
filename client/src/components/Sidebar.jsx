@@ -9,6 +9,7 @@ import {
   ChevronRight,
   Package,
   ChevronDown,
+  User2,
 } from "lucide-react";
 import { LogoutButton } from ".";
 import { useState } from "react";
@@ -25,7 +26,10 @@ const Sidebar = () => {
     {
       icon: Users,
       text: "Customers",
-      children: [{ icon: Users, text: "Request Supplier", path: "./request" }],
+      children: [
+        { icon: User2, text: "Request Supplier", path: "./request" },
+        { icon: Users, text: "All Suppliers", path: "./allsupplier" },
+      ],
     },
     { icon: CircleDollarSign, text: "Finance", path: "/finance" },
     { icon: LineChart, text: "Analytics", path: "/analytics" },
