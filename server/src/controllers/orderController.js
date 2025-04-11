@@ -8,7 +8,7 @@ import ejs from "ejs";
 import path from "path";
 import { fileURLToPath } from "url";
 import sendMail from "../utils/sendMail.js";
-import axios from 'axios'
+import axios from "axios";
 class OrderController {
   static createOrder = asyncHandler(async (req, res, next) => {
     try {
@@ -333,7 +333,8 @@ class OrderController {
       const distributor = await Distributor.findOne({ user: user._id });
       const orders = await Order.find({ distributor: distributor._id })
         .populate("user", "name email") // Populate user details (only name and email)
-        .populate("distributor", "name email");
+        .populate("distributor", "name email")
+        .sort({ createdAt: -1 });
 
       // Send the orders as a response
       res.status(200).json({
