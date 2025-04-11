@@ -135,7 +135,6 @@ class AdminController {
       } else {
         user.isVerified = true;
       }
-      // TODO: Mail feature for handling the user ban
       await user.save();
       return res.status(200).json({
         success: true,

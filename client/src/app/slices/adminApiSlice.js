@@ -42,6 +42,30 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
+    allProducts: builder.query({
+      query: () => ({
+        url: `${admin_url}/all-products`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
+    allCustomers: builder.query({
+      query: () => ({
+        url: `${admin_url}/all-customers`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
+
+    ban: builder.query({
+      query: (id) => ({
+        url: `${admin_url}/ban/${id}`,
+        method: "GET",
+        credentials: "include",
+      }),
+    }),
   }),
 });
 
@@ -49,4 +73,6 @@ export const {
   useAllocateDistrubitorMutation,
   useGetAllocationRequestQuery,
   useGetAllOrdersAdminQuery,
+  useAllProductsQuery,
+  useAllCustomersQuery,
 } = supplierApiSlice;

@@ -27,6 +27,7 @@ import {
   AdminShipments,
   ProductDetails,
   AdminAllSupplier,
+  AdminProduct,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -98,6 +99,14 @@ const router = createBrowserRouter([
             ),
           },
           {
+            path: "inventories",
+            element: (
+              <AdminLayout>
+                <AdminProduct />
+              </AdminLayout>
+            ),
+          },
+          {
             path: "suppliers",
             element: (
               <AdminLayout>
@@ -114,7 +123,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "all-suppliers",
+            path: "customers",
             element: (
               <AdminLayout>
                 <AdminAllSupplier />

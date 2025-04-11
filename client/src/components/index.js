@@ -28,7 +28,8 @@ import Shipments from "./Distributor/Shipments";
 import DistributorOrders from "./Distributor/DistributorOrders";
 import AdminShipments from "./Admin/AdminShipments";
 import ProductDetails from "./Dashboard/ProductDetails";
-import AdminAllSupplier from "./Admin/AdminAllSupplier";
+import AdminAllSupplier from "./Admin/AdminCustomers";
+import AdminProduct from "./Admin/AdminProduct";
 export {
   Login,
   Register,
@@ -60,5 +61,6 @@ export {
   AdminShipments,
   ProductDetails,
   AdminAllSupplier,
+  AdminProduct,
   Footer,
 };

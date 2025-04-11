@@ -10,6 +10,7 @@ import {
   Package,
   ChevronDown,
   User2,
+  Box,
 } from "lucide-react";
 import { LogoutButton } from ".";
 import { useState } from "react";
@@ -21,14 +22,15 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/admin" },
+    { icon: Box, text: "Inventories", path: "/admin/inventories" },
     { icon: Building2, text: "Suppliers", path: "/admin/suppliers" },
     { icon: Truck, text: "Shipments", path: "/admin/shipments" },
     {
       icon: Users,
       text: "Customers",
       children: [
-        { icon: User2, text: "Request Supplier", path: "./request" },
-        { icon: Users, text: "All Suppliers", path: "./all-suppliers" },
+        { icon: Users, text: "All Customers", path: "/admin/customers" },
+        { icon: User2, text: "Supplier Request", path: "/admin/request" },
       ],
     },
     { icon: CircleDollarSign, text: "Finance", path: "/finance" },
@@ -64,7 +66,7 @@ const Sidebar = () => {
                       : "text-gray-600 hover:bg-gray-200"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2">
                     <item.icon className="h-5 w-5" />
                     <span className="font-medium">{item.text}</span>
                   </div>
@@ -104,7 +106,7 @@ const Sidebar = () => {
                       </button>
                     ))}
                   </div>
-                )}
+                )} 
               </div>
             ))}
           </nav>
