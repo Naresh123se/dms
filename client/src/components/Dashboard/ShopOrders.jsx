@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { BillGenerated } from "./BillGenerated";
-
+import { toast } from "react-toastify";
 const ShopOrders = () => {
   const { data, refetch } = useGetOrdersShopQuery();
   const orders = Array.isArray(data?.orders) ? [...data.orders].reverse() : [];

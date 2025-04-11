@@ -39,7 +39,7 @@ adminRouter.get(
 );
 
 adminRouter.post(
-  "/add-user",
+  "/add-customer",
   isAuthenticated,
   authorizeRoles("admin"),
   AdminController.addUserByAdmin

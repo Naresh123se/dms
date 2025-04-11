@@ -28,6 +28,7 @@ import {
   ProductDetails,
   AdminAllSupplier,
   AdminProduct,
+  ViewSupplier,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -237,6 +238,10 @@ const router = createBrowserRouter([
           {
             path: "orders",
             element: <ShopOrders />,
+          },
+          {
+            path: "supplier",
+            element: <ViewSupplier />,
           },
         ],
       },

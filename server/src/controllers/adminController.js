@@ -184,7 +184,7 @@ class AdminController {
       });
       res.status(201).json({
         success: true,
-        messaged: "User Added Successfully",
+        message: "User Added Successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

@@ -61,9 +61,9 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    getSuppliers: builder.query({
+    getSupplier: builder.query({
       query: () => ({
-        url: `${user_url}/view-suppliers`,
+        url: `${user_url}/view-supplier`,
         method: "GET",
         credentials: "include",
       }),
@@ -77,6 +77,8 @@ export const userApiSlice = apiSlice.injectEndpoints({
         credentials: "include",
       }),
     }),
+
+
   }),
 });
 
@@ -89,5 +91,5 @@ export const {
   useRequestDistributorMutation,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
-  useGetSuppliersQuery
+  useGetSupplierQuery
 } = userApiSlice;

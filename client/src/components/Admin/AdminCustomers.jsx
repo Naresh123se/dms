@@ -279,12 +279,12 @@ const AdminCustomers = () => {
             <RefreshCw className="h-4 w-4" />
             Refresh
           </Button>
-          <Button className="gap-2">
+          {/* <Button className="gap-2">
             <Plus className="h-4 w-4" />
             Add Customer
-          </Button>
+          </Button> */}
 
-          <AddCustomerr/>
+          <AddCustomer refetch={refetch}/>
         </div>
       </div>
 

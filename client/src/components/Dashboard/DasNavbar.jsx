@@ -96,7 +96,7 @@ const DasNavbar = () => {
               Orders
             </Link>
             <Link
-              to="/suppliers"
+              to="/dashboard/supplier"
               className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white px-3 py-2 rounded-md text-sm font-medium flex items-center"
             >
               <Truck className="h-5 w-5 mr-1" />
@@ -222,7 +222,7 @@ const DasNavbar = () => {
               Orders
             </Link>
             <Link
-              to="/suppliers"
+              to="/dashboard/supplier"
               className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Truck className="h-5 w-5 mr-2" />

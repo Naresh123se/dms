@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAllProductsQuery } from "@/app/slices/adminApiSlice";
-import { Search, RefreshCw } from "lucide-react";
+import { Search, RefreshCw, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -48,7 +48,10 @@ const AdminProduct = () => {
   return (
     <div className="p-6 space-y-6 mt-16">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Products </h1>
+        <div className="flex items-center gap-4">
+          <Box className="w-8 h-8" />
+          <h1 className="text-3xl font-bold">Inventories </h1>
+        </div>
         <Button variant="outline" onClick={() => refetch()}>
           <RefreshCw className="h-4 w-4 mr-2" />
           Refresh
@@ -71,6 +74,7 @@ const AdminProduct = () => {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Category</TableHead>
               <TableHead>Price</TableHead>
@@ -85,9 +89,18 @@ const AdminProduct = () => {
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <TableRow key={product._id}>
+                  <TableCell className="font-medium">
+                    <div className="w-16 rounded-lg">
+                      <img
+                        src={product.images[0].url}
+                        alt=""
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </TableCell>
                   <TableCell className="font-medium">{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>${product.price.toLocaleString()}</TableCell>
+                  <TableCell>Rs.{product.price.toLocaleString()}</TableCell>
                   <TableCell>{product.quantity}</TableCell>
                   <TableCell>
                     <Badge

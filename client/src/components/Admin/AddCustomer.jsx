@@ -1,6 +1,5 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import * as z from "zod";
+
 import {
   Dialog,
   DialogContent,
@@ -21,54 +20,43 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "react-toastify";
+import { useAddCustomersMutation } from "@/app/slices/adminApiSlice";
 
-// Define form schema
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: "Name must be at least 2 characters.",
-  }),
-  email: z.string().email({
-    message: "Please enter a valid email address.",
-  }),
-  password: z.string().min(8, {
-    message: "Password must be at least 8 characters.",
-  }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
-  }),
-  address: z.string().min(5, {
-    message: "Address must be at least 5 characters.",
-  }),
-});
-
-export function AddCustomer() {
+export function AddCustomer({ refetch }) {
   // 1. Define your form.
-  const form =
-    useForm <
-    z.infer <
-    typeof formSchema >>
-      {
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-          name: "",
-          email: "",
-          password: "",
-          phone: "",
-          address: "",
-        },
-      };
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      phone: "",
+      address: "",
+    },
+  });
 
+  const [addCustomer, { isLoading }] = useAddCustomersMutation();
+  const [open, setOpen] = useState(false); // State to control dialog
   // 2. Define a submit handler.
-  function onSubmit(values) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    // Here you would typically call your API to add the customer
-    // await addCustomer(values);
-  }
+  const onSubmit = async (data) => {
+    
+    try {
+      const response = await addCustomer(data).unwrap();
+      console.log(response);
+      if (response.success) {
+        setOpen(false)
+        toast.success("Customer Added Successfully");
+        refetch();
+        form.reset();
+      }
+    } catch (error) {
+      toast.error(error.data.message);
+    }
+  };
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button className="gap-2">
           <Plus className="h-4 w-4" />
@@ -92,7 +80,7 @@ export function AddCustomer() {
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Full Name</FormLabel>
+                    <FormLabel>Shop Name</FormLabel>
                     <FormControl>
                       <Input placeholder="John Doe" {...field} />
                     </FormControl>
@@ -143,7 +131,7 @@ export function AddCustomer() {
                   <FormItem>
                     <FormLabel>Phone Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="+1 (555) 123-4567" {...field} />
+                      <Input placeholder="9812903888" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -159,7 +147,7 @@ export function AddCustomer() {
                     <FormLabel>Address</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="123 Main St, Anytown, USA"
+                        placeholder="123 Main St, Dhapakhel, Lalitpur"
                         {...field}
                       />
                     </FormControl>

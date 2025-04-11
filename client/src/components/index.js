@@ -30,6 +30,7 @@ import AdminShipments from "./Admin/AdminShipments";
 import ProductDetails from "./Dashboard/ProductDetails";
 import AdminAllSupplier from "./Admin/AdminCustomers";
 import AdminProduct from "./Admin/AdminProduct";
+import ViewSupplier from "./Dashboard/ViewSupplier";
 export {
   Login,
   Register,
@@ -49,6 +50,7 @@ export {
   Dashboard,
   Distributor,
   PageNotFound,
+  ViewSupplier,
   ChangePassword,
   Cart,
   Checkout,

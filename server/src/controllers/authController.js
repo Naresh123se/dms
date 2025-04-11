@@ -298,7 +298,9 @@ class AuthController {
       if (!user) {
         return next(new ErrorHandler("User Not Found", 400));
       }
-      const distributor = await Distributor.findById(user.distributor);
+      const distributor = await Distributor.findById(user.distributor).populate(
+        "user"
+      );
       if (!distributor) {
         return next(new ErrorHandler("Distributor is not allocated", 400));
       }
