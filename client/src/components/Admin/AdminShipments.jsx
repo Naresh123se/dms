@@ -37,7 +37,6 @@ import {
   Clock,
   IndianRupeeIcon,
 } from "lucide-react";
-import { useGetSuppliersQuery } from "@/app/slices/userApiSlice";
 
 const getStatusBadge = (status) => {
   const statusConfig = {
