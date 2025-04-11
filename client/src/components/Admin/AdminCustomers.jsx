@@ -63,6 +63,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { toast } from "react-toastify";
+import { AddCustomer } from "./AddCustomer";
 
 const AdminCustomers = () => {
   const { data, isLoading, error, refetch } = useAllCustomersQuery();
@@ -282,6 +283,8 @@ const AdminCustomers = () => {
             <Plus className="h-4 w-4" />
             Add Customer
           </Button>
+
+          <AddCustomerr/>
         </div>
       </div>
 
