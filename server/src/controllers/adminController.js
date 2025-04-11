@@ -124,7 +124,6 @@ class AdminController {
       } else {
         user.isVerified = true;
       }
-      // TODO: Mail feature for handling the user ban
       await user.save();
       return res.status(200).json({
         success: true,
@@ -193,11 +192,11 @@ class AdminController {
       if (address) {
         user.address = address;
       }
-      await user.save()
+      await user.save();
       return res.status(200).json({
-        success:true,
+        success: true,
         message: "User Updated Successfully",
-      })
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }

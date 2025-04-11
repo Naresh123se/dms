@@ -4,11 +4,8 @@ import { Button } from "@/components/ui/button";
 import productImage from "../../../public/order.png";
 import {
   Package2,
-  DollarSign,
   ShoppingCart,
   User,
-  FileText,
-  Tag,
   Percent,
   LayoutGrid,
   Box,
@@ -173,7 +170,9 @@ function ProductList() {
                           <IndianRupee className="h-5 w-5 text-green-500" />
                           <div>
                             <div className="text-sm text-green-600">Price</div>
-                            <div className="font-medium">Rs.{product.price}</div>
+                            <div className="font-medium">
+                              Rs.{product.price}
+                            </div>
                           </div>
                         </div>
                       </div>

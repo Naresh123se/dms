@@ -10,6 +10,7 @@ import {
   Package,
   ChevronDown,
   User2,
+  Box,
 } from "lucide-react";
 import { LogoutButton } from ".";
 import { useState } from "react";
@@ -21,6 +22,7 @@ const Sidebar = () => {
 
   const menuItems = [
     { icon: LayoutDashboard, text: "Dashboard", path: "/admin" },
+    { icon: Box, text: "Inventories", path: "/admin/inventories" },
     { icon: Building2, text: "Suppliers", path: "/admin/suppliers" },
     { icon: Truck, text: "Shipments", path: "/admin/shipments" },
     {
