@@ -61,6 +61,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    isBanned: {
+      type: Boolean,
+      required: false,
+    },
     paymentMethod: {
       type: String,
       enum: ["khalti", "cash"],

@@ -97,6 +97,7 @@ class AdminController {
       return next(new ErrorHandler(error.message, 500));
     }
   });
+
   static fetchAllCustomers = asyncHandler(async (req, res, next) => {
     try {
       const users = await User.find({ role: "shop" }).populate({
@@ -130,15 +131,15 @@ class AdminController {
       if (!user) {
         return next(new ErrorHandler("User not found", 400));
       }
-      if (user.isVerified) {
-        user.isVerified = false;
+      if (user.isBanned) {
+        user.isBanned = false;
       } else {
-        user.isVerified = true;
+        user.isBanned = true;
       }
       await user.save();
       return res.status(200).json({
         success: true,
-        message: "User banned successfully",
+        message: user.isBanned ? 'User banned Successfully': 'User unbanned Successfully'
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

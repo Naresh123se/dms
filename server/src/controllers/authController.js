@@ -129,7 +129,7 @@ class AuthController {
         );
       }
 
-      // TODO: CHECK if the user is banned
+      //  CHECK if the user is banned or not verified
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
@@ -138,6 +138,10 @@ class AuthController {
 
       if (!user.isVerified) {
         return next(new ErrorHandler("You are not verified yet", 400));
+      }
+
+      if (user.isBanned) {
+        return next(new ErrorHandler("You are banned from the site", 400));
       }
 
       const isPasswordMatch = await user.comparePassword(password);
