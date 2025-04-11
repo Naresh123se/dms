@@ -76,7 +76,7 @@ class AdminController {
     try {
       const products = await Product.find().populate({
         path: "owner", // Populate the Distributor
-        select: "user", // Only fetch the 'user' field from Distributor
+        select: "user warehouseDetails", // Only fetch the 'user' field from Distributor
         populate: {
           path: "user", // Then populate the User inside Distributor
           select: "name email", // Only fetch the 'name' field from User

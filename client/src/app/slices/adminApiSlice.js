@@ -59,10 +59,17 @@ export const supplierApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    ban: builder.query({
+    ban: builder.mutation({
       query: (id) => ({
         url: `${admin_url}/ban/${id}`,
-        method: "GET",
+        method: "PUT",
+        credentials: "include",
+      }),
+    }),
+    unban: builder.mutation({
+      query: (id) => ({
+        url: `${admin_url}/unban/${id}`,
+        method: "PUT",
         credentials: "include",
       }),
     }),
@@ -75,4 +82,6 @@ export const {
   useGetAllOrdersAdminQuery,
   useAllProductsQuery,
   useAllCustomersQuery,
+  useBanMutation,
+  useUnbanMutation,
 } = supplierApiSlice;

@@ -1,5 +1,8 @@
-import { useState } from "react";
-import { useAllCustomersQuery } from "@/app/slices/adminApiSlice";
+import { useState, useEffect } from "react";
+import {
+  useAllCustomersQuery,
+  useBanMutation,
+} from "@/app/slices/adminApiSlice";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,15 +62,30 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { toast } from "react-toastify";
 
 const AdminCustomers = () => {
   const { data, isLoading, error, refetch } = useAllCustomersQuery();
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [distributorFilter, setDistributorFilter] = useState("all");
-  const [bannedUsers, setBannedUsers] = useState({});
   const [userToConfirm, setUserToConfirm] = useState(null);
   const [showBanDialog, setShowBanDialog] = useState(false);
+  const [banAction, setBanAction] = useState("ban"); // "ban" or "unban"
+
+  const [banUser] = useBanMutation();
+
+  // Initialize bannedUsers state from API data
+  useEffect(() => {
+    if (data?.users) {
+      const bannedUsersMap = {};
+      data.users.forEach((user) => {
+        if (user.isBanned) {
+          bannedUsersMap[user._id] = true;
+        }
+      });
+    }
+  }, [data]);
 
   // Format date function
   const formatDate = (dateString) => {
@@ -80,39 +98,49 @@ const AdminCustomers = () => {
   };
 
   // Handle banning a user
-  const handleBanClick = (userId) => {
-    const isBanned = bannedUsers[userId];
-
+  const handleBanClick = (userId, isBanned) => {
     if (!isBanned) {
-      // Show confirmation dialog
+      // Show confirmation dialog for banning
       setUserToConfirm(userId);
+      setBanAction("ban");
       setShowBanDialog(true);
     } else {
-      // Immediately unban user
-      setBannedUsers((prev) => ({
-        ...prev,
-        [userId]: false,
-      }));
-      // Here you would call your API to unban the user
-      console.log(`User ${userId} has been unbanned`);
+      // Show confirmation dialog for unbanning
+      setUserToConfirm(userId);
+      setBanAction("unban");
+      setShowBanDialog(true);
     }
   };
 
-  const confirmBan = (userToConfirm) => {
-    if (userToConfirm) {
-      setBannedUsers((prev) => ({
-        ...prev,
-        [userToConfirm]: true,
-      }));
+  const confirmAction = async () => {
+    try {
+      let res;
 
-      // Here you would call your API to ban the user
-      console.log(`User ${userToConfirm} has been banned`);
-      setShowBanDialog(false);
-      setUserToConfirm(null);
+      if (banAction === "ban") {
+        res = await banUser(userToConfirm).unwrap();
+      } else {
+        res = await banUser(userToConfirm).unwrap();
+      }
+
+      if (res.success) {
+        toast.success(
+          res.message ||
+            `User successfully ${banAction === "ban" ? "banned" : "unbanned"}`
+        );
+        setShowBanDialog(false);
+        setUserToConfirm(null);
+        refetch(); // Refresh the data to get updated ban status
+      } else {
+        toast.error(res.message || "Action failed");
+      }
+    } catch (err) {
+      toast.error(
+        `Failed to ${banAction} user: ${err.message || "Unknown error"}`
+      );
     }
   };
 
-  const cancelBan = () => {
+  const cancelAction = () => {
     setShowBanDialog(false);
     setUserToConfirm(null);
   };
@@ -191,26 +219,44 @@ const AdminCustomers = () => {
 
   return (
     <div className="container mx-auto py-6 space-y-6 mt-16 px-8">
-      {/* Ban Confirmation Dialog */}
+      {/* Ban/Unban Confirmation Dialog */}
       <AlertDialog open={showBanDialog} onOpenChange={setShowBanDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-destructive flex items-center gap-2">
-              <Ban className="h-5 w-5" />
-              Ban User
+            <AlertDialogTitle
+              className={`flex items-center gap-2 ${
+                banAction === "ban" ? "text-destructive" : ""
+              }`}
+            >
+              {banAction === "ban" ? (
+                <>
+                  <Ban className="h-5 w-5" />
+                  Ban User
+                </>
+              ) : (
+                <>
+                  <UserX className="h-5 w-5" />
+                  Unban User
+                </>
+              )}
             </AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to ban this user? They will no longer be
-              able to access the platform. This action can be reversed later.
+              {banAction === "ban"
+                ? "Are you sure you want to ban this user? They will no longer be able to access the platform. This action can be reversed later."
+                : "Are you sure you want to unban this user? This will restore their access to the platform."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={cancelBan}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel onClick={cancelAction}>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={confirmBan}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={confirmAction}
+              className={
+                banAction === "ban"
+                  ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  : ""
+              }
             >
-              Ban User
+              {banAction === "ban" ? "Ban User" : "Unban User"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -240,7 +286,7 @@ const AdminCustomers = () => {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <Card className="hover:shadow-md transition-shadow">
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
@@ -275,6 +321,19 @@ const AdminCustomers = () => {
           <CardContent>
             <div className="text-2xl font-bold">
               {data?.users?.filter((user) => !user.isVerified).length || 0}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="pb-2">
+            <CardDescription className="flex items-center gap-2">
+              <Ban className="h-4 w-4 text-red-500" />
+              Banned
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              {data?.users?.filter((user) => user.isBanned).length || 0}
             </div>
           </CardContent>
         </Card>
@@ -517,15 +576,15 @@ const AdminCustomers = () => {
                               <TooltipTrigger asChild>
                                 <Button
                                   variant={
-                                    bannedUsers[user._id]
-                                      ? "outline"
-                                      : "destructive"
+                                    user.isBanned ? "outline" : "destructive"
                                   }
                                   size="sm"
                                   className="h-8 px-2 flex items-center gap-1"
-                                  onClick={() => handleBanClick(user._id)}
+                                  onClick={() =>
+                                    handleBanClick(user._id, user.isBanned)
+                                  }
                                 >
-                                  {bannedUsers[user._id] ? (
+                                  {user.isBanned ? (
                                     <>
                                       <UserX className="h-4 w-4" />
                                       Unban
@@ -539,14 +598,14 @@ const AdminCustomers = () => {
                                 </Button>
                               </TooltipTrigger>
                               <TooltipContent>
-                                {bannedUsers[user._id]
+                                {user.isBanned
                                   ? "Remove ban from this user"
                                   : "Ban this user"}
                               </TooltipContent>
                             </Tooltip>
                           </TooltipProvider>
 
-                          {bannedUsers[user._id] && (
+                          {user.isBanned && (
                             <Badge
                               variant="outline"
                               className="bg-red-50 text-red-700 border-red-200"
