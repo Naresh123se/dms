@@ -114,7 +114,7 @@ const router = createBrowserRouter([
             ),
           },
           {
-            path: "all-suppliers",
+            path: "customers",
             element: (
               <AdminLayout>
                 <AdminAllSupplier />
