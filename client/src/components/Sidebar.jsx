@@ -38,7 +38,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-72 h-screen border-r border-gray-200 bg-white flex flex-col justify-between">
+    <div className="w-80 h-screen border-r border-gray-200 bg-white flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-3 p-6 border-b border-gray-100">
           <Link to="/admin" className="flex-shrink-0 flex items-center">

@@ -76,7 +76,7 @@ class AdminController {
     try {
       const products = await Product.find().populate({
         path: "owner", // Populate the Distributor
-        select: "user", // Only fetch the 'user' field from Distributor
+        select: "user warehouseDetails", // Only fetch the 'user' field from Distributor
         populate: {
           path: "user", // Then populate the User inside Distributor
           select: "name email", // Only fetch the 'name' field from User
@@ -139,7 +139,9 @@ class AdminController {
       await user.save();
       return res.status(200).json({
         success: true,
-        message: user.isBanned ? 'User banned Successfully': 'User unbanned Successfully'
+        message: user.isBanned
+          ? "User banned Successfully"
+          : "User unbanned Successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
