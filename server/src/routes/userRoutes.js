@@ -31,8 +31,9 @@ authRouter.put(
   isAuthenticated,
   AuthController.requestDistributor
 );
+
 authRouter.get(
-  "/view-suppliers",
+  "/view-supplier",
   isAuthenticated,
   authorizeRoles("shop"),
   AuthController.viewSuppliers

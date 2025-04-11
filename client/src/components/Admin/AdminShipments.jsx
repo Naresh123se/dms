@@ -57,7 +57,6 @@ const getStatusBadge = (status) => {
   );
 };
 
-
 const AdminShipments = () => {
   const { data, isLoading, refetch } = useGetAllOrdersAdminQuery();
   const [searchTerm, setSearchTerm] = useState("");
@@ -81,8 +80,6 @@ const AdminShipments = () => {
 
     return matchesSearch && matchesStatus;
   });
-  const { data: ff } = useGetSuppliersQuery();
-  console.log(ff);
 
   return (
     <Card className="w-full mt-16">

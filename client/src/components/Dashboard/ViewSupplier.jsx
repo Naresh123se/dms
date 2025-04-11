@@ -15,7 +15,7 @@ import {
 
 import {
   useGetUserProfileQuery,
-  useRequestDistributorMutation,
+  useGetSuppliersQuery
 } from "@/app/slices/userApiSlice";
 
 const InfoCard = ({ icon: Icon, label, value }) => (
@@ -32,7 +32,9 @@ const ViewSupplier = () => {
   const { data: userData, refetch } = useGetUserProfileQuery();
   const user = userData?.user || {};
   
-  // const 
+  const  {data:distributorData, refetch:distributorRefetch} = useGetSuppliersQuery()
+  console.log(distributorData);
+  const distributor = distributorData?.distributor
 
   // No suppliers available state
   if (user.requestDistributor === "pending") {
@@ -86,7 +88,7 @@ const ViewSupplier = () => {
               <Building2 className="w-8 h-8 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">{distributor.warehouseDetails?.contactPerson}</h1>
+              <h1 className="text-2xl font-bold text-gray-900">{distributor?.user.name}</h1>
               <p className="text-gray-500">Distributor Details</p>
             </div>
           </div>
@@ -97,25 +99,25 @@ const ViewSupplier = () => {
           <InfoCard 
             icon={MapPin} 
             label="Warehouse Address" 
-            value={distributor.warehouseDetails?.address} 
+            value={distributor?.warehouseDetails?.address} 
           />
           
           <InfoCard 
             icon={MapPinned} 
             label="Areas Covered" 
-            value={distributor.areaCovered?.join(', ')} 
+            value={distributor?.areaCovered?.join(', ')} 
           />
 
           <InfoCard 
             icon={FileText} 
             label="VAT Number" 
-            value={distributor.vat || 'Not provided'} 
+            value={distributor?.vat || 'Not provided'} 
           />
 
           <InfoCard 
             icon={Contact2} 
             label="Contact Person" 
-            value={distributor.warehouseDetails?.contactPerson} 
+            value={distributor?.warehouseDetails?.contactPerson} 
           />
 
           <InfoCard 
@@ -127,19 +129,13 @@ const ViewSupplier = () => {
           <InfoCard 
             icon={Mail} 
             label="Email" 
-            value={user.email} 
-          />
-
-          <InfoCard 
-            icon={Wallet} 
-            label="Available Balance" 
-            value={`NPR ${distributor.availableBalance?.toLocaleString() || 0}`} 
+            value={distributor?.user.email} 
           />
 
           <InfoCard 
             icon={MapPin} 
             label="Zip Code" 
-            value={distributor.zipCode} 
+            value={distributor?.zipCode} 
           />
 
           <InfoCard 
@@ -158,7 +154,7 @@ const ViewSupplier = () => {
               <p className="text-blue-700 capitalize">{user.paymentMethod}</p>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
-              <h3 className="font-medium text-green-900 mb-2">Account Status</h3>
+              <h3 className="font-medium text-green-900 mb-2">Distributor Status</h3>
               <p className="text-green-700">{user.isVerified ? 'Verified' : 'Pending Verification'}</p>
             </div>
           </div>

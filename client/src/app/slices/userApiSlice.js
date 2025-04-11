@@ -61,7 +61,7 @@ export const userApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
-    getSupplier: builder.query({
+    getSuppliers: builder.query({
       query: () => ({
         url: `${user_url}/view-supplier`,
         method: "GET",
@@ -91,5 +91,5 @@ export const {
   useRequestDistributorMutation,
   useGetUserProfileQuery,
   useUpdateUserProfileMutation,
-  useGetSupplierQuery
+  useGetSuppliersQuery
 } = userApiSlice;
