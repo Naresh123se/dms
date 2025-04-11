@@ -128,10 +128,16 @@ class AuthController {
           new ErrorHandler("Please enter your email or Password", 400)
         );
       }
+
+      // TODO: CHECK if the user is banned
       const user = await User.findOne({ email }).select("+password");
 
       if (!user) {
         return next(new ErrorHandler("Invalid Email or Password", 400));
+      }
+
+      if (!user.isVerified) {
+        return next(new ErrorHandler("You are not verified yet", 400));
       }
 
       const isPasswordMatch = await user.comparePassword(password);

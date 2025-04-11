@@ -125,7 +125,7 @@ const Checkout = () => {
             Check your email for order details.
           </p>
           <Link
-            to="/"
+            to="/dashboard"
             className="inline-block bg-indigo-600 text-white px-8 py-3 rounded-full font-semibold hover:bg-indigo-700 transition-all duration-200 transform hover:-translate-y-1"
           >
             Continue Shopping
