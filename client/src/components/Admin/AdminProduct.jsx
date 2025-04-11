@@ -77,7 +77,7 @@ const AdminProduct = () => {
               <TableHead>Quantity</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Warehouse</TableHead>
-              <TableHead>Owner</TableHead>
+              <TableHead>Distributor</TableHead>
               <TableHead className="w-16"></TableHead>
             </TableRow>
           </TableHeader>
@@ -104,7 +104,7 @@ const AdminProduct = () => {
                     {product.owner?.warehouseDetails?.address}
                   </TableCell>
                   <TableCell>
-                    {/* {product.owner?.warehouseDetails?.address} */}
+                    {product.owner?.warehouseDetails?.address}
                   </TableCell>
                 </TableRow>
               ))
