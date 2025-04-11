@@ -74,7 +74,14 @@ class AdminController {
   });
   static fetchAllProducts = asyncHandler(async (req, res, next) => {
     try {
-      const products = await Product.find().populate("owner");
+      const products = await Product.find().populate({
+        path: "owner", // Populate the Distributor
+        select: "user", // Only fetch the 'user' field from Distributor
+        populate: {
+          path: "user", // Then populate the User inside Distributor
+          select: "name email", // Only fetch the 'name' field from User
+        },
+      });
       if (!products) {
         return res.status(200).json({
           success: true,
@@ -92,10 +99,14 @@ class AdminController {
   });
   static fetchAllCustomers = asyncHandler(async (req, res, next) => {
     try {
-      const users = await User.find({ role: "shop" }).populate(
-        "distributor",
-        "name email"
-      );
+      const users = await User.find({ role: "shop" }).populate({
+        path: "distributor", // Populate the Distributor
+        select: "user", // Only fetch the 'user' field from Distributor
+        populate: {
+          path: "user", // Then populate the User inside Distributor
+          select: "name email", // Only fetch the 'name' field from User
+        },
+      });
       if (!users) {
         return res
           .status(200)
@@ -145,9 +156,11 @@ class AdminController {
       if (!email) {
         return next(new ErrorHandler("Email cannot be empty", 400));
       }
+
       if (!password) {
         return next(new ErrorHandler("Password cannot be empty", 400));
       }
+
       if (!address) {
         return next(new ErrorHandler("Address cannot be empty", 400));
       }
@@ -193,11 +206,11 @@ class AdminController {
       if (address) {
         user.address = address;
       }
-      await user.save()
+      await user.save();
       return res.status(200).json({
-        success:true,
+        success: true,
         message: "User Updated Successfully",
-      })
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
