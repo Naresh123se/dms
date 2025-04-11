@@ -29,6 +29,9 @@ import {
   AdminAllSupplier,
   AdminProduct,
   ViewSupplier,
+  TermsOfService,
+  PrivacyPolicy1,
+  Support,
 } from "./components";
 import { StrictMode } from "react";
 import AuthLayout from "./routes/AuthLayout";
@@ -82,6 +85,30 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={true}>
             <Profile />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/terms",
+        element: (
+          <AuthLayout authentication={false}>
+            <TermsOfService />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/privacy",
+        element: (
+          <AuthLayout authentication={false}>
+            <PrivacyPolicy1 />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/support",
+        element: (
+          <AuthLayout authentication={false}>
+            <Support />
           </AuthLayout>
         ),
       },

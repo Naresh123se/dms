@@ -1,22 +1,23 @@
-import React from 'react';
-import { 
-  Building2, 
-  MapPin, 
-  Phone, 
-  Mail, 
-  Clock, 
-  Warehouse, 
-  Contact2, 
+import React from "react";
+import {
+  Building2,
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  Warehouse,
+  Contact2,
   MapPinned,
   Unlink,
   FileText,
-  Wallet
-} from 'lucide-react';
+  Wallet,
+} from "lucide-react";
 
 import {
   useGetUserProfileQuery,
-  useGetSuppliersQuery
+  useGetSuppliersQuery,
 } from "@/app/slices/userApiSlice";
+import { ScrollArea } from "../ui/scroll-area";
 
 const InfoCard = ({ icon: Icon, label, value }) => (
   <div className="flex items-start space-x-3 p-4 bg-white rounded-lg shadow-sm">
@@ -31,10 +32,11 @@ const InfoCard = ({ icon: Icon, label, value }) => (
 const ViewSupplier = () => {
   const { data: userData, refetch } = useGetUserProfileQuery();
   const user = userData?.user || {};
-  
-  const  {data:distributorData, refetch:distributorRefetch} = useGetSuppliersQuery()
+
+  const { data: distributorData, refetch: distributorRefetch } =
+    useGetSuppliersQuery();
   console.log(distributorData);
-  const distributor = distributorData?.distributor
+  const distributor = distributorData?.distributor;
 
   // No suppliers available state
   if (user.requestDistributor === "pending") {
@@ -51,7 +53,6 @@ const ViewSupplier = () => {
             We currently don't have any suppliers connected to your account.
             Please contact the admin or request a Supplier from the dashboard
           </p>
-          
         </div>
       </div>
     );
@@ -79,88 +80,96 @@ const ViewSupplier = () => {
   }
 
   return (
-    <div className="bg-gray-100 min-h-screen py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header Section */}
-        <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-              <Building2 className="w-8 h-8 text-blue-600" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{distributor?.user.name}</h1>
-              <p className="text-gray-500">Distributor Details</p>
+    <ScrollArea className="h-[calc(100vh-65px)]">
+      <div className="bg-gray-100 min-h-screen py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+            <div className="flex items-center space-x-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                <Building2 className="w-8 h-8 text-blue-600" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {distributor?.user.name}
+                </h1>
+                <p className="text-gray-500">Distributor Details</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Main Content Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <InfoCard 
-            icon={MapPin} 
-            label="Warehouse Address" 
-            value={distributor?.warehouseDetails?.address} 
-          />
-          
-          <InfoCard 
-            icon={MapPinned} 
-            label="Areas Covered" 
-            value={distributor?.areaCovered?.join(', ')} 
-          />
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <InfoCard
+              icon={MapPin}
+              label="Warehouse Address"
+              value={distributor?.warehouseDetails?.address}
+            />
 
-          <InfoCard 
-            icon={FileText} 
-            label="VAT Number" 
-            value={distributor?.vat || 'Not provided'} 
-          />
+            <InfoCard
+              icon={MapPinned}
+              label="Areas Covered"
+              value={distributor?.areaCovered?.join(", ")}
+            />
 
-          <InfoCard 
-            icon={Contact2} 
-            label="Contact Person" 
-            value={distributor?.warehouseDetails?.contactPerson} 
-          />
+            <InfoCard
+              icon={FileText}
+              label="VAT Number"
+              value={distributor?.vat || "Not provided"}
+            />
 
-          <InfoCard 
-            icon={Phone} 
-            label="Phone" 
-            value={user.phone} 
-          />
+            <InfoCard
+              icon={Contact2}
+              label="Contact Person"
+              value={distributor?.warehouseDetails?.contactPerson}
+            />
 
-          <InfoCard 
-            icon={Mail} 
-            label="Email" 
-            value={distributor?.user.email} 
-          />
+            <InfoCard icon={Phone} label="Phone" value={user.phone} />
 
-          <InfoCard 
-            icon={MapPin} 
-            label="Zip Code" 
-            value={distributor?.zipCode} 
-          />
+            <InfoCard
+              icon={Mail}
+              label="Email"
+              value={distributor?.user.email}
+            />
 
-          <InfoCard 
-            icon={Clock} 
-            label="Member Since" 
-            value={new Date(user.createdAt).toLocaleDateString()} 
-          />
-        </div>
+            <InfoCard
+              icon={MapPin}
+              label="Zip Code"
+              value={distributor?.zipCode}
+            />
 
-        {/* Additional Information */}
-        <div className="mt-6 bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold mb-4">Additional Information</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-blue-50 rounded-lg">
-              <h3 className="font-medium text-blue-900 mb-2">Payment Method</h3>
-              <p className="text-blue-700 capitalize">{user.paymentMethod}</p>
-            </div>
-            <div className="p-4 bg-green-50 rounded-lg">
-              <h3 className="font-medium text-green-900 mb-2">Distributor Status</h3>
-              <p className="text-green-700">{user.isVerified ? 'Verified' : 'Pending Verification'}</p>
+            <InfoCard
+              icon={Clock}
+              label="Member Since"
+              value={new Date(user.createdAt).toLocaleDateString()}
+            />
+          </div>
+
+          {/* Additional Information */}
+          <div className="mt-6 bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-xl font-semibold mb-4">
+              Additional Information
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <h3 className="font-medium text-blue-900 mb-2">
+                  Payment Method
+                </h3>
+                <p className="text-blue-700 capitalize">{user.paymentMethod}</p>
+              </div>
+              <div className="p-4 bg-green-50 rounded-lg">
+                <h3 className="font-medium text-green-900 mb-2">
+                  Distributor Status
+                </h3>
+                <p className="text-green-700">
+                  {user.isVerified ? "Verified" : "Pending Verification"}
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 };
 

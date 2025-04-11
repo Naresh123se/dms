@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { BillGenerated } from "./BillGenerated";
 import { toast } from "react-toastify";
+
 const ShopOrders = () => {
   const { data, refetch } = useGetOrdersShopQuery();
   const orders = Array.isArray(data?.orders) ? [...data.orders].reverse() : [];
@@ -18,7 +19,7 @@ const ShopOrders = () => {
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
 
   const tabs = [
     { id: "all", label: "All", count: orders.length },
@@ -27,7 +28,11 @@ const ShopOrders = () => {
       label: "Pending",
       count: orders.filter((o) => o.status === "pending").length,
     },
-    { id: "to-receive", label: "To Receive", count: orders.filter((o) => o.status === "process").length },
+    {
+      id: "to-receive",
+      label: "To Receive",
+      count: orders.filter((o) => o.status === "process").length,
+    },
     {
       id: "rejected",
       label: "Rejected",
@@ -75,10 +80,11 @@ const ShopOrders = () => {
   };
 
   const displayOrders = getFilteredByTime(filteredOrders);
-  const [payment, {isLoading:paymentLoading}] = useInitiatePaymentMutation();
-  const initiatePayment = async () => {
+  const [payment, { isLoading: paymentLoading }] = useInitiatePaymentMutation();
+
+  const initiatePayment = async (orderId) => {
     try {
-      const res = await payment(data).unwrap();
+      const res = await payment(orderId).unwrap();
       if (res.success) {
         window.location.href = res?.payment_url;
       }
@@ -86,8 +92,9 @@ const ShopOrders = () => {
       toast.error(error?.data?.message || "Payment Initiation Failed");
     }
   };
+
   return (
-    <div className=" bg-gray-50 p-8">
+    <div className="bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-gray-900">My Orders</h1>
 
@@ -104,7 +111,7 @@ const ShopOrders = () => {
               onClick={() => setActiveTab(tab.id)}
             >
               {tab.label}
-              {tab.count !== null && (
+              {tab.count > 0 && (
                 <span className="ml-2 text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
                   {tab.count}
                 </span>
@@ -128,6 +135,7 @@ const ShopOrders = () => {
             ))}
           </select>
         </div>
+
         <ScrollArea className="h-[calc(100vh-360px)]">
           {displayOrders.length > 0 ? (
             displayOrders.map((order) => (
@@ -152,7 +160,7 @@ const ShopOrders = () => {
                         : "text-blue-700 bg-blue-100"
                     }`}
                   >
-                    {order.status}
+                    {order.isDelivered ? "Delivered" : order.status}
                   </span>
                 </div>
 
@@ -171,7 +179,7 @@ const ShopOrders = () => {
                             {item?.name}
                           </h4>
                           <p className="text-sm text-gray-500">
-                            Payment: {order.paymentMethod}
+                            Quantity: {item?.qty}
                           </p>
                         </div>
 
@@ -181,55 +189,63 @@ const ShopOrders = () => {
                             ₹{item?.price?.toFixed(2)}
                           </p>
                         </div>
-
-                        <div>
-                          <p className="text-sm text-gray-500">Tax</p>
-                          <p className="text-gray-900">
-                            ₹{order.taxPrice.toFixed(2)}
-                          </p>
-                        </div>
-
-                        <div>
-                          <p className="text-sm text-gray-500">Total</p>
-                          <p className="text-gray-900 font-semibold">
-                            ₹{order.totalPrice.toFixed(2)}
-                          </p>
-                        </div>
-
-                        <div className="col-span-2 md:col-span-4">
-                          <p className="text-sm text-gray-500">
-                            Quantity: {item?.qty}
-                          </p>
-                          <hr className="my-2" />
-                          <div className="flex items-center gap-2">
-                            <p className="text-sm text-gray-500 ">
-                              Shipping Address:
-                            </p>
-                            <p className="text-gray-900">
-                              {order.shippingAddress.address},{" "}
-                              {order.shippingAddress.city},{" "}
-                              {order.shippingAddress.postalCode},{" "}
-                              {order.shippingAddress.country}
-                            </p>
-                          </div>
-                        </div>
-                        <BillGenerated id={order._id} />
-                        {["process", "delivered"].includes(order.status) &&
-                          !order.isPaid && (
-                            <Button onClick={initiatePayment} disabled={paymentLoading} >
-                              {paymentLoading? "Redirecting...":"Pay with Khalti"}
-                            </Button>
-                          )}
                       </div>
                     </div>
                   ))}
+
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <div>
+                      <p className="text-sm text-gray-500">Tax</p>
+                      <p className="text-gray-900">
+                        ₹{order.taxPrice.toFixed(2)}
+                      </p>
+                    </div>
+
+                    <div>
+                      <p className="text-sm text-gray-500">Shipping</p>
+                      <p className="text-gray-900">
+                        ₹{order.shippingPrice.toFixed(2)}
+                      </p>
+                    </div>
+
+                    <div className="col-span-2">
+                      <p className="text-sm text-gray-500">Total</p>
+                      <p className="text-gray-900 font-semibold">
+                        ₹{order.totalPrice.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-sm text-gray-500">Shipping Address:</p>
+                    <p className="text-gray-900">
+                      {order.shippingAddress.address},{" "}
+                      {order.shippingAddress.city},{" "}
+                      {order.shippingAddress.postalCode},{" "}
+                      {order.shippingAddress.country}
+                    </p>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <BillGenerated id={order._id} />
+                    {["process", "delivered"].includes(order.status) &&
+                      !order.isPaid && (
+                        <Button
+                          onClick={() => initiatePayment(order._id)}
+                          disabled={paymentLoading}
+                        >
+                          {paymentLoading
+                            ? "Redirecting..."
+                            : "Pay with Khalti"}
+                        </Button>
+                      )}
+                  </div>
                 </div>
               </div>
             ))
           ) : (
             <div className="bg-white rounded-lg shadow-md border p-8 text-center flex flex-col text-gray-500 gap-3">
               <p>There are no orders placed yet.</p>
-
               <p>
                 <Button onClick={() => nav("/dashboard")}>
                   CONTINUE SHOPPING
