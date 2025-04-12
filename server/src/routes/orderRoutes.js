@@ -54,8 +54,14 @@ orderRouter.put(
 orderRouter.post(
   "/initiate-payment",
   isAuthenticated,
-  // authorizeRoles("shop"),
+  authorizeRoles("shop"),
   OrderController.initiatePayment
+);
+orderRouter.put(
+  "/complete-payment",
+  isAuthenticated,
+  authorizeRoles("shop"),
+  OrderController.completePayment
 );
 
 export default orderRouter;

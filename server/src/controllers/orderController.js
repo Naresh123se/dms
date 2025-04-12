@@ -92,13 +92,6 @@ class OrderController {
       // Save the order
       const createdOrder = await order.save();
 
-      // Update the stock for each product
-      for (const item of dbOrderItems) {
-        const product = await Product.findById(item.product);
-        product.quantity -= item.qty;
-        await product.save();
-      }
-
       res.status(201).json({
         success: true,
         message: "Order has been added successfully",
@@ -177,6 +170,13 @@ class OrderController {
         return next(new ErrorHandler("Order not found", 400));
       }
       order.status = "process";
+
+      // Update the stock for each product
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        product.quantity -= item.qty;
+        await product.save();
+      }
 
       await order.save();
 
@@ -296,6 +296,7 @@ class OrderController {
       }
       order.status = "delivered";
       order.isDelivered = true;
+      order.deliveredAt = new Date.now();
       await order.save();
       return res.status(200).json({
         success: true,
@@ -306,14 +307,26 @@ class OrderController {
     }
   });
 
+  // FOR CASH PAYMENT
+  static markPaymentAsPaid = asyncHandler(async (req, res, next) => {
+    try {
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
   // ********* FOR Shops
   static getShopOrders = asyncHandler(async (req, res, next) => {
     try {
       // Fetch orders where the logged-in user is the 'user'
-      const orders = await Order.find({ user: req.user._id }).populate(
-        "distributor",
-        "name email"
-      ); // Populate distributor details (only name and email)
+      const orders = await Order.find({ user: req.user._id }).populate({
+        path: "distributor", // Populate the Distributor
+        select: "user warehouseDetails", // Only fetch the 'user' field from Distributor
+        populate: {
+          path: "user", // Then populate the User inside Distributor
+          select: "name email", // Only fetch the 'name' field from User
+        },
+      }); // Populate distributor details (only name and email)
 
       // Send the orders as a response
       res.status(200).json({
@@ -349,11 +362,9 @@ class OrderController {
 
   // ********************* Payment Method onlin ************************************
   static initiatePayment = asyncHandler(async (req, res, next) => {
-    // const { amount, purchaseOrderId, purchaseOrderName } = req.body;
+    const { amount, purchaseOrderId, purchaseOrderName } = req.body;
+    console.log(req.body);
     const user = await User.findById(req.user._id);
-    const amount = 3000;
-    const purchaseOrderId = "randomassid";
-    const purchaseOrderName = "singapore beverages";
 
     const payload = {
       return_url: "http://localhost:3000/dashboard/orders",
@@ -379,65 +390,6 @@ class OrderController {
           },
         }
       );
-
-      // if (response.data.pidx) {
-      //   const order = await Order.findById(purchaseOrderId)
-      //     .populate("user", "name email")
-      //     .populate({
-      //       path: "distributor",
-      //       populate: {
-      //         path: "user",
-      //         select: "name",
-      //       },
-      //     });
-
-      //   order.paymentStatus = "Paid";
-      //   order.paymentMethod = "Khalti";
-      //   await appointment.save();
-
-      //   await Payment.create({
-      //     paidBy: user._id,
-      //     appointment: purchaseOrderId,
-      //     status: "Paid",
-      //     amount: amount,
-      //     paymentMethod: "Khalti",
-      //     pidx: response.data.pidx,
-      //   });
-
-      //   // Prepare mail data
-      //   const mailData = {
-      //     userName: user.name,
-      //     amount: amount,
-      //     appointmentId: appointment._id,
-      //     dentistName: appointment.dentist.user.name,
-      //     appointmentDate: format(new Date(appointment.date), "do MMMM yyyy"),
-      //     appointmentTime: appointment.timeSlot,
-      //     paymentMethod: "Khalti",
-      //     userEmail: user.email,
-      //   };
-
-      //   // Send email
-      //   try {
-      //     const __filename = fileURLToPath(import.meta.url);
-      //     const currentDirectory = path.dirname(__filename);
-      //     const mailPath = path.join(
-      //       currentDirectory,
-      //       "../mails/paymentSuccessfull.ejs"
-      //     );
-
-      //     const html = await ejs.renderFile(mailPath, mailData);
-
-      //     await sendMail({
-      //       email: user.email,
-      //       subject: "Payment Successful",
-      //       template: "paymentSuccessfull.ejs",
-      //       data: mailData,
-      //     });
-      //   } catch (mailError) {
-      //     console.error("Mail sending failed:", mailError);
-      //     // Don't fail the whole request if email fails
-      //   }
-      // }
       console.log(response.data);
       res.json({
         success: true,
@@ -455,6 +407,8 @@ class OrderController {
 
   static completePayment = asyncHandler(async (req, res, next) => {
     const { pidx } = req.query;
+    const { orderId } = req.body;
+    const user = await User.findById(req.user._id);
     if (!pidx) {
       return res
         .status(400)
@@ -474,6 +428,12 @@ class OrderController {
     paymentInfo.total_amount = paymentInfo.total_amount / 100;
 
     if (paymentInfo.status === "Completed") {
+      const order = await Order.findById(orderId);
+      order.paymentMethod = "Khalti";
+      order.isPaid = true;
+      order.paidAt = new Date.now();
+      // Send mail to the user id
+      
       res.json({
         success: true,
         message: "Payment verified ",
