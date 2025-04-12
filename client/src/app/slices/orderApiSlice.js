@@ -58,6 +58,14 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
     }),
 
+    cashPayment: builder.mutation({
+      query: (id) => ({
+        url: `${order_url}/cash-payment/${id}`,
+        method: "PUT",
+        credentials: "include",
+      }),
+    }),
+
     initiatePayment: builder.mutation({
       query: (data) => ({
         url: `${order_url}/initiate-payment`,
@@ -67,13 +75,14 @@ export const productApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     completePayment: builder.mutation({
-      query: ({ pidx, expenseId }) => ({
+      query: ({ pidx, orderId }) => ({
         url: `${order_url}/complete-payment?pidx=${pidx}`,
         method: "PUT",
-        body: { expenseId },
+        body: { orderId },
         credentials: "include",
       }),
     }),
+    
   }),
 });
 
@@ -87,4 +96,5 @@ export const {
   useGenerateBiilQuery,
   useInitiatePaymentMutation,
   useCompletePaymentMutation,
+  useCashPaymentMutation,
 } = productApiSlice;

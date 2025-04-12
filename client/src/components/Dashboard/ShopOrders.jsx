@@ -45,8 +45,8 @@ const ShopOrders = () => {
       const orderId = localStorage.getItem("orderId");
       completePaymentHandler(pidxFromUrl, orderId);
     }
+    // completePaymentHandler('pidx','orderId')
   }, []);
-
   const [payment, { isLoading: paymentLoading }] = useInitiatePaymentMutation();
   const initiatePayment = async (data) => {
     try {
@@ -266,7 +266,7 @@ const ShopOrders = () => {
                     {["process", "delivered"].includes(order.status) &&
                       !order.isPaid && (
                         <Button
-                          onClick={() => initiatePayment(order._id)}
+                          onClick={() => initiatePayment({purchaseOrderId:order._id,amount:order.totalPrice, purchasOrderName:order.distributor.user.name })}
                           disabled={paymentLoading}
                         >
                           {paymentLoading
@@ -274,6 +274,11 @@ const ShopOrders = () => {
                             : "Pay with Khalti"}
                         </Button>
                       )}
+                    {order.isPaid && order.status !== 'rejected' && (
+                      <span className="bg-green-200 text-green-700 rounded-md px-4 py-1  ">
+                        Paid
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>

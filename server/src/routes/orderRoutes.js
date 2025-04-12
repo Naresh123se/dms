@@ -51,6 +51,13 @@ orderRouter.put(
   OrderController.makeOrderAsDelivered
 );
 
+orderRouter.put(
+  "/cash-payment/:id",
+  isAuthenticated,
+  authorizeRoles("distributor"),
+  OrderController.markPaymentAsPaid
+);
+
 orderRouter.post(
   "/initiate-payment",
   isAuthenticated,

@@ -192,7 +192,7 @@ const Checkout = () => {
                         </p>
                       </div>
                       <p className="text-sm font-semibold text-gray-900">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        Rs.{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}
@@ -200,16 +200,16 @@ const Checkout = () => {
                 <div className="border-t border-gray-200 pt-4 mt-6 space-y-3">
                   <div className="flex justify-between text-sm text-gray-600">
                     <p>Subtotal</p>
-                    <p>${totalPrice.toFixed(2)}</p>
+                    <p>Rs.{totalPrice.toFixed(2)}</p>
                   </div>
 
                   <div className="flex justify-between text-sm text-gray-600">
                     <p>Tax (13%)</p>
-                    <p>${tax.toFixed(2)}</p>
+                    <p>Rs.{tax.toFixed(2)}</p>
                   </div>
                   <div className="flex justify-between text-lg font-semibold text-gray-900 pt-3 border-t border-gray-200">
                     <p>Total</p>
-                    <p>${orderTotal.toFixed(2)}</p>
+                    <p>Rs.{orderTotal.toFixed(2)}</p>
                   </div>
                 </div>
               </div>
@@ -425,7 +425,7 @@ const Checkout = () => {
                     >
                       {isSubmitting
                         ? "Processing..."
-                        : `Place Order ($${orderTotal.toFixed(2)})`}
+                        : `Place Order (Rs.${orderTotal.toFixed(2)})`}
                     </button>
                   </div>
                 </form>

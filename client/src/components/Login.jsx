@@ -27,23 +27,21 @@ const Login = () => {
   const onSubmit = async (data) => {
     try {
       const res = await storeLogin(data).unwrap();
-  
+
       dispatch(setCredentials({ user: res.user }));
-      if(res.user.role === 'shop'){
+      if (res.user.role === "shop") {
         navigate("/");
-      }else if (res.user.role === 'admin'){
-        navigate('/admin')
-      }
-      else if (res.user.role === 'distributor'){
-        navigate('/distributor')
+      } else if (res.user.role === "admin") {
+        navigate("/admin");
+      } else if (res.user.role === "distributor") {
+        navigate("/distributor");
       }
       toast.success("Login Successful");
     } catch (error) {
-      toast.error("Invalid Email or Password");
-      console.log(error)
+      toast.error(error.data.message);
     }
   };
-  
+
   return (
     <div className="min-h-screen flex">
       {/* Left Side - Image */}

@@ -296,7 +296,7 @@ class OrderController {
       }
       order.status = "delivered";
       order.isDelivered = true;
-      order.deliveredAt = new Date.now();
+      order.deliveredAt = new Date();
       await order.save();
       return res.status(200).json({
         success: true,
@@ -310,6 +310,19 @@ class OrderController {
   // FOR CASH PAYMENT
   static markPaymentAsPaid = asyncHandler(async (req, res, next) => {
     try {
+      const orderId = req.params.id;
+      const order = await Order.findById(orderId);
+      if (!order) {
+        return next(new ErrorHandler("Order not found", 400));
+      }
+
+      order.isPaid = true;
+      order.paidAt = new Date();
+      await order.save();
+      res.status(200).json({
+        success: true,
+        message: "Order marked as paid",
+      });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -408,6 +421,7 @@ class OrderController {
   static completePayment = asyncHandler(async (req, res, next) => {
     const { pidx } = req.query;
     const { orderId } = req.body;
+    console.log(orderId, pidx);
     const user = await User.findById(req.user._id);
     if (!pidx) {
       return res
@@ -431,9 +445,9 @@ class OrderController {
       const order = await Order.findById(orderId);
       order.paymentMethod = "Khalti";
       order.isPaid = true;
-      order.paidAt = new Date.now();
+      order.paidAt = new Date();
       // Send mail to the user id
-      
+
       res.json({
         success: true,
         message: "Payment verified ",

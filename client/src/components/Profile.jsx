@@ -35,15 +35,6 @@ function Profile() {
       "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
     bio: "Tell us about yourself...",
     role: "user",
-    journalStats: {
-      totalEntries: 0,
-      publicEntries: 0,
-      privateEntries: 0,
-    },
-    groupStats: {
-      totalGroups: 0,
-      createdGroups: 0,
-    },
   });
 
   useEffect(() => {
@@ -60,15 +51,6 @@ function Profile() {
           "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
         bio: user.bio || "Tell us about yourself...",
         role: user.role || "user",
-        journalStats: user.journalStats || {
-          totalEntries: 0,
-          publicEntries: 0,
-          privateEntries: 0,
-        },
-        groupStats: user.groupStats || {
-          totalGroups: 0,
-          createdGroups: 0,
-        },
       });
     }
   }, [user]);
@@ -258,16 +240,6 @@ function Profile() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 justify-center">
-          <StatCard
-            icon={BookOpen}
-            label="Total Journal Entries"
-            value={profile.journalStats.totalEntries}
-          />
-          <StatCard
-            icon={Users}
-            label="Total Groups"
-            value={profile.groupStats.totalGroups}
-          />
         </div>
 
         {/* Profile Information */}

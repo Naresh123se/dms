@@ -3,6 +3,7 @@ import {
   useDeliverOrderMutation,
   useGetOrdersDistributorQuery,
   useRejectOrderMutation,
+  useCashPaymentMutation,
 } from "@/app/slices/orderApiSlice";
 import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -31,6 +32,9 @@ import {
   MapPin,
   Package2,
   Calendar,
+  BookMarked,
+  BookMarkedIcon,
+  BookmarkCheckIcon,
 } from "lucide-react";
 import { formatDate, cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -45,8 +49,10 @@ export default function Shipments() {
   const [selectedOrder, setSelectedOrder] = useState(null);
   const orderRefs = useRef({});
   const [Accept, { isLoading: acceptLoading }] = useAcceptOrderMutation();
-  const [Delivered, {isLoading:deliveredLoading}] = useDeliverOrderMutation();
+  const [Delivered, { isLoading: deliveredLoading }] =
+    useDeliverOrderMutation();
   const [Reject, { isLoading: rejectLoading }] = useRejectOrderMutation();
+  const [cashPayment, { isLoading: cashLoading }] = useCashPaymentMutation();
 
   // Status counts for the dashboard
   const statusCounts = orders.reduce((acc, order) => {
@@ -105,6 +111,18 @@ export default function Shipments() {
       }
     } catch (error) {
       console.error("Failed to mark order as delivered:", error);
+    }
+  };
+
+  const handleOrderPaid = async (orderId) => {
+    try {
+      const response = await cashPayment(orderId);
+      if (response.data.success) {
+        toast.success("Order marked as Paid");
+        refetch();
+      }
+    } catch (error) {
+      toast.error(error.data.message);
     }
   };
 
@@ -357,6 +375,28 @@ export default function Shipments() {
                                           Mark Delivered
                                         </Button>
                                       )}
+                                    {order.status !== "rejected" && order.status !== 'pending' &&
+                                      !order.isPaid && (
+                                        <Button
+                                          className="bg-green-500 hover:bg-green-700"
+                                          size="sm"
+                                          onClick={(e) =>
+                                            handleOrderPaid(order._id)
+                                          }
+                                          disabled={cashLoading}
+                                        >
+                                          <BookmarkCheckIcon />
+                                          {cashLoading
+                                            ? "Marking..."
+                                            : "Mark as paid"}
+                                        </Button>
+                                      )}
+                                    {order.status !== "rejected" &&
+                                      order.isPaid && (
+                                        <span className="bg-green-100 text-green-700 px-[12.5px] rounded-lg ">
+                                          Paid
+                                        </span>
+                                      )}
                                   </div>
                                 </div>
                               </div>
@@ -466,8 +506,11 @@ export default function Shipments() {
                                     </CardTitle>
                                   </CardHeader>
                                   <CardContent>
-                                  <p className="text-sm font-medium">
-                                      Shop Name: <span className="text-gray-600 font-normal">{selectedOrder.user.name}</span>
+                                    <p className="text-sm font-medium">
+                                      Shop Name:{" "}
+                                      <span className="text-gray-600 font-normal">
+                                        {selectedOrder.user.name}
+                                      </span>
                                     </p>
                                     <p className="text-sm font-medium mt-2">
                                       Shipping Address:
@@ -535,7 +578,11 @@ export default function Shipments() {
                                           <div className="flex items-center gap-3">
                                             <div className="w-10 h-10 bg-accent rounded flex items-center justify-center">
                                               <Package2 className="w-5 h-5 text-muted-foreground" />
-                                              <img src={item.image} className="rounded-lg" srcset="" />
+                                              <img
+                                                src={item.image}
+                                                className="rounded-lg"
+                                                srcset=""
+                                              />
                                             </div>
                                             <div>
                                               <p className="font-medium">
@@ -596,7 +643,7 @@ export default function Shipments() {
                                     <Button
                                       variant="default"
                                       className="flex items-center gap-2"
-                                      onClick={() =>
+                                      onClick={(e) =>
                                         handleMarkDelivered(selectedOrder._id)
                                       }
                                       disabled={deliveredLoading}
@@ -604,6 +651,28 @@ export default function Shipments() {
                                       <TruckIcon className="w-4 h-4" />
                                       Mark as Delivered
                                     </Button>
+                                  )}
+                                {selectedOrder.status !== "rejected" && selectedOrder.status !== 'pending' &&
+                                  !selectedOrder.isPaid && (
+                                    <Button
+                                      className="bg-green-500 hover:bg-green-700"
+                                      size="sm"
+                                      onClick={(e) =>
+                                        handleOrderPaid(selectedOrder._id)
+                                      }
+                                      disabled={cashLoading}
+                                    >
+                                      <BookmarkCheckIcon />
+                                      {cashLoading
+                                        ? "Marking..."
+                                        : "Mark as paid"}
+                                    </Button>
+                                  )}
+                                {selectedOrder.status !== "rejected" &&
+                                  selectedOrder.isPaid && (
+                                    <span className="bg-green-100 text-green-700 px-[12.5px] rounded-lg ">
+                                      Paid
+                                    </span>
                                   )}
                               </div>
                             </div>
