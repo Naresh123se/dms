@@ -190,7 +190,6 @@ function InvoiceContent({ orderId }) {
 
 // Wrapper component for both dialog view and printable view
 export function BillGenerated({ id }) {
-  console.log(id);
   // State to manage print mode
   const [isPrintMode, setIsPrintMode] = useState(false);
   // State to choose watermark type

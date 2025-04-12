@@ -59,9 +59,18 @@ export const productApiSlice = apiSlice.injectEndpoints({
     }),
 
     initiatePayment: builder.mutation({
-      query: () => ({
+      query: (data) => ({
         url: `${order_url}/initiate-payment`,
         method: "POST",
+        body: data,
+        credentials: "include",
+      }),
+    }),
+    completePayment: builder.mutation({
+      query: ({ pidx, expenseId }) => ({
+        url: `${order_url}/complete-payment?pidx=${pidx}`,
+        method: "PUT",
+        body: { expenseId },
         credentials: "include",
       }),
     }),
@@ -77,4 +86,5 @@ export const {
   useRejectOrderMutation,
   useGenerateBiilQuery,
   useInitiatePaymentMutation,
+  useCompletePaymentMutation,
 } = productApiSlice;

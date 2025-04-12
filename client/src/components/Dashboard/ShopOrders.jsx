@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
+  useCompletePaymentMutation,
   useGetOrdersShopQuery,
   useInitiatePaymentMutation,
 } from "@/app/slices/orderApiSlice";
@@ -8,17 +9,64 @@ import { useNavigate } from "react-router-dom";
 import { ScrollArea } from "../ui/scroll-area";
 import { BillGenerated } from "./BillGenerated";
 import { toast } from "react-toastify";
+import { Badge } from "../ui/badge";
+import { CheckCircle2 } from "lucide-react";
 const ShopOrders = () => {
   const { data, refetch } = useGetOrdersShopQuery();
   const orders = Array.isArray(data?.orders) ? [...data.orders].reverse() : [];
 
   const [activeTab, setActiveTab] = useState("all");
   const [selectedFilter, setSelectedFilter] = useState("All Orders");
+
   const nav = useNavigate();
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [paymentResult, setPaymentResult] = useState(null);
+  const [completePayment, { isLoading }] = useCompletePaymentMutation();
+
+  const completePaymentHandler = async (pidx, orderId) => {
+    try {
+      const paymentData = await completePayment({ pidx, orderId }).unwrap();
+      if (paymentData.success) {
+        setPaymentResult(paymentData);
+        setShowSuccessPopup(true);
+      }
+      return;
+    } catch (error) {
+      toast.error(error?.data?.message || "Payment verification failed");
+    }
+  };
 
   useEffect(() => {
     refetch();
+    const urlParams = new URLSearchParams(window.location.search);
+    const pidxFromUrl = urlParams.get("pidx");
+    if (pidxFromUrl) {
+      // await completePayment()
+      const orderId = localStorage.getItem("orderId");
+      completePaymentHandler(pidxFromUrl, orderId);
+    }
   }, []);
+
+  const [payment, { isLoading: paymentLoading }] = useInitiatePaymentMutation();
+  const initiatePayment = async (data) => {
+    try {
+      localStorage.setItem("orderId", data.purchaseOrderId);
+      const res = await payment(data).unwrap();
+      if (res.success) {
+        window.location.href = res?.payment_url;
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Payment Initiation Failed");
+    }
+  };
+
+  const resetForm = useCallback(() => {
+    setShowSuccessPopup(false);
+
+    window.history.pushState({}, document.title, `/dashboard/orders`);
+    localStorage.removeItem("orderId");
+    window.location.reload();
+  }, [showSuccessPopup]);
 
   const tabs = [
     { id: "all", label: "All", count: orders.length },
@@ -27,7 +75,11 @@ const ShopOrders = () => {
       label: "Pending",
       count: orders.filter((o) => o.status === "pending").length,
     },
-    { id: "to-receive", label: "To Receive", count: orders.filter((o) => o.status === "process").length },
+    {
+      id: "to-receive",
+      label: "To Receive",
+      count: orders.filter((o) => o.status === "process").length,
+    },
     {
       id: "rejected",
       label: "Rejected",
@@ -75,17 +127,7 @@ const ShopOrders = () => {
   };
 
   const displayOrders = getFilteredByTime(filteredOrders);
-  const [payment, {isLoading:paymentLoading}] = useInitiatePaymentMutation();
-  const initiatePayment = async () => {
-    try {
-      const res = await payment(data).unwrap();
-      if (res.success) {
-        window.location.href = res?.payment_url;
-      }
-    } catch (error) {
-      toast.error(error?.data?.message || "Payment Initiation Failed");
-    }
-  };
+
   return (
     <div className=" bg-gray-50 p-8">
       <div className="max-w-6xl mx-auto">
@@ -216,10 +258,29 @@ const ShopOrders = () => {
                         <BillGenerated id={order._id} />
                         {["process", "delivered"].includes(order.status) &&
                           !order.isPaid && (
-                            <Button onClick={initiatePayment} disabled={paymentLoading} >
-                              {paymentLoading? "Redirecting...":"Pay with Khalti"}
+                            <Button
+                              onClick={(e) =>
+                                initiatePayment({
+                                  amount: order.totalPrice,
+                                  purchaseOrderId: order._id,
+                                  purchaseOrderName:
+                                    order.distributor.user.name,
+                                })
+                              }
+                              disabled={paymentLoading}
+                            >
+                              {paymentLoading
+                                ? "Redirecting..."
+                                : "Pay with Khalti"}
                             </Button>
                           )}
+                        {!order.isPaid && (
+                          <span
+                          className={`px-3 py-1 rounded-full w-20 text-sm font-medium text-green-700 bg-green-100`}
+                        >
+                          Paid
+                        </span>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -235,6 +296,54 @@ const ShopOrders = () => {
                   CONTINUE SHOPPING
                 </Button>
               </p>
+            </div>
+          )}
+
+          {showSuccessPopup && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+              <div className="bg-white rounded-xl shadow-xl max-w-md w-full p-6 animate-fade-in">
+                <div className="text-center">
+                  <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                    <CheckCircle2 className="h-6 w-6 text-indigo-800" />
+                  </div>
+                  <h3 className="mt-3 text-lg font-medium text-gray-900">
+                    Payment Successful!
+                  </h3>
+                  <div className="mt-2 text-sm text-gray-500">
+                    <p>Your payment has been processed successfully.</p>
+
+                    {paymentResult?.paymentInfo && (
+                      <div className="mt-4 bg-gray-50 p-3 rounded-lg text-left">
+                        <h4 className="font-medium text-gray-700 mb-2">
+                          Transaction Details:
+                        </h4>
+                        <div className="space-y-1">
+                          <p className="flex justify-between">
+                            <span className="font-medium">Amount:</span>
+                            <span>
+                              NPR {paymentResult.paymentInfo.total_amount}
+                            </span>
+                          </p>
+                          <p className="flex justify-between">
+                            <span className="font-medium">Transaction ID:</span>
+                            <span className="font-mono">
+                              {paymentResult.paymentInfo.transaction_id}
+                            </span>
+                          </p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-5">
+                  <button
+                    onClick={resetForm}
+                    className="w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-blue-900 hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
             </div>
           )}
         </ScrollArea>
