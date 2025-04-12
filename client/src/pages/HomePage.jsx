@@ -8,7 +8,7 @@ import {
   Seamless,
   Testimonial,
 } from "../components/Landing";
-import { Nav, Footer } from "../components/index";
+import { Nav, Footer, ScrollToTop } from "../components/index";
 
 const HomePage = () => {
   return (
@@ -23,6 +23,7 @@ const HomePage = () => {
       <Seamless />
       <Testimonial />
       <Footer />
+      <ScrollToTop/>
     </div>
   );
 };

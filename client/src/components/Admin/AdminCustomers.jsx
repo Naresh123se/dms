@@ -34,7 +34,6 @@ import {
   XCircle,
   Filter,
   ChevronDown,
-  Plus,
   RefreshCw,
   UserX,
   Ban,

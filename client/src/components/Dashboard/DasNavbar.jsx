@@ -3,7 +3,6 @@ import {
   ShoppingCart,
   Package,
   ClipboardList,
-  Bell,
   Search,
   User,
   Menu,
@@ -14,7 +13,6 @@ import {
   LogIn,
   UserPlus,
   UserCircle,
-  Settings,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -54,19 +52,7 @@ const DasNavbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Search bar */}
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-gray-400" />
-              </div>
-              <input
-                type="text"
-                placeholder="Search products..."
-                className="block w-full pl-10 pr-3 py-2 border border-transparent rounded-md leading-5 bg-[#1E3A8A]/90 text-gray-100 placeholder-gray-400 focus:outline-none focus:bg-white focus:text-gray-900 focus:placeholder-gray-500 sm:text-sm transition duration-150 ease-in-out"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
+      
 
             {/* Navigation Links */}
             <Link
@@ -102,12 +88,6 @@ const DasNavbar = () => {
               <Truck className="h-5 w-5 mr-1" />
               Suppliers
             </Link>
-
-            {/* Notification Icon */}
-            <button className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white p-2 rounded-full relative">
-              <Bell className="h-6 w-6" />
-              <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#1E3A8A]"></span>
-            </button>
 
             {/* User Profile/Auth for Desktop */}
             {!user ? (
@@ -147,12 +127,7 @@ const DasNavbar = () => {
                     </DropdownMenuItem>
                   </Link>
                   <DropdownMenuSeparator />
-                  <Link to="/settings">
-                    <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 p-2">
-                      <Settings className="mr-2 ml-2 w-4 h-4" />
-                      <span className="font-medium text-sm">Settings</span>
-                    </DropdownMenuItem>
-                  </Link>
+
                   <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
                   <DropdownMenuSeparator />
                 </DropdownMenuContent>
@@ -267,24 +242,10 @@ const DasNavbar = () => {
                   <UserCircle className="h-5 w-5 mr-2" />
                   Profile
                 </Link>
-                <Link
-                  to="/settings"
-                  className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white block px-3 py-2 rounded-md text-base font-medium flex items-center"
-                >
-                  <Settings className="h-5 w-5 mr-2" />
-                  Settings
-                </Link>
+
                 <LogoutButton className="bg-no w-full justify-start text-red-600 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/50" />
               </div>
             )}
-
-            {/* Mobile Notification */}
-            <div className="flex items-center px-3 py-2">
-              <button className="text-gray-200 hover:bg-[#1E3A8A]/90 hover:text-white p-2 rounded-full relative">
-                <Bell className="h-6 w-6" />
-                <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-[#1E3A8A]"></span>
-              </button>
-            </div>
           </div>
         </div>
       )}

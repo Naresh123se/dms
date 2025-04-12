@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useGetAllOrdersAdminQuery } from "@/app/slices/adminApiSlice";
 import { formatDate } from "@/lib/utils";
 
@@ -37,7 +37,6 @@ import {
   Clock,
   IndianRupeeIcon,
 } from "lucide-react";
-import { useGetSuppliersQuery } from "@/app/slices/userApiSlice";
 
 const getStatusBadge = (status) => {
   const statusConfig = {

@@ -2,7 +2,6 @@ import {
   LogIn,
   Menu,
   Search,
-  Settings,
   Truck,
   UserCircle,
   UserPlus,
@@ -37,9 +36,9 @@ const Nav = () => {
         <div className="flex justify-between items-center h-20">
           <div className="flex items-center">
             <Truck className="w-8 h-8 text-blue-900" />
-            <span className="ml-2 text-2xl font-bold text-blue-900">
+            <Link to={'/'} className="ml-2 text-2xl font-bold text-blue-900">
               DISTRO
-            </span>
+            </Link>
           </div>
           <div className="hidden md:flex space-x-8">
             <button
@@ -75,7 +74,6 @@ const Nav = () => {
             </button>
           </div>
           <div className="hidden md:flex items-center space-x-4">
-     
             <div className="hidden md:flex md:items-center md:space-x-4">
               {!user ? (
                 <>
@@ -112,14 +110,6 @@ const Nav = () => {
                         <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 p-3">
                           <UserCircle className="mr-2 ml-3" />
                           <span className="font-medium text-md">Profile</span>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuSeparator />
-
-                      <Link to="/settings">
-                        <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 p-3">
-                          <Settings className="mr-2 ml-2" />
-                          <span className="font-medium text-md">Settings</span>
                         </DropdownMenuItem>
                       </Link>
                       <DropdownMenuSeparator />

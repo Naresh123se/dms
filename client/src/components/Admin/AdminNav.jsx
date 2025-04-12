@@ -1,5 +1,4 @@
-import { LogIn, Search, Settings, UserCircle, UserPlus } from "lucide-react";
-import { useState } from "react";
+import { LogIn, UserCircle, UserPlus } from "lucide-react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { LogoutButton } from "@/components";
@@ -62,14 +61,6 @@ const AdminNav = () => {
                         <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 p-3">
                           <UserCircle className="mr-2 ml-3" />
                           <span className="font-medium text-md">Profile</span>
-                        </DropdownMenuItem>
-                      </Link>
-                      <DropdownMenuSeparator />
-
-                      <Link to="/settings">
-                        <DropdownMenuItem className="cursor-pointer hover:bg-gray-100 p-3">
-                          <Settings className="mr-2 ml-2" />
-                          <span className="font-medium text-md">Settings</span>
                         </DropdownMenuItem>
                       </Link>
                       <DropdownMenuSeparator />

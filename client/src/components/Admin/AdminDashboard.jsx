@@ -11,8 +11,31 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
+import { useNavigate } from "react-router-dom";
+import { useGetAllOrdersAdminQuery } from "@/app/slices/adminApiSlice";
+import { Badge } from "../ui/badge";
 
 function AdminDashboard() {
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { color: "bg-yellow-100 text-yellow-800", label: "Pending" },
+      processing: { color: "bg-blue-100 text-blue-800", label: "Processing" },
+      shipped: { color: "bg-purple-100 text-purple-800", label: "Shipped" },
+      delivered: { color: "bg-green-100 text-green-800", label: "Delivered" },
+      rejected: { color: "bg-red-100 text-red-800", label: "Rejected" },
+    };
+
+    const config = statusConfig[status.toLowerCase()] || statusConfig.pending;
+
+    return (
+      <Badge className={`${config.color} hover:${config.color}`}>
+        {config.label}
+      </Badge>
+    );
+  };
+  const { data } = useGetAllOrdersAdminQuery();
+  const orders = data?.orders || [];
+  const navigator = useNavigate();
   return (
     <ScrollArea className="flex-1 h-[calc(100vh-1px)]  ">
       <div>
@@ -27,27 +50,7 @@ function AdminDashboard() {
                 Welcome back, Admin! Here's what's happening today.
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-white rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 shadow-sm">
-                <Filter className="h-4 w-4" />
-                <span>Filter</span>
-              </button>
-              <button className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:bg-white rounded-lg transition-all duration-200 border border-gray-200 hover:border-gray-300 shadow-sm">
-                <Download className="h-4 w-4" />
-                <span>Export</span>
-              </button>
-              <div className="flex items-center gap-2 text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-200">
-                <Clock className="h-4 w-4" />
-                <span>
-                  {new Date().toLocaleDateString("en-US", {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
-                </span>
-              </div>
-            </div>
+
           </div>
 
           {/* Stats Grid */}
@@ -124,91 +127,43 @@ function AdminDashboard() {
                 <h3 className="text-xl font-bold text-gray-800">
                   Recent Activity
                 </h3>
-                <button className="text-blue-600 text-sm hover:text-blue-700 font-medium flex items-center gap-1">
+                <button
+                  className="text-blue-600 text-sm hover:text-blue-700 font-medium flex items-center gap-1"
+                  onClick={() => navigator("./shipments")}
+                >
                   View All
                   <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
               <div className="space-y-3">
-                {[
-                  {
-                    title: "New order #45678",
-                    description: "Order placed by John Doe",
-                    time: "5 minutes ago",
-                    icon: Package,
-                    color: "blue",
-                  },
-                  {
-                    title: "Shipment Delivered",
-                    description: "Order #45623 successfully delivered",
-                    time: "1 hour ago",
-                    icon: Truck,
-                    color: "green",
-                  },
-                  {
-                    title: "Customer Support",
-                    description: "New ticket from Sarah Smith",
-                    time: "2 hours ago",
-                    icon: Users,
-                    color: "yellow",
-                  },
-                  {
-                    title: "Low Stock Alert",
-                    description: "Product SKU-123 is running low",
-                    time: "3 hours ago",
-                    icon: AlertCircle,
-                    color: "red",
-                  },
-                ].map((activity, index) => (
-                  <div key={index} className="activity-item">
-                    <div
-                      className={`p-2.5 rounded-xl bg-gradient-to-br from-${activity.color}-50 to-${activity.color}-100`}
-                    >
-                      <activity.icon
-                        className={`h-5 w-5 text-${activity.color}-500`}
-                      />
+                {orders.slice(0, 4).map((order, index) => {
+                  return (
+                    <div key={index} className="activity-item">
+                      <div className="flex-1">
+                        <div className="flex gap-4">
+                          <h4 className="text-sm font-semibold text-gray-800 mb-0.5">
+                            Order #{order._id.slice(-5).toUpperCase()}
+                          </h4>
+                          <span>-{order.user.name}</span>
+                        </div>
+                        <p className="text-sm text-gray-600">
+                          {order.orderItems.length} item
+                          {order.orderItems.length !== 1 ? "s" : ""} • Total:
+                          Rs. {order.totalPrice.toFixed(2)}
+                        </p>
+                      </div>
+                      {getStatusBadge(order.status)}
                     </div>
-                    <div className="flex-1">
-                      <h4 className="text-sm font-semibold text-gray-800 mb-0.5">
-                        {activity.title}
-                      </h4>
-                      <p className="text-sm text-gray-600">
-                        {activity.description}
-                      </p>
-                    </div>
-                    <span className="text-sm text-gray-500 font-medium">
-                      {activity.time}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
             {/* Quick Actions */}
             <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
               <h3 className="text-xl font-bold text-gray-800 mb-6">
-                Quick Actions
+                Recent Payment
               </h3>
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  { icon: Package, text: "New Order", color: "blue" },
-                  { icon: Truck, text: "Track Shipment", color: "green" },
-                  { icon: Users, text: "Add Customer", color: "purple" },
-                  { icon: AlertCircle, text: "Report Issue", color: "red" },
-                ].map((action, index) => (
-                  <button
-                    key={index}
-                    className={`quick-action-btn border-${action.color}-100 bg-gradient-to-br from-${action.color}-50 to-${action.color}-100/30`}
-                  >
-                    <action.icon
-                      className={`h-6 w-6 text-${action.color}-500`}
-                    />
-                    <span className="text-sm font-medium text-gray-700">
-                      {action.text}
-                    </span>
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>

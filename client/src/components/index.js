@@ -31,6 +31,10 @@ import ProductDetails from "./Dashboard/ProductDetails";
 import AdminAllSupplier from "./Admin/AdminCustomers";
 import AdminProduct from "./Admin/AdminProduct";
 import ViewSupplier from "./Dashboard/ViewSupplier";
+import TermsOfService from "./Resources/TermsOfService";
+import Support from "./Resources/Support";
+import PrivacyPolicy1 from "./Resources/PrivacyPolicy1";
+import ScrollToTop from "./ScrollToTop";
 export {
   Login,
   Register,
@@ -64,5 +68,9 @@ export {
   ProductDetails,
   AdminAllSupplier,
   AdminProduct,
+  PrivacyPolicy1,
+  TermsOfService,
+  Support,
+  ScrollToTop,
   Footer,
 };
