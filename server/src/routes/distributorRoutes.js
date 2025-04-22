@@ -13,6 +13,13 @@ distributorRouter.get(
   DistributorController.getDistributorProfile
 );
 
+distributorRouter.get(
+  "/dashboard-data",
+  isAuthenticated,
+  authorizeRoles("distributor"),
+  DistributorController.getDashboardData
+);
+
 distributorRouter.get("/:id", DistributorController.fetchSingleDistributor);
 
 distributorRouter.post(
