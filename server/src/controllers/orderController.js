@@ -376,7 +376,7 @@ class OrderController {
   // ********************* Payment Method onlin ************************************
   static initiatePayment = asyncHandler(async (req, res, next) => {
     const { amount, purchaseOrderId, purchaseOrderName } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     const user = await User.findById(req.user._id);
 
     const payload = {
@@ -403,7 +403,7 @@ class OrderController {
           },
         }
       );
-      console.log(response.data);
+      console.log(response);
       res.json({
         success: true,
         payment_url: response.data.payment_url,

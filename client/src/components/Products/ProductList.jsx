@@ -45,7 +45,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 function ProductList() {
-  const { data, isLoading } = useGetDistributorProductsQuery();
+  const { data, isLoading, refetch:productRefetch } = useGetDistributorProductsQuery();
   const navigate = useNavigate();
   const products = Array.isArray(data?.products) ? data.products : [];
   const allProducts = [...products].reverse();
@@ -117,7 +117,7 @@ function ProductList() {
       const result = await updateStock({
         id: selectedProduct._id,
         quantity: parseInt(stockUpdateValue),
-      });
+      }).unwrap();
 
       // Check if the mutation was successful
       if ("data" in result) {
@@ -126,11 +126,13 @@ function ProductList() {
         setSelectedProduct(null);
 
         // Show success toast
-        toast({
-          title: "Stock Updated",
-          description: `Stock for "${selectedProduct.name}" has been updated to ${stockUpdateValue} units.`,
-          duration: 3000,
-        });
+        toast.success("Stock Updated");
+        productRefetch()
+        // toast({
+        //   title: "Stock Updated",
+        //   description: `Stock for "${selectedProduct.name}" has been updated to ${stockUpdateValue} units.`,
+        //   duration: 3000,
+        // });
       } else if ("error" in result) {
         throw new Error(result.error.message || "Failed to update stock");
       }

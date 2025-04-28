@@ -48,7 +48,7 @@ export const productApiSlice = apiSlice.injectEndpoints({
     updateStockQuantity: builder.mutation({
       query: (data) => ({
         url: `${product_url}/updateStock/${data.id}`,
-        method: "PUT",
+        method: "PATCH",
         credentials: "include",
         body: { quantity: data.quantity },
       }),
