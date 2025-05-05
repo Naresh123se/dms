@@ -12,29 +12,24 @@ import React, { useEffect } from "react";
 import { toast } from "react-toastify";
 
 const Cart = () => {
-  // Hooks and state management
   const nav = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
 
-  // API calls
   const { data: productsData, refetch: refetchProducts } =
     useGetDistributorProductsQuery();
   const products = productsData?.products || [];
 
-  // Derived values
   const totalPrice = cartItems.reduce(
     (total, item) => total + item.price * (item.quantity || 1),
     0
   );
 
-  // Helper functions
   const getProductStock = (_id) => {
     const product = products.find((p) => p._id === _id);
     return product ? product.quantity : 0;
   };
 
-  // Event handlers
   const handleRemoveItem = (_id) => {
     try {
       dispatch(removeFromCart({ _id }));
@@ -45,12 +40,7 @@ const Cart = () => {
     }
   };
 
-  const handleQuantityChange = async (
-    _id,
-    changeType,
-    currentQuantity,
-    stock
-  ) => {
+  const handleQuantityChange = (_id, changeType, currentQuantity, stock) => {
     try {
       let newQuantity = currentQuantity;
 
@@ -73,13 +63,13 @@ const Cart = () => {
   const handleInputChange = (_id, e, stock) => {
     try {
       const value = e.target.value;
+      const numValue = parseInt(value);
 
       if (value === "") {
-        dispatch(updateQuantity({ _id, quantity: "" }));
+        dispatch(updateQuantity({ _id, quantity: 1 })); // Default to 1 if empty
         return;
       }
 
-      const numValue = parseInt(value);
       if (!isNaN(numValue)) {
         const validatedQuantity = Math.max(1, Math.min(numValue, stock));
         dispatch(updateQuantity({ _id, quantity: validatedQuantity }));
@@ -94,7 +84,7 @@ const Cart = () => {
     try {
       let finalQuantity = 1;
 
-      if (currentValue !== "" && currentValue >= 1) {
+      if (currentValue && currentValue >= 1) {
         finalQuantity = Math.min(currentValue, stock);
       }
 
@@ -107,9 +97,7 @@ const Cart = () => {
 
   const handleClearCart = () => {
     try {
-      console.log("Attempting to clear cart");
       dispatch(clearCart());
-      console.log("Cart cleared in Redux");
       toast.success("Cart cleared successfully");
     } catch (error) {
       console.error("Failed to clear cart:", error);
@@ -117,12 +105,10 @@ const Cart = () => {
     }
   };
 
-  // Render empty cart state
   if (cartItems.length === 0) {
     return <EmptyCart />;
   }
 
-  // Main render
   return (
     <ScrollArea className="h-[calc(100vh-200px)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -155,7 +141,6 @@ const Cart = () => {
   );
 };
 
-// Sub-components for better organization
 const EmptyCart = () => (
   <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
     <div className="bg-white rounded-lg shadow-md p-8 max-w-md mx-auto">
@@ -230,11 +215,11 @@ const CartItem = ({
         <div className="flex justify-between text-base font-medium text-gray-900">
           <h3>{item.name}</h3>
           <p className="ml-4">
-            ${(item.price * (item.quantity || 1)).toFixed(2)}
+            Rs.{(item.price * (item.quantity || 1)).toFixed(2)}
           </p>
         </div>
         <p className="mt-1 text-sm text-gray-500">
-          ${item.price.toFixed(2)} each
+          Rs.{item.price.toFixed(2)} each
         </p>
         <p
           className={`mt-1 text-sm ${
@@ -263,11 +248,12 @@ const QuantityControls = ({
   productStock,
   isOutOfStock,
   handleQuantityChange,
+  handleInputChange,
+  handleInputBlur,
   handleRemoveItem,
 }) => {
   const [inputValue, setInputValue] = React.useState(item.quantity || 1);
 
-  // Update local state when item quantity changes from outside
   React.useEffect(() => {
     setInputValue(item.quantity || 1);
   }, [item.quantity]);
@@ -275,43 +261,52 @@ const QuantityControls = ({
   const handleChange = (e) => {
     const value = e.target.value;
 
-    // Allow empty string temporarily (for backspace/delete)
+    // Allow empty string temporarily for better UX when deleting
     if (value === "") {
       setInputValue("");
       return;
     }
 
-    // Only allow positive integers
-    if (/^[1-9]\d*$/.test(value)) {
+    // Only allow positive numbers
+    if (/^\d+$/.test(value)) {
       const numValue = parseInt(value, 10);
-      const validatedValue = Math.min(numValue, productStock);
-      setInputValue(validatedValue);
-      dispatch(updateQuantity({ _id: item._id, quantity: validatedValue }));
+      if (numValue >= 1) {
+        const clampedValue = Math.min(numValue, productStock);
+        setInputValue(clampedValue);
+        handleInputChange(
+          item._id,
+          { target: { value: clampedValue.toString() } },
+          productStock
+        );
+      }
     }
   };
 
   const handleBlur = () => {
-    // If empty or invalid, reset to 1
+    let finalValue = 1;
+
     if (inputValue === "" || inputValue < 1) {
-      const finalValue = 1;
-      setInputValue(finalValue);
-      dispatch(updateQuantity({ _id: item._id, quantity: finalValue }));
+      finalValue = 1;
     } else {
-      // Ensure it doesn't exceed stock
-      const finalValue = Math.min(inputValue, productStock);
-      setInputValue(finalValue);
-      dispatch(updateQuantity({ _id: item._id, quantity: finalValue }));
+      finalValue = Math.min(inputValue, productStock);
     }
+
+    setInputValue(finalValue);
+    handleInputBlur(item._id, finalValue, productStock);
   };
 
   return (
     <div className="flex-1 flex items-end justify-between text-sm">
       <div className="flex items-center border border-gray-300 rounded-md">
         <button
-          onClick={() => {
-            const newQuantity = Math.max(1, (item.quantity || 1) - 1);
-            dispatch(updateQuantity({ _id: item._id, quantity: newQuantity }));
-          }}
+          onClick={() =>
+            handleQuantityChange(
+              item._id,
+              "decrement",
+              item.quantity || 1,
+              productStock
+            )
+          }
           className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={(item.quantity || 1) <= 1 || isOutOfStock}
         >
@@ -330,13 +325,14 @@ const QuantityControls = ({
         />
 
         <button
-          onClick={() => {
-            const newQuantity = Math.min(
-              productStock,
-              (item.quantity || 1) + 1
-            );
-            dispatch(updateQuantity({ _id: item._id, quantity: newQuantity }));
-          }}
+          onClick={() =>
+            handleQuantityChange(
+              item._id,
+              "increment",
+              item.quantity || 1,
+              productStock
+            )
+          }
           className="px-3 py-1 text-gray-600 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={(item.quantity || 1) >= productStock || isOutOfStock}
         >
@@ -366,7 +362,7 @@ const CartSummary = ({
   <div className="border-t border-gray-200 px-6 py-4 bg-gray-50">
     <div className="flex justify-between text-base font-medium text-gray-900 mb-4">
       <p>Subtotal</p>
-      <p>${totalPrice.toFixed(2)}</p>
+      <p>Rs.{totalPrice.toFixed(2)}</p>
     </div>
     <div className="flex justify-between">
       <button
