@@ -249,6 +249,17 @@ class OrderController {
       if (!order) {
         return next(new ErrorHandler("Order not found", 400));
       }
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product.holdQuantity >= item.qty) {
+          product.holdQuantity -= item.qty;
+          product.quantity +=item.qty
+        } else {
+          product.quantity += item.qty;
+        }
+        await product.save();
+      }
+
       order.status = "rejected";
       await order.save();
       // TODO: SEND MAIL TO the user regarding the order being rejected

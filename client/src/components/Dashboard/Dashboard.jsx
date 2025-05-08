@@ -293,8 +293,8 @@ const ProductCard = ({ product, handleAddToCart }) => {
           {product?.name || "Unnamed Product"}
         </h3>
 
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-          {product?.description || "No description available"}
+        <p className="text-gray-600 flex justify-between text-sm mb-4 line-clamp-2">
+          {product?.description || "No description available"} <span className="font-bold text-blue-700">{product?.quantity}</span>
         </p>
 
         <div className="flex justify-between items-center">
