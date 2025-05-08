@@ -14,8 +14,8 @@ import { toast } from "react-toastify";
 const Cart = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
-  const cartItems = useSelector((state) => state.cart.items);
-
+  const cartItems = useSelector((state) => state.cart?.items);
+  
   const { data: productsData, refetch: refetchProducts } =
     useGetDistributorProductsQuery();
   const products = productsData?.products || [];
@@ -28,6 +28,15 @@ const Cart = () => {
   const getProductStock = (_id) => {
     const product = products.find((p) => p._id === _id);
     return product ? product.quantity : 0;
+  };
+
+  const getAvailableQuantity = (_id) => {
+    const product = products.find((p) => p._id === _id);
+    const cartItem = cartItems.find(item => item._id === _id);
+    if (product) {
+      return product.quantity - (cartItem?.quantity || 0);
+    }
+    return 0;
   };
 
   const handleRemoveItem = (_id) => {
@@ -121,6 +130,7 @@ const Cart = () => {
             <CartItemList
               cartItems={cartItems}
               getProductStock={getProductStock}
+              getAvailableQuantity={getAvailableQuantity}
               handleQuantityChange={handleQuantityChange}
               handleInputChange={handleInputChange}
               handleInputBlur={handleInputBlur}
@@ -164,6 +174,7 @@ const EmptyCart = () => (
 const CartItemList = ({
   cartItems,
   getProductStock,
+  getAvailableQuantity,
   handleQuantityChange,
   handleInputChange,
   handleInputBlur,
@@ -173,6 +184,7 @@ const CartItemList = ({
     <ul className="-my-6 divide-y divide-gray-200">
       {cartItems.map((item) => {
         const productStock = getProductStock(item._id);
+        const availableQuantity = getAvailableQuantity(item._id);
         const isOutOfStock = productStock <= 0;
 
         return (
@@ -180,6 +192,7 @@ const CartItemList = ({
             key={item._id}
             item={item}
             productStock={productStock}
+            availableQuantity={availableQuantity}
             isOutOfStock={isOutOfStock}
             handleQuantityChange={handleQuantityChange}
             handleInputChange={handleInputChange}
@@ -195,6 +208,7 @@ const CartItemList = ({
 const CartItem = ({
   item,
   productStock,
+  availableQuantity,
   isOutOfStock,
   handleQuantityChange,
   handleInputChange,
@@ -226,7 +240,9 @@ const CartItem = ({
             isOutOfStock ? "text-red-500" : "text-gray-500"
           }`}
         >
-          {isOutOfStock ? "Out of stock" : `${productStock} available in stock`}
+          {isOutOfStock
+            ? "Out of stock"
+            : `${productStock} available in stock (${availableQuantity} remaining after cart)`}
         </p>
       </div>
 

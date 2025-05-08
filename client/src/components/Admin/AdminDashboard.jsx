@@ -1,22 +1,10 @@
-import {
-  Clock,
-  Package,
-  Truck,
-  Users,
-  AlertCircle,
-  ArrowUpRight,
-  ArrowDownRight,
-  Filter,
-  Download,
-  ChevronRight,
-  Building,
-  Store,
-  BuildingIcon,
-  Building2,
-} from "lucide-react";
+import { Package, Truck, ChevronRight, Store, Building2 } from "lucide-react";
 import { ScrollArea } from "../ui/scroll-area";
 import { useNavigate } from "react-router-dom";
-import { useGetAllOrdersAdminQuery, useAllCustomersQuery } from "@/app/slices/adminApiSlice";
+import {
+  useGetAllOrdersAdminQuery,
+  useAllCustomersQuery,
+} from "@/app/slices/adminApiSlice";
 import { Badge } from "../ui/badge";
 import { useGetAllSupplierQuery } from "@/app/slices/supplierApiSlice";
 
@@ -40,14 +28,14 @@ function AdminDashboard() {
   };
   const { data } = useGetAllOrdersAdminQuery();
   const orders = data?.orders || [];
-  const {data:distributorData} = useGetAllSupplierQuery()
-  const distributors = distributorData?.distributors || []
+  const { data: distributorData } = useGetAllSupplierQuery();
+  const distributors = distributorData?.distributors || [];
   // const {data:retailerData} = useGetAl
-  const {data:customersData} = useAllCustomersQuery()
+  const { data: customersData } = useAllCustomersQuery();
   const totalRetailers = customersData?.users?.length;
   const navigator = useNavigate();
   const totalTurnOver = orders.reduce(
-    (total, order) => total + order.totalPrice, 
+    (total, order) => total + order.totalPrice,
     0 // Initialize accumulator at 0
   );
   return (
@@ -64,7 +52,6 @@ function AdminDashboard() {
                 Welcome back, Admin! Here's what's happening today.
               </p>
             </div>
-
           </div>
 
           {/* Stats Grid */}
@@ -72,9 +59,7 @@ function AdminDashboard() {
             {[
               {
                 title: "Total Turnover",
-                value: `Rs.${totalTurnOver.toLocaleString(
-                  "en-IN"
-                )}`,
+                value: `Rs.${totalTurnOver.toLocaleString("en-IN")}`,
                 isPositive: true,
                 icon: Package,
                 color: "blue",
