@@ -166,13 +166,24 @@ const ProductDetails = () => {
                 {/* Price */}
                 <div className="mb-6">
                   <span className="text-3xl font-bold text-blue-600">
-                    Rs.{product.price?.toFixed(2)}
+                    Rs.{product.discountedPrice?.toFixed(2)}
                   </span>
                   {product.comparePrice && (
                     <span className="ml-3 text-lg text-gray-500 line-through">
                       ${product.comparePrice.toFixed(2)}
                     </span>
                   )}
+
+                  <span className="text-xl font-bold text-blue-600 flex flex-col ">
+                    <span className="gap-2 flex mr-3  items-center font-medium">
+                      <span className="line-through text-gray-400 text-base ">
+                        Rs.{product.price?.toFixed(2) || "0.00"}
+                      </span>
+                      <span className="text-base text-black ">
+                        -{product.discountPercent?.toFixed(2) || "0.00"}%
+                      </span>
+                    </span>
+                  </span>
                 </div>
 
                 {/* Short Description */}

@@ -221,7 +221,7 @@ const ShopOrders = () => {
                         <div>
                           <p className="text-sm text-gray-500">Price</p>
                           <p className="text-gray-900 font-medium">
-                            ₹{item?.price?.toFixed(2)}
+                            ₹{item?.discountedPrice?.toFixed(2)}
                           </p>
                         </div>
                       </div>
@@ -266,7 +266,13 @@ const ShopOrders = () => {
                     {["process", "delivered"].includes(order.status) &&
                       !order.isPaid && (
                         <Button
-                          onClick={() => initiatePayment({purchaseOrderId:order._id,amount:order.totalPrice, purchaseOrderName:order.distributor.user.name })}
+                          onClick={() =>
+                            initiatePayment({
+                              purchaseOrderId: order._id,
+                              amount: order.totalPrice,
+                              purchaseOrderName: order.distributor.user.name,
+                            })
+                          }
                           disabled={paymentLoading}
                         >
                           {paymentLoading
@@ -274,7 +280,7 @@ const ShopOrders = () => {
                             : "Pay with Khalti"}
                         </Button>
                       )}
-                    {order.isPaid && order.status !== 'rejected' && (
+                    {order.isPaid && order.status !== "rejected" && (
                       <span className="bg-green-200 text-green-700 rounded-md px-4 py-1  ">
                         Paid
                       </span>
