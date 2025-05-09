@@ -200,6 +200,50 @@ class ProductController {
     }
   });
 
+  static addDiscount = asyncHandler(async (req, res, next) => {
+    try {
+      const productId = req.params.id;
+      const { discount } = req.body;
+
+      // Validate discount amount
+      if (discount === undefined || discount < 0) {
+        return next(
+          new ErrorHandler("Please provide a valid discount amount", 400)
+        );
+      }
+
+      const product = await Product.findById(productId);
+
+      if (!product) {
+        return next(new ErrorHandler("Product not found", 404));
+      }
+
+      if (discount > product.price) {
+        return next(
+          new ErrorHandler(
+            "Discount amount cannot be greater than product price",
+            400
+          )
+        );
+      }
+      // Calculate discount percentage
+      const discountPercent = (discount / product.price) * 100;
+
+      // Update product with discount and calculated percentage
+      product.discount = discount;
+      product.discountPercent = parseFloat(discountPercent.toFixed(2)); // Round to 2 decimal places
+
+      await product.save();
+
+      res.status(200).json({
+        success: true,
+        message: "Discount added successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
   static deleteProduct = asyncHandler(async (req, res, next) => {
     try {
     } catch (error) {

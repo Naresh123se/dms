@@ -45,6 +45,12 @@ const ProductSchema = new mongoose.Schema({
     default: 0,
     trim: true,
   },
+  discountPercent:{
+    type:Number,
+    required:false,
+    default:0,
+    trim:true
+  },
   images: [
     {
       public_id: {

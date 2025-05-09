@@ -341,7 +341,7 @@ const ProductCard = ({
               canAddToCart
                 ? "bg-blue-600 hover:bg-blue-700"
                 : "bg-gray-400 cursor-not-allowed"
-            } text-white rounded-lg flex items-center gap-2`}
+            } text-white rounded-lg flex items-center p-2 gap-2`}
             onClick={(e) => {
               e.stopPropagation();
               if (canAddToCart) handleAddToCart(product);
