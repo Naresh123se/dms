@@ -106,7 +106,6 @@ function InvoiceContent({ orderId }) {
                 <td className="py-3 px-4">{item.name}</td>
                 <td className="py-3 px-4 text-right">{item.quantity}</td>
                 <td className="py-3 px-4 text-right">Rs. {item.price}</td>
-
                 <td className="py-3 px-4 text-right font-medium">
                   Rs. {item.total}
                 </td>

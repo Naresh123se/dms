@@ -15,13 +15,13 @@ const Cart = () => {
   const nav = useNavigate();
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart?.items);
-  
+
   const { data: productsData, refetch: refetchProducts } =
     useGetDistributorProductsQuery();
   const products = productsData?.products || [];
 
   const totalPrice = cartItems.reduce(
-    (total, item) => total + item.price * (item.quantity || 1),
+    (total, item) => total + item.discountedPrice * (item.quantity || 1),
     0
   );
 
@@ -32,7 +32,7 @@ const Cart = () => {
 
   const getAvailableQuantity = (_id) => {
     const product = products.find((p) => p._id === _id);
-    const cartItem = cartItems.find(item => item._id === _id);
+    const cartItem = cartItems.find((item) => item._id === _id);
     if (product) {
       return product.quantity - (cartItem?.quantity || 0);
     }
@@ -229,12 +229,21 @@ const CartItem = ({
         <div className="flex justify-between text-base font-medium text-gray-900">
           <h3>{item.name}</h3>
           <p className="ml-4">
-            Rs.{(item.price * (item.quantity || 1)).toFixed(2)}
+            Rs.{(item.discountedPrice * (item.quantity || 1)).toFixed(2)}
           </p>
         </div>
-        <p className="mt-1 text-sm text-gray-500">
-          Rs.{item.price.toFixed(2)} each
+        <p className="mt-1 text-sm text-gray-800">
+          Rs.{item.discountedPrice?.toFixed(2)} each
         </p>
+        <span className="flex gap-3 items-center">
+          <p className=" text-sm text-gray-400 line-through ">
+            Rs.{item.price.toFixed(2)}
+          </p>
+          <span className="font-normal text-sm">
+            -{item.discountPercent?.toFixed(2) || "0.00"}%
+          </span>
+        </span>
+
         <p
           className={`mt-1 text-sm ${
             isOutOfStock ? "text-red-500" : "text-gray-500"
