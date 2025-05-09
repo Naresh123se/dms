@@ -203,12 +203,16 @@ class ProductController {
   static addDiscount = asyncHandler(async (req, res, next) => {
     try {
       const productId = req.params.id;
-      const { discount } = req.body;
+      const { discountPercent } = req.body;
 
       // Validate discount amount
-      if (discount === undefined || discount < 0) {
+      if (
+        discountPercent === undefined ||
+        discountPercent < 0 ||
+        discountPercent > 100
+      ) {
         return next(
-          new ErrorHandler("Please provide a valid discount amount", 400)
+          new ErrorHandler("Please provide a valid discount percent", 400)
         );
       }
 
@@ -218,19 +222,11 @@ class ProductController {
         return next(new ErrorHandler("Product not found", 404));
       }
 
-      if (discount > product.price) {
-        return next(
-          new ErrorHandler(
-            "Discount amount cannot be greater than product price",
-            400
-          )
-        );
-      }
-      // Calculate discount percentage
-      const discountPercent = (discount / product.price) * 100;
+      // Calculate discount amount
+      const discount = (discountPercent / 100) * product.price;
 
       // Update product with discount and calculated percentage
-      product.discount = discount;
+      product.discountedPrice = product.price - discount;
       product.discountPercent = parseFloat(discountPercent.toFixed(2)); // Round to 2 decimal places
 
       await product.save();
@@ -238,6 +234,25 @@ class ProductController {
       res.status(200).json({
         success: true,
         message: "Discount added successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  });
+
+  static removeDiscount = asyncHandler(async (req, res, next) => {
+    try {
+      const productId = req.params.id;
+      if (!productId) {
+        return next(new ErrorHandler("Product id is not defined", 500));
+      }
+      const product = await Product.findById(productId);
+      product.discountPercent = 0;
+      product.discountedPrice = 0;
+      await product.save();
+      res.status(200).json({
+        success: true,
+        message: "Discount removed successfully",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

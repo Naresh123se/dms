@@ -39,7 +39,7 @@ const ProductSchema = new mongoose.Schema({
     trim: true,
     min: [0, "Price must be a positive number"],
   },
-  discount: {
+  discountedPrice: {
     type: Number,
     required: false,
     default: 0,
