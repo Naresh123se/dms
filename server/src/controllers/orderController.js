@@ -74,7 +74,7 @@ class OrderController {
         return {
           ...itemFromClient,
           product: itemFromClient.product,
-          price: matchingItemFromDB.price,
+          price: matchingItemFromDB.discountedPrice,
           _id: undefined,
         };
       });
