@@ -335,14 +335,16 @@ const ProductCard = ({
         <div className="flex justify-between items-center">
           <span className="text-xl font-bold text-blue-600 flex flex-col ">
             <span>Rs.{product.discountedPrice?.toFixed(2) || "0.00"}</span>
-            <span className="gap-2 flex mr-3  items-center font-medium">
-              <span className="line-through text-gray-400 text-base ">
-                Rs.{product.price?.toFixed(2) || "0.00"}
+            {product.discountPercent?.toFixed(2) > 0 && (
+              <span className="gap-2 flex mr-3  items-center font-medium">
+                <span className="line-through text-gray-400 text-base ">
+                  Rs.{product.price?.toFixed(2) || "0.00"}
+                </span>
+                <span className="text-base text-black ">
+                  -{product.discountPercent?.toFixed(2) || "0.00"}%
+                </span>
               </span>
-              <span className="text-base text-black ">
-                -{product.discountPercent?.toFixed(2) || "0.00"}%
-              </span>
-            </span>
+            )}
           </span>
           <Button
             className={`${

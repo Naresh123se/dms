@@ -172,7 +172,7 @@ function ProductList() {
       }).unwrap();
 
       // Check if the mutation was successful
-      if ("data" in result) {
+      if (result) {
         // Close dialog and reset state
         setShowAddDialog(false);
         setSelectedDiscountProduct(null);

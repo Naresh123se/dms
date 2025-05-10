@@ -37,6 +37,7 @@ class ProductController {
         description,
         owner: distributor._id,
         price,
+        discountedPrice: price,
         category,
         quantity,
         images: imagesLinks,

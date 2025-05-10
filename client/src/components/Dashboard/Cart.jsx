@@ -235,14 +235,16 @@ const CartItem = ({
         <p className="mt-1 text-sm text-gray-800">
           Rs.{item.discountedPrice?.toFixed(2)} each
         </p>
-        <span className="flex gap-3 items-center">
-          <p className=" text-sm text-gray-400 line-through ">
-            Rs.{item.price.toFixed(2)}
-          </p>
-          <span className="font-normal text-sm">
-            -{item.discountPercent?.toFixed(2) || "0.00"}%
+        {item.discountPercent?.toFixed(2) > 0 && (
+          <span className="flex gap-3 items-center">
+            <p className=" text-sm text-gray-400 line-through ">
+              Rs.{item.price.toFixed(2)}
+            </p>
+            <span className="font-normal text-sm">
+              -{item.discountPercent?.toFixed(2) || "0.00"}%
+            </span>
           </span>
-        </span>
+        )}
 
         <p
           className={`mt-1 text-sm ${

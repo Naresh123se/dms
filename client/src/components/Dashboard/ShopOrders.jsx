@@ -221,7 +221,7 @@ const ShopOrders = () => {
                         <div>
                           <p className="text-sm text-gray-500">Price</p>
                           <p className="text-gray-900 font-medium">
-                            ₹{item?.discountedPrice?.toFixed(2)}
+                            ₹{item?.price?.toFixed(2)}
                           </p>
                         </div>
                       </div>
