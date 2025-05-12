@@ -10,6 +10,7 @@ import {
   X,
   Check,
   Camera,
+  ArrowLeft,
 } from "lucide-react";
 import {
   useGetUserProfileQuery,
@@ -17,6 +18,8 @@ import {
 } from "@/app/slices/userApiSlice";
 import { toast } from "react-toastify";
 import { Button } from "./ui/button";
+import { useNavigate } from "react-router-dom";
+
 
 function Profile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -24,6 +27,7 @@ function Profile() {
   const [updateProfile, { isLoading: updateLoading }] =
     useUpdateUserProfileMutation();
   const user = data?.user;
+  const navigate = useNavigate()
 
   const [profile, setProfile] = useState({
     name: "John Doe",
@@ -168,7 +172,10 @@ function Profile() {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-10 pb-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <div>
+        <button className="flex items-center gap-1 text-blue-700 p-2 rounded-md" onClick={(e) =>navigate(-1)}> <ArrowLeft/> Back</button>
+        </div>
         {/* Profile Header */}
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
           <div className="h-32 bg-gradient-to-r from-[#1E3A8A] to-[#3b1861]"></div>
