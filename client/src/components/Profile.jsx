@@ -4,8 +4,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  BookOpen,
-  Users,
   Edit2,
   X,
   Check,
@@ -105,6 +103,7 @@ function Profile() {
     reset(profile);
     setIsEditing(false);
   };
+  const nav = useNavigate();
 
   const StatCard = ({ icon: Icon, label, value, className = "" }) => (
     <div
@@ -177,6 +176,13 @@ function Profile() {
         <button className="flex items-center gap-1 text-blue-700 p-2 rounded-md" onClick={(e) =>navigate(-1)}> <ArrowLeft/> Back</button>
         </div>
         {/* Profile Header */}
+        <button
+          className="flex gap-2 items-center "
+          onClick={() => nav(-1)}
+        >
+          <ArrowLeft />
+          Back
+        </button>
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
           <div className="h-32 bg-gradient-to-r from-[#1E3A8A] to-[#3b1861]"></div>
           <div className="relative px-6 pb-6">
@@ -246,8 +252,7 @@ function Profile() {
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 justify-center">
-        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6 justify-center"></div>
 
         {/* Profile Information */}
         <div className="grid gap-8 grid-cols-1 lg:grid-cols-2">
