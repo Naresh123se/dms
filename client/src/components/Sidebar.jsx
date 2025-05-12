@@ -32,7 +32,11 @@ const Sidebar = () => {
         { icon: User2, text: "Supplier Request", path: "/admin/request" },
       ],
     },
-    { icon: CircleDollarSign, text: "Finance", path: "/finance" },
+    {
+      icon: CircleDollarSign,
+      text: "Payments",
+      path: "/admin/all-payments",
+    },
   ];
 
   return (
