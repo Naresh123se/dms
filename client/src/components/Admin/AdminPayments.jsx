@@ -120,6 +120,8 @@ export default function PaymentsTable() {
                 <TableHead>Customer</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Payment ID</TableHead>
+                <TableHead>Order ID</TableHead>
+                <TableHead>Distributor</TableHead>
                 <TableHead>Method</TableHead>
                 <TableHead>Date</TableHead>
                 <TableHead>Status</TableHead>
@@ -136,7 +138,13 @@ export default function PaymentsTable() {
                       {formatCurrency(payment.amount)}
                     </TableCell>
                     <TableCell className="text-sm font-mono">
-                      {payment.pidx}
+                      {payment.pidx.slice(-8)}
+                    </TableCell>
+                    <TableCell className="text-sm font-mono">
+                      {payment.order.slice(-8)}
+                    </TableCell>
+                    <TableCell className="text-sm font-mono">
+                      {payment.distributor.name}
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
